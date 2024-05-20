@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -7,7 +6,6 @@ import { Link } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '~/assets/images/logo.png';
@@ -29,13 +27,7 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function SignUp() {
-    const [value, setValue] = React.useState('1');
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
+export default function ForgotPassword() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -55,7 +47,6 @@ export default function SignUp() {
                     sm={4}
                     md={7}
                     sx={{
-                        // backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
                         backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
                         backgroundSize: 'cover',
@@ -65,7 +56,19 @@ export default function SignUp() {
                 >
                     <img src={logo} style={{ width: 150, height: 150, margin: '37%' }} alt="Logo" />
                 </Grid>
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                <Grid
+                    item
+                    xs={12}
+                    sm={8}
+                    md={5}
+                    component={Paper}
+                    elevation={6}
+                    square
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}
+                >
                     <Box
                         sx={{
                             my: 8,
@@ -75,43 +78,13 @@ export default function SignUp() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            Sign up as mentee
+                        <Typography component="h1" variant="h4">
+                            Reset your password
                         </Typography>
-
+                        <Typography component="h4" variant="h7" sx={{ mt: 2 }}>
+                            Enter your email address and we’ll send you a link to reset your password.
+                        </Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Username "
-                                name="username"
-                                autoComplete="username"
-                                autoFocus
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="university"
-                                label="University"
-                                type="text"
-                                id="university"
-                                autoComplete="university"
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="dob"
-                                label="Date of Birth"
-                                type="date"
-                                id="dob"
-                            />
                             <TextField
                                 margin="normal"
                                 required
@@ -121,34 +94,15 @@ export default function SignUp() {
                                 name="email"
                                 autoComplete="email"
                             />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="confirmPassword"
-                                label="Confirm Password"
-                                type="password"
-                                id="confirmPassword"
-                                autoComplete="current-password"
-                            />
+
                             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                                Sign Up
+                                Send reset link
                             </Button>
 
                             <Grid container>
                                 <Grid item xs>
                                     <Link to="/sign-in" variant="body2">
-                                        Sign In
+                                        Back to sign in
                                     </Link>
                                 </Grid>
                             </Grid>

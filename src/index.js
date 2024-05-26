@@ -5,6 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import GlobalStyles from './components/GlobalStyles';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+document.title = 'Tortee - Connecting mentors and mentees';
 root.render(
     <React.StrictMode>
         <GlobalStyles>

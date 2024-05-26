@@ -12,8 +12,12 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ToggleColorMode from '../ToggleColorMode';
+import { Link } from 'react-router-dom';
+
+import logo from '~/assets/images/logo-outlined.png';
+
 const logoStyle = {
-    width: '140px',
+    width: '50px',
     height: 'auto',
     cursor: 'pointer',
 };
@@ -79,25 +83,16 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 px: 0,
                             }}
                         >
-                            <img
-                                src={
-                                    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg'
-                                }
-                                style={logoStyle}
-                                alt="logo of sitemark"
-                            />
+                            <img src={logo} style={logoStyle} alt="logo of tortee" />
                             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                                 <MenuItem onClick={() => scrollToSection('features')} sx={{ py: '6px', px: '12px' }}>
                                     <Typography variant="body2" color="text.primary">
                                         Features
                                     </Typography>
                                 </MenuItem>
-                                <MenuItem
-                                    onClick={() => scrollToSection('testimonials')}
-                                    sx={{ py: '6px', px: '12px' }}
-                                >
+                                <MenuItem onClick={() => scrollToSection('mentors')} sx={{ py: '6px', px: '12px' }}>
                                     <Typography variant="body2" color="text.primary">
-                                        Testimonials
+                                        Mentors
                                     </Typography>
                                 </MenuItem>
                                 <MenuItem onClick={() => scrollToSection('highlights')} sx={{ py: '6px', px: '12px' }}>
@@ -112,7 +107,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 </MenuItem>
                                 <MenuItem onClick={() => scrollToSection('faq')} sx={{ py: '6px', px: '12px' }}>
                                     <Typography variant="body2" color="text.primary">
-                                        FAQ
+                                        FAQs
                                     </Typography>
                                 </MenuItem>
                             </Box>
@@ -125,25 +120,15 @@ function AppAppBar({ mode, toggleColorMode }) {
                             }}
                         >
                             <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-                            <Button
-                                color="primary"
-                                variant="text"
-                                size="small"
-                                component="a"
-                                href="/material-ui/getting-started/templates/sign-in/"
-                                target="_blank"
-                            >
-                                Sign in
+                            <Button color="primary" variant="text" size="small" component="a" target="_blank">
+                                <Link to={'/sign-in'} style={{ textDecoration: 'none', color: 'black' }}>
+                                    Sign in
+                                </Link>
                             </Button>
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                size="small"
-                                component="a"
-                                href="/material-ui/getting-started/templates/sign-up/"
-                                target="_blank"
-                            >
-                                Sign up
+                            <Button color="primary" variant="contained" size="small" component="a" target="_blank">
+                                <Link to={'/sign-up'} style={{ textDecoration: 'none', color: 'white' }}>
+                                    Sign up
+                                </Link>
                             </Button>
                         </Box>
                         <Box sx={{ display: { sm: '', md: 'none' } }}>
@@ -176,7 +161,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                                     </Box>
                                     <MenuItem onClick={() => scrollToSection('features')}>Features</MenuItem>
-                                    <MenuItem onClick={() => scrollToSection('testimonials')}>Testimonials</MenuItem>
+                                    <MenuItem onClick={() => scrollToSection('mentors')}>Mentors</MenuItem>
                                     <MenuItem onClick={() => scrollToSection('highlights')}>Highlights</MenuItem>
                                     <MenuItem onClick={() => scrollToSection('pricing')}>Pricing</MenuItem>
                                     <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>

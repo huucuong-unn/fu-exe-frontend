@@ -9,33 +9,26 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
 import EdgesensorHighRoundedIcon from '@mui/icons-material/EdgesensorHighRounded';
 import ViewQuiltRoundedIcon from '@mui/icons-material/ViewQuiltRounded';
 
 const items = [
     {
         icon: <ViewQuiltRoundedIcon />,
-        title: 'Dashboard',
+        title: 'Many majors',
         description:
             'This item could provide a snapshot of the most important metrics or data points related to the product.',
-        imageLight: 'url("/static/images/templates/templates-images/dash-light.png")',
-        imageDark: 'url("/static/images/templates/templates-images/dash-dark.png")',
+        imageLight:
+            'url(https://scontent.xx.fbcdn.net/v/t1.15752-9/440717696_427299193402405_8684226142794510200_n.png?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeHlYfOiJJMs0lzx7TrMYbzt9XtWrWlXB3H1e1ataVcHcZBUtd34Yk-w3bj9ZHEOS22JizAEkLtQu9imat2-1DxK&_nc_ohc=p3qDyoxyLG4Q7kNvgHUF_FZ&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_Q7cD1QFad1goyQReavQBLHevtD3JYY356dPfAgqbZ1mEZoz2-Q&oe=6679599A)',
+        imageDark:
+            'url(https://scontent.xx.fbcdn.net/v/t1.15752-9/440717696_427299193402405_8684226142794510200_n.png?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeHlYfOiJJMs0lzx7TrMYbzt9XtWrWlXB3H1e1ataVcHcZBUtd34Yk-w3bj9ZHEOS22JizAEkLtQu9imat2-1DxK&_nc_ohc=p3qDyoxyLG4Q7kNvgHUF_FZ&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=03_Q7cD1QFad1goyQReavQBLHevtD3JYY356dPfAgqbZ1mEZoz2-Q&oe=6679599A)',
     },
     {
         icon: <EdgesensorHighRoundedIcon />,
         title: 'Mobile integration',
         description: 'This item could provide information about the mobile app version of the product.',
-        imageLight: 'url("/static/images/templates/templates-images/mobile-light.png")',
-        imageDark: 'url("/static/images/templates/templates-images/mobile-dark.png")',
-    },
-    {
-        icon: <DevicesRoundedIcon />,
-        title: 'Available on all platforms',
-        description:
-            'This item could let users know the product is available on all platforms, such as web, mobile, and desktop.',
-        imageLight: 'url("/static/images/templates/templates-images/devices-light.png")',
-        imageDark: 'url("/static/images/templates/templates-images/devices-dark.png")',
+        imageLight: 'url(https://mui.com/static/images/templates/templates-images/mobile-light.png)',
+        imageDark: 'url(https://mui.com/static/images/templates/templates-images/mobile-light.png)',
     },
 ];
 
@@ -54,12 +47,10 @@ export default function Features() {
                 <Grid item xs={12} md={6}>
                     <div>
                         <Typography component="h2" variant="h4" color="text.primary">
-                            Product features
+                            Features
                         </Typography>
                         <Typography variant="body1" color="text.secondary" sx={{ mb: { xs: 2, sm: 4 } }}>
-                            Here you can provide a brief overview of the key features of the product. For example, you
-                            could list the number of features, the types of features, add-ons, or the benefits of the
-                            features.
+                            Some of features of our platform
                         </Typography>
                     </div>
                     <Grid container item gap={1} sx={{ display: { xs: 'auto', sm: 'none' } }}>
@@ -106,6 +97,7 @@ export default function Features() {
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                                 minHeight: 280,
+                                backgroundRepeat: 'no-repeat',
                             }}
                         />
                         <Box sx={{ px: 2, pb: 2 }}>
@@ -231,6 +223,8 @@ export default function Features() {
                                     theme.palette.mode === 'light'
                                         ? items[selectedItemIndex].imageLight
                                         : items[selectedItemIndex].imageDark,
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
                             }}
                         />
                     </Card>

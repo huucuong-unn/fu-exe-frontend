@@ -14,7 +14,7 @@ import LogoCollection from '~/components/LogoCollection';
 import Highlights from '~/components/Highlights';
 import Pricing from '~/components/Pricing';
 import Features from '~/components/Features';
-import Testimonials from '~/components/Testimonials';
+import MentorSuggestion from '~/components/MentorSuggestion';
 import FAQ from '~/components/FAQ';
 import getLPTheme from '~/components/getLPTheme';
 
@@ -75,7 +75,12 @@ export default function LandingPage() {
     };
 
     return (
-        <ThemeProvider theme={showCustomTheme ? LPtheme : defaultTheme}>
+        <ThemeProvider
+            theme={showCustomTheme ? LPtheme : defaultTheme}
+            sx={{
+                fontFamily: 'Montserrat, sans-serif',
+            }}
+        >
             <CssBaseline />
             <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
             <Hero />
@@ -83,7 +88,7 @@ export default function LandingPage() {
                 <LogoCollection />
                 <Features />
                 <Divider />
-                <Testimonials />
+                <MentorSuggestion />
                 <Divider />
                 <Highlights />
                 <Divider />
@@ -92,7 +97,7 @@ export default function LandingPage() {
                 <FAQ />
                 <Divider />
             </Box>
-            <ToggleCustomTheme showCustomTheme={showCustomTheme} toggleCustomTheme={toggleCustomTheme} />
+            {/* <ToggleCustomTheme showCustomTheme={showCustomTheme} toggleCustomTheme={toggleCustomTheme} /> */}
         </ThemeProvider>
     );
 }

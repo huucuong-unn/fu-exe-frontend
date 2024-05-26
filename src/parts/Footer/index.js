@@ -1,19 +1,19 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
 
+import logo from '~/assets/images/logo-outlined.png';
+
 const logoStyle = {
-    width: '140px',
+    width: '100px',
     height: 'auto',
 };
 
@@ -21,7 +21,9 @@ function Copyright() {
     return (
         <Typography variant="body2" color="text.secondary" mt={1}>
             {'Copyright © '}
-            <Link href="https://mui.com/">Sitemark&nbsp;</Link>
+            <Link href="https://huucuong-un.github.io/htmlcss-1112studio/?fbclid=IwAR177w5Ref1WUBg432KBNieE9wKll9rdKw70B_YpFL8V1vJNGZZWgOlBfLE#">
+                Tortee&nbsp;
+            </Link>
             {new Date().getFullYear()}
         </Typography>
     );
@@ -52,43 +54,41 @@ export default function Footer() {
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 4,
-                        minWidth: { xs: '100%', sm: '60%' },
+                        minWidth: { xs: '100%', sm: '40%' },
                     }}
                 >
                     <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
                         <Box sx={{ ml: '-15px' }}>
-                            <img
-                                src={
-                                    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e6faf73568658154dae_SitemarkDefault.svg'
-                                }
-                                style={logoStyle}
-                                alt="logo of sitemark"
-                            />
-                        </Box>
-                        <Typography variant="body2" fontWeight={600} gutterBottom>
-                            Newsletter
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" mb={2}>
-                            Subscribe to our newsletter for weekly updates and promotions.
-                        </Typography>
-                        <Stack direction="row" spacing={1} useFlexGap>
-                            <TextField
-                                id="outlined-basic"
-                                hiddenLabel
-                                size="small"
-                                variant="outlined"
-                                fullWidth
-                                aria-label="Enter your email address"
-                                placeholder="Your email address"
-                                inputProps={{
-                                    autoComplete: 'off',
-                                    'aria-label': 'Enter your email address',
+                            <img src={logo} style={logoStyle} alt="logo of tortee" />
+                            <Typography
+                                variant="h1"
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: { xs: 'column', md: 'row' },
+                                    alignSelf: 'center',
+                                    textAlign: 'center',
+                                    fontSize: 'clamp(3.5rem, 10vw, 4rem)',
                                 }}
-                            />
-                            <Button variant="contained" color="primary" sx={{ flexShrink: 0 }}>
-                                Subscribe
-                            </Button>
-                        </Stack>
+                            >
+                                Tor
+                                <Typography
+                                    component="span"
+                                    variant="h1"
+                                    sx={{
+                                        fontSize: 'clamp(3rem, 10vw, 4rem)',
+                                        color: (theme) =>
+                                            theme.palette.mode === 'light' ? 'primary.main' : 'primary.light',
+                                    }}
+                                >
+                                    tee
+                                </Typography>
+                            </Typography>
+                        </Box>
+                        <Typography variant="body2" color="text.secondary" mt={2}>
+                            Tortee is a platform for creating and sharing your own
+                            <br />
+                            custom stickers, and it's completely free!
+                        </Typography>
                     </Box>
                 </Box>
                 <Box

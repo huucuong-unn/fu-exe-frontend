@@ -3,7 +3,6 @@ import { alpha } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -42,7 +41,7 @@ export default function Hero() {
                             fontSize: 'clamp(3.5rem, 10vw, 4rem)',
                         }}
                     >
-                        Our latest&nbsp;
+                        Mentor
                         <Typography
                             component="span"
                             variant="h1"
@@ -51,7 +50,7 @@ export default function Hero() {
                                 color: (theme) => (theme.palette.mode === 'light' ? 'primary.main' : 'primary.light'),
                             }}
                         >
-                            products
+                            ship
                         </Typography>
                     </Typography>
                     <Typography
@@ -59,8 +58,7 @@ export default function Hero() {
                         color="text.secondary"
                         sx={{ alignSelf: 'center', width: { sm: '100%', md: '80%' } }}
                     >
-                        Explore our cutting-edge dashboard, delivering high-quality solutions tailored to your needs.
-                        Elevate your experience with top-tier features and services.
+                        Learn a new skill, launch a project, land your dream career.
                     </Typography>
                     <Stack
                         direction={{ xs: 'column', sm: 'row' }}
@@ -74,24 +72,16 @@ export default function Hero() {
                             hiddenLabel
                             size="small"
                             variant="outlined"
-                            aria-label="Enter your email address"
-                            placeholder="Your email address"
+                            placeholder="Search by company, role, or skill"
                             inputProps={{
                                 autoComplete: 'off',
-                                'aria-label': 'Enter your email address',
+                                'aria-label': 'Search by company, role, or skill',
                             }}
                         />
                         <Button variant="contained" color="primary">
-                            Start now
+                            Find mentors
                         </Button>
                     </Stack>
-                    <Typography variant="caption" textAlign="center" sx={{ opacity: 0.8 }}>
-                        By clicking &quot;Start now&quot; you agree to our&nbsp;
-                        <Link href="#" color="primary">
-                            Terms & Conditions
-                        </Link>
-                        .
-                    </Typography>
                 </Stack>
                 <Box
                     id="image"

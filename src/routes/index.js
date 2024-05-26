@@ -1,4 +1,5 @@
 import LayoutWithFooter from '~/components/Layouts/LayoutWithFooter';
+import Mentors from '~/components/Mentors';
 import Checkout from '~/pages/Checkout';
 import Dashboard from '~/pages/Dashboard';
 import Following from '~/pages/Following';
@@ -13,11 +14,17 @@ const publicRoutes = [
     { path: '/', component: Home },
     { path: '/page', component: LandingPage, layout: LayoutWithFooter },
     { path: '/following', component: Following },
+    { path: '/mentors', component: Mentors },
+
+    //Auth
     { path: '/sign-in', component: SignInSide, layout: null },
     { path: '/sign-up', component: SignUp, layout: null },
     { path: '/forgot-password', component: ForgotPassword, layout: null },
-    { path: '/dashboard', component: Dashboard },
+
     { path: '/checkout', component: Checkout, layout: null },
+
+    //Admin
+    { path: '/admin/dashboard', component: Dashboard },
 ];
 
 const privateRoutes = [];

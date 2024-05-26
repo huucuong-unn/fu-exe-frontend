@@ -1,7 +1,6 @@
-import { Avatar, Box, Button, Card, CardContent, Chip, Container, Grid, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, Chip, Container, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Star } from '@mui/icons-material';
 import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 
 const mentor = {

@@ -185,11 +185,9 @@ export default function MentorSuggestion() {
                       ))}
             </Grid>
             <Box>
-                <Button variant="contained">
-                    <Link style={{ color: 'white', textDecoration: 'none' }} to={'/mentors'}>
-                        Explore more
-                    </Link>
-                </Button>
+                <Link style={{ color: 'white', textDecoration: 'none' }} to={'/mentors'}>
+                    <Button variant="contained">Explore more</Button>
+                </Link>
             </Box>
         </Container>
     );

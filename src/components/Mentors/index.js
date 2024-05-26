@@ -7,9 +7,20 @@ import Grid from '@mui/material/Grid';
 import { Link } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Avatar, CardContent, Chip, Input, TextField } from '@mui/material';
+import {
+    Avatar,
+    CardContent,
+    Checkbox,
+    Chip,
+    Divider,
+    FormControlLabel,
+    FormGroup,
+    Input,
+    Modal,
+    TextField,
+} from '@mui/material';
 
-const items = [
+const mentors = [
     {
         profilePicture: 'https://ih1.redbubble.net/image.5481662153.7016/st,small,507x507-pad,600x600,f8f8f8.jpg',
         shortDescription: 'Director, Engineering at Tortee',
@@ -28,7 +39,28 @@ const items = [
     },
 ];
 
+const modalItems = {
+    companies: ['FPT', 'VNG', 'Nashtech', 'Tortee', 'Google', 'Facebook', 'Amazon', 'Microsoft'],
+    jobTitles: ['Software Engineer', 'Product Manager', 'UX Designer', 'CTO', 'CEO', 'Founder'],
+};
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 600,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 5,
+};
+
 function SearchFilter() {
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
     return (
         <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -55,9 +87,65 @@ function SearchFilter() {
                 }}
                 sx={{ width: { sx: '100%', sm: '70%', lg: '60%' } }}
             />
-            <Button variant="contained" color="primary" sx={{ width: 105, borderRadius: 5 }}>
+            <Button variant="contained" color="primary" sx={{ width: 105, borderRadius: 5 }} onClick={handleOpen}>
                 Filter
             </Button>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h3"
+                        sx={{ textAlign: 'center', fontWeight: 'bold' }}
+                    >
+                        Filters
+                    </Typography>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography id="modal-modal-title" variant="h6" component="h3" sx={{ my: 2, fontWeight: 'bold' }}>
+                        Companies
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <FormGroup>
+                            <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 8 }}>
+                                {Array.from(modalItems.companies).map((company, index) => (
+                                    <Grid item xs={2} sm={4} md={4} key={index}>
+                                        <FormControlLabel control={<Checkbox />} label={company} />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </FormGroup>
+                    </Typography>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography id="modal-modal-title" variant="h6" component="h3" sx={{ my: 2, fontWeight: 'bold' }}>
+                        Job Titles
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <FormGroup>
+                            <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 8 }}>
+                                {Array.from(modalItems.jobTitles).map((jobTitle, index) => (
+                                    <Grid item xs={2} sm={4} md={4} key={index}>
+                                        <FormControlLabel control={<Checkbox />} label={jobTitle} />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </FormGroup>
+                    </Typography>
+                    <Divider sx={{ my: 2 }} />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={{ width: 150, borderRadius: 3, display: 'flex' }}
+                        onClick={() => handleClose()}
+                    >
+                        Show Results
+                    </Button>
+                </Box>
+            </Modal>
         </Stack>
     );
 }
@@ -87,7 +175,7 @@ export default function Mentors() {
                         useFlexGap
                         sx={{ width: '100%', display: { xs: 8, sm: 'flex' } }}
                     >
-                        {items?.map(({ title, description, shortDescription, skills, profilePicture }, index) => (
+                        {mentors?.map((mentor, index) => (
                             <Card
                                 key={index}
                                 variant="outlined"
@@ -129,7 +217,7 @@ export default function Mentors() {
                                     >
                                         <Avatar
                                             alt="avatar image"
-                                            src={profilePicture}
+                                            src={mentor.profilePicture}
                                             sx={{ width: 150, height: 150 }}
                                         />
                                     </Box>
@@ -140,7 +228,7 @@ export default function Mentors() {
                                             fontWeight="bold"
                                             fontSize={'24px'}
                                         >
-                                            {title}
+                                            {mentor?.title}
                                         </Typography>
                                         <Typography
                                             color="text.secondary"
@@ -148,7 +236,7 @@ export default function Mentors() {
                                             sx={{ my: 1 }}
                                             fontSize={'16px'}
                                         >
-                                            {shortDescription}
+                                            {mentor?.shortDescription}
                                         </Typography>
                                         <Typography
                                             color="text.secondary"
@@ -156,10 +244,10 @@ export default function Mentors() {
                                             sx={{ my: 2 }}
                                             fontSize={'14px'}
                                         >
-                                            {description}
+                                            {mentor?.description}
                                         </Typography>
                                         <CardContent>
-                                            {skills?.map((skill, index) => (
+                                            {mentor?.skills?.map((skill, index) => (
                                                 <Chip
                                                     key={index}
                                                     label={skill}
@@ -169,7 +257,7 @@ export default function Mentors() {
                                             ))}
                                         </CardContent>
                                         <br />
-                                        <Link to={'/page'}>
+                                        <Link to={'/mentor/id'}>
                                             <Button
                                                 variant="contained"
                                                 color="primary"

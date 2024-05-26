@@ -120,16 +120,16 @@ function AppAppBar({ mode, toggleColorMode }) {
                             }}
                         >
                             <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
-                            <Button color="primary" variant="text" size="small" component="a" target="_blank">
-                                <Link to={'/sign-in'} style={{ textDecoration: 'none', color: 'black' }}>
+                            <Link to={'/sign-in'}>
+                                <Button color="primary" variant="text" size="small" component="a" target="_blank">
                                     Sign in
-                                </Link>
-                            </Button>
-                            <Button color="primary" variant="contained" size="small" component="a" target="_blank">
-                                <Link to={'/sign-up'} style={{ textDecoration: 'none', color: 'white' }}>
+                                </Button>
+                            </Link>
+                            <Link to={'/sign-up'}>
+                                <Button color="primary" variant="contained" size="small" component="a" target="_blank">
                                     Sign up
-                                </Link>
-                            </Button>
+                                </Button>
+                            </Link>
                         </Box>
                         <Box sx={{ display: { sm: '', md: 'none' } }}>
                             <Button

@@ -80,13 +80,10 @@ export default function SignInSide() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
+                        <Typography component="h1" variant="h4">
                             Sign in
                         </Typography>
-                        <Box sx={{ width: '100%', typography: 'body1' }}>
+                        <Box sx={{ width: '100%', typography: 'body1', mt: 5 }}>
                             <TabContext value={value}>
                                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                     <TabList onChange={handleChange} aria-label="lab API tabs example">

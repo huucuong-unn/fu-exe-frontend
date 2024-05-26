@@ -6,6 +6,7 @@ import Following from '~/pages/Following';
 import ForgotPassword from '~/pages/ForgotPassword';
 import Home from '~/pages/Home';
 import LandingPage from '~/pages/LandingPage';
+import { MentorProfile } from '~/pages/MentorProfile';
 import SignInSide from '~/pages/SignInSide';
 import SignUp from '~/pages/SignUp';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
@@ -14,7 +15,8 @@ const publicRoutes = [
     { path: '/', component: Home },
     { path: '/page', component: LandingPage, layout: LayoutWithFooter },
     { path: '/following', component: Following },
-    { path: '/mentors', component: Mentors },
+    { path: '/mentor', component: Mentors },
+    { path: '/mentor/id', component: MentorProfile },
 
     //Auth
     { path: '/sign-in', component: SignInSide, layout: null },

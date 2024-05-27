@@ -26,7 +26,7 @@ const publicRoutes = [
     { path: '/checkout', component: Checkout, layout: null },
 
     //Admin
-    { path: '/admin/dashboard', component: Dashboard },
+    { path: '/admin/dashboard', component: Dashboard, layout: null },
 ];
 
 const privateRoutes = [];

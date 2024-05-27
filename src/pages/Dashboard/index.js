@@ -21,6 +21,7 @@ import { mainListItems, secondaryListItems } from '../../components/listItems';
 import Chart from '../../components/Chart';
 import Deposits from '../../components/Deposits';
 import Orders from '../../components/Orders';
+import { TextField } from '@mui/material';
 
 function Copyright(props) {
     return (
@@ -129,6 +130,11 @@ export default function Dashboard() {
                             px: [1],
                         }}
                     >
+                        <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                                Hi Admin
+                            </Typography>
+                        </Box>
                         <IconButton onClick={toggleDrawer}>
                             <ChevronLeftIcon />
                         </IconButton>

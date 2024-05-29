@@ -6,7 +6,7 @@
             "localhost",
             ".localhost"
         ],
-        "proxy": "https://fu-exe.onrender.com"
+        "proxy": "https://fu-exe-backend.onrender.com"
     },
     "private": true,
     "dependencies": {

@@ -7,7 +7,7 @@ import { ShortMentorInfo } from '~/components/ShortMentorInfo';
 
 export const MentorProfile = () => {
     return (
-        <Container>
+        <Container sx={{ pt: 14 }}>
             <Box>
                 <ShortMentorInfo />
                 <Divider />

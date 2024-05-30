@@ -4,19 +4,19 @@ import Checkout from '~/pages/Checkout';
 import Dashboard from '~/pages/Dashboard';
 import Following from '~/pages/Following';
 import ForgotPassword from '~/pages/ForgotPassword';
-import Home from '~/pages/Home';
 import LandingPage from '~/pages/LandingPage';
 import { MentorProfile } from '~/pages/MentorProfile';
 import SignInSide from '~/pages/SignInSide';
 import SignUp from '~/pages/SignUp';
+import { UserProfile } from '~/pages/UserProfile';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
-    { path: '/', component: Home },
-    { path: '/page', component: LandingPage, layout: LayoutWithFooter },
+    { path: '/', component: LandingPage, layout: LayoutWithFooter },
     { path: '/following', component: Following },
     { path: '/mentor', component: Mentors },
     { path: '/mentor/id', component: MentorProfile },
+    { path: '/user/profile', component: UserProfile },
 
     //Auth
     { path: '/sign-in', component: SignInSide, layout: null },

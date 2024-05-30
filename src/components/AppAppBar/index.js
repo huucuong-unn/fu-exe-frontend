@@ -119,7 +119,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 alignItems: 'center',
                             }}
                         >
-                            <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
+                            {/* <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} /> */}
                             <Link to={'/sign-in'}>
                                 <Button color="primary" variant="text" size="small" component="a" target="_blank">
                                     Sign in

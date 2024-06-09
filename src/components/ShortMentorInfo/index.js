@@ -103,7 +103,7 @@ export const ShortMentorInfo = () => {
                         <Typography color="text.secondary" variant="body1" fontSize={'16px'}>
                             The most popular way to get mentored, let's work towards your goals!{' '}
                         </Typography>
-                        <Link to={'/mentor/id'}>
+                        <Link to={'/user/apply'}>
                             <Button
                                 variant="contained"
                                 color="primary"

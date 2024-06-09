@@ -1,5 +1,6 @@
 import LayoutWithFooter from '~/components/Layouts/LayoutWithFooter';
 import Mentors from '~/components/Mentors';
+import { Application } from '~/pages/Application';
 import Checkout from '~/pages/Checkout';
 import CompaniesCampaignHistory from '~/pages/CompaniesCampaignHistory';
 import Dashboard from '~/pages/Dashboard';
@@ -18,6 +19,9 @@ const publicRoutes = [
     { path: '/mentor', component: Mentors },
     { path: '/mentor/id', component: MentorProfile },
     { path: '/user/profile', component: UserProfile },
+    { path: '/user/apply', component: Application },
+
+    //Company
     { path: '/company/campaign', component: CompaniesCampaignHistory },
 
     //Auth

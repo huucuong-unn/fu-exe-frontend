@@ -14,8 +14,6 @@ import { UserProfile } from '~/pages/UserProfile';
 import { Application } from '~/pages/Application';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
-
-
 const publicRoutes = [
     { path: '/', component: LandingPage, layout: LayoutWithFooter },
     { path: '/following', component: Following },
@@ -26,7 +24,6 @@ const publicRoutes = [
 
     //Company
     { path: '/company/campaign', component: CompaniesCampaignHistory },
-    { path: '/admin/dashboard/orders', component: Orders,layout: null},
 
     //Auth
     { path: '/sign-in', component: SignInSide, layout: null },
@@ -37,6 +34,7 @@ const publicRoutes = [
 
     //Admin
     { path: '/admin/dashboard', component: Dashboard, layout: null },
+    { path: '/admin/dashboard/orders', component: Orders, layout: null },
 ];
 
 const privateRoutes = [];

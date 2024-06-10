@@ -87,7 +87,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 <img src={logo} style={logoStyle} alt="logo of tortee" />
                             </a>
                             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                                <MenuItem onClick={() => scrollToSection('mentors')} sx={{ py: '6px', px: '12px' }}>
+                                <MenuItem sx={{ py: '6px', px: '12px' }}>
                                     <a href="/mentor" style={{ textDecoration: 'none' }}>
                                         <Typography variant="body2" color="text.primary">
                                             Mentors
@@ -173,7 +173,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                                     </Box>
                                     <MenuItem onClick={() => scrollToSection('features')}>Features</MenuItem>
-                                    <MenuItem onClick={() => scrollToSection('mentors')}>Mentors</MenuItem>
+                                    {/* <MenuItem onClick={() => scrollToSection('mentors')}>Mentors</MenuItem> */}
                                     <MenuItem onClick={() => scrollToSection('highlights')}>Highlights</MenuItem>
                                     <MenuItem onClick={() => scrollToSection('pricing')}>Pricing</MenuItem>
                                     <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>

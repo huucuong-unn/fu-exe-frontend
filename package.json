@@ -6,7 +6,7 @@
             "localhost",
             ".localhost"
         ],
-        "proxy": "https://fu-exe-backend.onrender.com"
+        "proxy": "https://tortee-463vt.ondigitalocean.app"
     },
     "private": true,
     "dependencies": {

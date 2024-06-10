@@ -11,6 +11,7 @@ import { MentorProfile } from '~/pages/MentorProfile';
 import SignInSide from '~/pages/SignInSide';
 import SignUp from '~/pages/SignUp';
 import { UserProfile } from '~/pages/UserProfile';
+import { Application } from '~/pages/Application';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 

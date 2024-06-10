@@ -21,6 +21,9 @@ const publicRoutes = [
     { path: '/mentor', component: Mentors },
     { path: '/mentor/id', component: MentorProfile },
     { path: '/user/profile', component: UserProfile },
+    { path: '/user/apply', component: Application },
+
+    //Company
     { path: '/company/campaign', component: CompaniesCampaignHistory },
     { path: '/admin/dashboard/orders', component: Orders,layout: null},
 

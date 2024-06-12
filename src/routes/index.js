@@ -15,6 +15,9 @@ import SignInSide from '~/pages/SignInSide';
 import SignUp from '~/pages/SignUp';
 import { UserProfile } from '~/pages/UserProfile';
 import { Application } from '~/pages/Application';
+import CreateMentorAccount from '~/pages/CreateMentorAccount';
+import CreateMentorProfile from '~/pages/CreateMentorProfile';
+import MentorHistoryForCompany from '~/pages/MentorHistoryForCompany';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -30,6 +33,9 @@ const publicRoutes = [
     { path: '/company/id', component: CompanyDetails },
     { path: '/company/campaign-history', component: CompaniesCampaignHistory },
     { path: '/company/campaign-details', component: CompaniesCampaignDetail },
+    { path: '/company/create-mentor-account', component: CreateMentorAccount },
+    { path: '/company/create-mentor-profile', component: CreateMentorProfile },
+    { path: '/company/create-mentor-History', component: MentorHistoryForCompany },
 
     //Auth
     { path: '/sign-in', component: SignInSide, layout: null },

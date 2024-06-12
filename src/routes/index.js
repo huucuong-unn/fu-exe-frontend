@@ -12,6 +12,8 @@ import SignInSide from '~/pages/SignInSide';
 import SignUp from '~/pages/SignUp';
 import { UserProfile } from '~/pages/UserProfile';
 import { Application } from '~/pages/Application';
+import MentorAdminDashboard from '~/pages/MentorAdminDashboard';
+
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -35,6 +37,8 @@ const publicRoutes = [
     //Admin
     { path: '/admin/dashboard', component: Dashboard, layout: null },
     { path: '/admin/dashboard/orders', component: Orders, layout: null },
+    { path: '/admin/dashboard/mentor', component:  MentorAdminDashboard, layout: null },
+   
 ];
 
 const privateRoutes = [];

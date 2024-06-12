@@ -87,7 +87,10 @@ function CompanyDetails() {
                                     </Typography>
                                 </Box>
                                 <CardContent>
-                                    <Button variant="contained" color="primary" sx={{ width: '100%', mr: '10%' }}>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ width: '100%', mr: '10%', backgroundColor: '#365E32' }}
+                                    >
                                         Follow
                                     </Button>
                                 </CardContent>
@@ -493,8 +496,7 @@ function CompanyDetails() {
                                                 <CardContent>
                                                     <Button
                                                         variant="contained"
-                                                        color="primary"
-                                                        sx={{ width: '100%', mr: '10%' }}
+                                                        sx={{ width: '100%', mr: '10%', backgroundColor: '#365E32' }}
                                                     >
                                                         Apply Now
                                                     </Button>
@@ -586,7 +588,7 @@ function CompanyDetails() {
                                                     <Button
                                                         variant="contained"
                                                         color="primary"
-                                                        sx={{ width: '100%', mr: '10%' }}
+                                                        sx={{ width: '100%', mr: '10%', backgroundColor: '#365E32' }}
                                                     >
                                                         Apply Now
                                                     </Button>
@@ -677,8 +679,7 @@ function CompanyDetails() {
                                                 <CardContent>
                                                     <Button
                                                         variant="contained"
-                                                        color="primary"
-                                                        sx={{ width: '100%', mr: '10%' }}
+                                                        sx={{ width: '100%', mr: '10%', backgroundColor: '#365E32' }}
                                                     >
                                                         Apply Now
                                                     </Button>

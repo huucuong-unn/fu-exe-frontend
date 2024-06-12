@@ -20,7 +20,7 @@ import { Application } from '~/pages/Application';
 const publicRoutes = [
     { path: '/', component: LandingPage, layout: LayoutWithFooter },
     { path: '/following', component: Following },
-    { path: '/mentor', component: Mentors },
+    { path: '/mentors', component: Mentors },
     { path: '/mentor/id', component: MentorProfile },
     { path: '/user/profile', component: UserProfile },
     { path: '/user/apply', component: Application },

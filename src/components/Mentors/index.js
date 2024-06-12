@@ -86,7 +86,11 @@ function SearchFilter() {
                 }}
                 sx={{ width: { sx: '100%', sm: '70%', lg: '60%' } }}
             />
-            <Button variant="contained" color="primary" sx={{ width: 105, borderRadius: 5 }} onClick={handleOpen}>
+            <Button
+                variant="contained"
+                sx={{ width: 105, borderRadius: 5, backgroundColor: '#365E32' }}
+                onClick={handleOpen}
+            >
                 Filter
             </Button>
             <Modal
@@ -161,11 +165,9 @@ export default function Mentors() {
             <SearchFilter />
             <Grid container spacing={6}>
                 <Grid item xs={12} md={12}>
-                    <div>
-                        <Typography variant="body1" color="text.secondary" sx={{ mb: { xs: 2, sm: 4 } }}>
-                            404 mentors found
-                        </Typography>
-                    </div>
+                    <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
+                        404 mentors found
+                    </Typography>
                     <Stack
                         direction="column"
                         justifyContent="center"
@@ -259,8 +261,14 @@ export default function Mentors() {
                                         <Link to={'/mentor/id'}>
                                             <Button
                                                 variant="contained"
-                                                color="primary"
-                                                sx={{ width: { lg: '40%', md: '70%', xs: '80%' } }}
+                                                sx={{
+                                                    width: {
+                                                        lg: '40%',
+                                                        md: '70%',
+                                                        xs: '80%',
+                                                        backgroundColor: '#365E32',
+                                                    },
+                                                }}
                                             >
                                                 View Profile
                                             </Button>

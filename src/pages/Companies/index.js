@@ -136,7 +136,12 @@ function Companies() {
                     <Button
                         variant="contained"
                         color="primary"
-                        sx={{ width: { xs: '100%', sm: 'auto' }, flexGrow: { xs: 1, sm: 0 }, height: '100%' }}
+                        sx={{
+                            width: { xs: '100%', sm: 'auto' },
+                            flexGrow: { xs: 1, sm: 0 },
+                            height: '100%',
+                            backgroundColor: '#365E32',
+                        }}
                     >
                         Find Company
                     </Button>

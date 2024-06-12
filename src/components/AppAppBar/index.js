@@ -143,7 +143,13 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 </Button>
                             </Link>
                             <Link to={'/sign-up'}>
-                                <Button color="primary" variant="contained" size="small" component="a" target="_blank">
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    component="a"
+                                    target="_blank"
+                                    sx={{ backgroundColor: '#365E32' }}
+                                >
                                     Sign up
                                 </Button>
                             </Link>

@@ -95,6 +95,11 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         Mentors
                                     </Typography>
                                 </MenuItem>
+                                <MenuItem onClick={() => scrollToSection('companies')} sx={{ py: '6px', px: '12px' }}>
+                                    <Typography variant="body2" color="text.primary">
+                                        Companies
+                                    </Typography>
+                                </MenuItem>
                                 <MenuItem onClick={() => scrollToSection('highlights')} sx={{ py: '6px', px: '12px' }}>
                                     <Typography variant="body2" color="text.primary">
                                         Highlights

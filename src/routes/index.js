@@ -2,7 +2,10 @@ import LayoutWithFooter from '~/components/Layouts/LayoutWithFooter';
 import Mentors from '~/components/Mentors';
 import { Application } from '~/pages/Application';
 import Checkout from '~/pages/Checkout';
+import Companies from '~/pages/Companies';
+import CompaniesCampaignDetail from '~/pages/CompaniesCampaignDetails';
 import CompaniesCampaignHistory from '~/pages/CompaniesCampaignHistory';
+import CompanyDetails from '~/pages/CompanyDetails';
 import Dashboard from '~/pages/Dashboard';
 import Following from '~/pages/Following';
 import ForgotPassword from '~/pages/ForgotPassword';
@@ -22,7 +25,10 @@ const publicRoutes = [
     { path: '/user/apply', component: Application },
 
     //Company
-    { path: '/company/campaign', component: CompaniesCampaignHistory },
+    { path: '/company', component: Companies },
+    { path: '/company/id', component: CompanyDetails },
+    { path: '/company/campaign-history', component: CompaniesCampaignHistory },
+    { path: '/company/campaign-details', component: CompaniesCampaignDetail },
 
     //Auth
     { path: '/sign-in', component: SignInSide, layout: null },

@@ -18,6 +18,9 @@ import { Application } from '~/pages/Application';
 import CreateMentorAccount from '~/pages/CreateMentorAccount';
 import CreateMentorProfile from '~/pages/CreateMentorProfile';
 import MentorHistoryForCompany from '~/pages/MentorHistoryForCompany';
+import MentorLandingPage from '~/pages/MentorLandingPage';
+import CampaignDetail from '~/pages/MentorCampainDetailPage';
+
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -47,6 +50,12 @@ const publicRoutes = [
     //Admin
     { path: '/admin/dashboard', component: Dashboard, layout: null },
     { path: '/admin/dashboard/orders', component: Orders, layout: null },
+
+    //Mentor
+    { path: '/campaigns', component: MentorLandingPage, layout: LayoutWithFooter },
+
+    // Campaign detail route
+    { path: '/campaign/:campaignName', component: CampaignDetail, layout: LayoutWithFooter },
 ];
 
 const privateRoutes = [];

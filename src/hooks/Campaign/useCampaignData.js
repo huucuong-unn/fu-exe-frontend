@@ -1,27 +1,32 @@
 import { useState, useEffect } from 'react';
-import getCampaignData from '~/API/Campaign/getCampaignData';
+import getCampaignData from '~/API/Campain/getCampainData';
 
-const useCampaignData = () => {
+const useCampaignData = (initialPage = 1, initialLimit = 10) => {
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [page, setPage] = useState(initialPage);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
+            setError(null);
             try {
-                const data = await getCampaignData();
-                setCampaigns(data);
+                const { campaigns, totalPage } = await getCampaignData(page, initialLimit);
+                setCampaigns(campaigns);
+                setTotalPages(totalPage);
             } catch (err) {
-                setError(err);
+                setError(err.message || 'An error occurred while fetching the data.');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, []);
+    }, [page, initialLimit]);
 
-    return { campaigns, loading, error };
+    return { campaigns, loading, error, page, totalPages, setPage };
 };
 
 export default useCampaignData;

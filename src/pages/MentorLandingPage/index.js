@@ -83,6 +83,7 @@ export default function MentorLandingPage() {
         >
             <CssBaseline />
             <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
+            <Divider />
 
             <Box sx={{ bgcolor: 'background.default' }}>
                 <CampaignList />

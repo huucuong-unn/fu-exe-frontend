@@ -174,7 +174,7 @@ function SearchFilter() {
             <Button variant="contained" color="primary" sx={{ width: 105, borderRadius: 5 }} onClick={handleOpen}>
                 Filter
             </Button>
-            <Link to={'/mentor'}>
+            <Link to={'/company/create-mentor-account'}>
             <Button variant="contained" color="primary" sx={{ width: 150, borderRadius: 5}}>
                 Create Mentor
             </Button>
@@ -417,7 +417,7 @@ export default function Dashboard() {
                                 ))}
                             </CardContent>
                             <br />
-                            <Link to={'/company/create-mentor-account'}>
+                            <Link to={'/mentor/id'}>
                                 <Button
                                     variant="contained"
                                     color="primary"

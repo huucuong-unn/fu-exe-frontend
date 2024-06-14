@@ -175,7 +175,7 @@ function CompaniesCampaignHistory() {
                                             />
                                         </CardContent>
                                         <br />
-                                        <Link to={'/mentor/id'}>
+                                        <Link to={'/company/campaign-details'}>
                                             <Button
                                                 variant="contained"
                                                 color="primary"

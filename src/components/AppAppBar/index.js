@@ -83,32 +83,49 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 px: 0,
                             }}
                         >
-                            <img src={logo} style={logoStyle} alt="logo of tortee" />
+                            <a href="/">
+                                <img src={logo} style={logoStyle} alt="logo of tortee" />
+                            </a>
                             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                                <MenuItem onClick={() => scrollToSection('features')} sx={{ py: '6px', px: '12px' }}>
-                                    <Typography variant="body2" color="text.primary">
-                                        Features
-                                    </Typography>
+                                <MenuItem sx={{ py: '6px', px: '12px' }}>
+                                    <a href="/mentor" style={{ textDecoration: 'none' }}>
+                                        <Typography variant="body2" color="text.primary">
+                                            Mentors
+                                        </Typography>
+                                    </a>
                                 </MenuItem>
-                                <MenuItem onClick={() => scrollToSection('mentors')} sx={{ py: '6px', px: '12px' }}>
+                                <Divider orientation="vertical" variant="middle" flexItem />
+
+                                <MenuItem onClick={() => scrollToSection('features')} sx={{ py: '6px', px: '12px' }}>
+                                    <a href="/#features" style={{ textDecoration: 'none' }}>
+                                        <Typography variant="body2" color="text.primary">
+                                            Features
+                                        </Typography>
+                                    </a>
+                                </MenuItem>
+                                <MenuItem onClick={() => scrollToSection('companies')} sx={{ py: '6px', px: '12px' }}>
                                     <Typography variant="body2" color="text.primary">
-                                        Mentors
+                                        Companies
                                     </Typography>
                                 </MenuItem>
                                 <MenuItem onClick={() => scrollToSection('highlights')} sx={{ py: '6px', px: '12px' }}>
-                                    <Typography variant="body2" color="text.primary">
-                                        Highlights
-                                    </Typography>
+                                    <a href="/#highlights" style={{ textDecoration: 'none' }}>
+                                        <Typography variant="body2" color="text.primary">
+                                            Highlights
+                                        </Typography>
+                                    </a>
                                 </MenuItem>
-                                <MenuItem onClick={() => scrollToSection('pricing')} sx={{ py: '6px', px: '12px' }}>
+                                {/* <MenuItem onClick={() => scrollToSection('pricing')} sx={{ py: '6px', px: '12px' }}>
                                     <Typography variant="body2" color="text.primary">
                                         Pricing
                                     </Typography>
-                                </MenuItem>
+                                </MenuItem> */}
                                 <MenuItem onClick={() => scrollToSection('faq')} sx={{ py: '6px', px: '12px' }}>
-                                    <Typography variant="body2" color="text.primary">
-                                        FAQs
-                                    </Typography>
+                                    <a href="/#faq" style={{ textDecoration: 'none' }}>
+                                        <Typography variant="body2" color="text.primary">
+                                            FAQs
+                                        </Typography>
+                                    </a>
                                 </MenuItem>
                             </Box>
                         </Box>
@@ -126,7 +143,13 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 </Button>
                             </Link>
                             <Link to={'/sign-up'}>
-                                <Button color="primary" variant="contained" size="small" component="a" target="_blank">
+                                <Button
+                                    variant="contained"
+                                    size="small"
+                                    component="a"
+                                    target="_blank"
+                                    sx={{ backgroundColor: '#365E32' }}
+                                >
                                     Sign up
                                 </Button>
                             </Link>
@@ -161,7 +184,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         <ToggleColorMode mode={mode} toggleColorMode={toggleColorMode} />
                                     </Box>
                                     <MenuItem onClick={() => scrollToSection('features')}>Features</MenuItem>
-                                    <MenuItem onClick={() => scrollToSection('mentors')}>Mentors</MenuItem>
+                                    {/* <MenuItem onClick={() => scrollToSection('mentors')}>Mentors</MenuItem> */}
                                     <MenuItem onClick={() => scrollToSection('highlights')}>Highlights</MenuItem>
                                     <MenuItem onClick={() => scrollToSection('pricing')}>Pricing</MenuItem>
                                     <MenuItem onClick={() => scrollToSection('faq')}>FAQ</MenuItem>
@@ -171,7 +194,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                             color="primary"
                                             variant="contained"
                                             component="a"
-                                            href="/material-ui/getting-started/templates/sign-up/"
+                                            href="/sign-up/"
                                             target="_blank"
                                             sx={{ width: '100%' }}
                                         >
@@ -183,7 +206,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                             color="primary"
                                             variant="outlined"
                                             component="a"
-                                            href="/material-ui/getting-started/templates/sign-in/"
+                                            href="/sign-in/"
                                             target="_blank"
                                             sx={{ width: '100%' }}
                                         >

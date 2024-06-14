@@ -1,20 +1,29 @@
 import { Avatar, Box, Button, Card, CardContent, Chip, Container, Stack, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
+import BoltIcon from '@mui/icons-material/Bolt';
+import GroupsIcon from '@mui/icons-material/Groups';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { Phone } from '@mui/icons-material';
 
-const mentor = {
-    profilePicture: 'https://ih1.redbubble.net/image.5481662153.7016/st,small,507x507-pad,600x600,f8f8f8.jpg',
-    shortDescription: 'Director, Engineering at Tortee',
-    title: 'Huu Cuong Le',
-    description:
-        'Passionate about technology and its social impact. Over 10 years experience delivering successful products in healthcare, eCommerce, digital media and international fundraising. Strong focus on product, user-centricity, UX and lean processes. Interested in Zen and Stoic philosophy. Enjoy deep thinking and deep work.',
-    skills: ['React', 'Java', 'Nodejs'],
-};
-
-export const ShortMentorInfo = () => {
+export const ShortMentorInfo = ({
+    username,
+    profilePicture,
+    shortDescription,
+    linkedinURL,
+    facebookURL,
+    googleMeetURL,
+    requirement,
+}) => {
     return (
-        <Container id="shortmentorinfo" sx={{ py: 4 }} direction={{ xs: 'column', lg: 'row' }} useFlexGap>
+        <Container
+            id="shortmentorinfo"
+            sx={{ py: 4, backgroundColor: '#BACD92', borderRadius: 2 }}
+            direction={{ xs: 'column', lg: 'row' }}
+            useFlexGap
+        >
             <Stack
                 justifyContent="evenly"
                 alignItems="flex-start"
@@ -51,9 +60,17 @@ export const ShortMentorInfo = () => {
                                 },
                                 display: 'flex',
                                 justifyContent: { xs: 'center', md: 'flex-start', lg: 'flex-start' },
+                                alignItems: 'center',
+                                gap: 5,
                             }}
                         >
-                            <Avatar alt="avatar image" src={mentor.profilePicture} sx={{ width: 150, height: 150 }} />
+                            <Avatar alt="avatar image" src={profilePicture} sx={{ width: 150, height: 150 }} />
+                            <Chip
+                                icon={<BoltIcon />}
+                                label="Top Mentor"
+                                sx={{ backgroundColor: 'white', color: 'black' }}
+                                size="medium"
+                            />
                         </Box>
                         <Stack
                             useFlexGap
@@ -61,29 +78,86 @@ export const ShortMentorInfo = () => {
                         >
                             <Box sx={{ textTransform: 'none' }}>
                                 <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'30px'}>
-                                    {mentor?.title}
+                                    {username}
                                 </Typography>
                                 <Typography color="text.secondary" variant="body2" sx={{ mb: 1 }} fontSize={'18px'}>
-                                    {mentor?.shortDescription}
+                                    {shortDescription}
                                 </Typography>
-
-                                <Typography color="text.primary" variant="body2" sx={{ mt: 3 }} fontSize={'18px'}>
-                                    Skills
-                                </Typography>
-                                <CardContent sx={{ px: 0 }}>
-                                    {mentor.skills?.map((skill, index) => (
-                                        <Chip key={index} label={skill} sx={{ mr: 2, mb: 1 }} onClick={() => {}} />
-                                    ))}
-                                </CardContent>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'left',
+                                        alignItems: 'center',
+                                        gap: 4,
+                                        marginTop: 2,
+                                    }}
+                                >
+                                    <Box
+                                        xs={12}
+                                        sm={6}
+                                        md={4}
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            gap: 1,
+                                            '&:hover': {
+                                                textDecoration: 'underline',
+                                                cursor: 'pointer',
+                                            },
+                                        }}
+                                    >
+                                        <LinkedInIcon />
+                                        <a href={linkedinURL} style={{ textDecoration: 'none' }}>
+                                            <Typography
+                                                color="black"
+                                                variant="h7"
+                                                fontWeight="bold"
+                                                sx={{
+                                                    textDecoration: 'none',
+                                                    '&:hover': {
+                                                        textDecoration: 'underline',
+                                                    },
+                                                }}
+                                            >
+                                                Linkedin
+                                            </Typography>
+                                        </a>
+                                    </Box>
+                                    <Box
+                                        xs={12}
+                                        sm={6}
+                                        md={4}
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            gap: 1,
+                                            '&:hover': {
+                                                textDecoration: 'underline',
+                                                cursor: 'pointer',
+                                            },
+                                        }}
+                                    >
+                                        <FacebookIcon />
+                                        <a href={facebookURL} style={{ textDecoration: 'none' }}>
+                                            <Typography
+                                                color="black"
+                                                variant="h7"
+                                                fontWeight="bold"
+                                                sx={{
+                                                    textDecoration: 'none',
+                                                    '&:hover': {
+                                                        textDecoration: 'underline',
+                                                    },
+                                                }}
+                                            >
+                                                Facebook
+                                            </Typography>
+                                        </a>
+                                    </Box>
+                                </Box>
                                 <br />
-                            </Box>
-                            <Box sx={{ p: { md: 2, xs: 0 } }}>
-                                <Typography color="text.primary" variant="body1" fontSize={'16px'}>
-                                    <StarBorderRoundedIcon /> 5.0 (2 reviews)
-                                </Typography>
-                                <Typography color="text.primary" variant="body1" fontSize={'16px'}>
-                                    <StarBorderRoundedIcon /> Usually responds in 1 day
-                                </Typography>
                             </Box>
                         </Stack>
                     </Box>
@@ -98,18 +172,48 @@ export const ShortMentorInfo = () => {
                 >
                     <Box sx={{ p: 3 }}>
                         <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'40px'}>
-                            $20 <span style={{ fontSize: '20px' }}>/ acceptance</span>
+                            150 point <span style={{ fontSize: '20px' }}>/ acceptance</span>
                         </Typography>
-                        <Typography color="text.secondary" variant="body1" fontSize={'16px'}>
+                        <Typography color="text.primary" variant="body1" fontSize={'16px'}>
                             The most popular way to get mentored, let's work towards your goals!{' '}
                         </Typography>
-                        <Link to={'/mentor/id'}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'start',
+                                gap: 2,
+                                marginTop: 2,
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 2 }}>
+                                <GroupsIcon />
+                                <Typography color="text.primary" variant="body1" fontSize={'16px'}>
+                                    {requirement}
+                                </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 2 }}>
+                                <LocalPhoneIcon />
+                                <Typography color="text.primary" variant="body1" fontSize={'16px'}>
+                                    {googleMeetURL}
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        <Link to={'/user/apply'}>
                             <Button
                                 variant="contained"
-                                color="primary"
-                                sx={{ width: '100%', mt: 2, textTransform: 'none', fontSize: '16px' }}
+                                // color="primary"
+                                sx={{
+                                    width: '100%',
+                                    mt: 2,
+                                    textTransform: 'none',
+                                    fontSize: '16px',
+                                    backgroundColor: '#365E32',
+                                }}
                             >
-                                Apply
+                                Apply now
                             </Button>
                         </Link>
                     </Box>

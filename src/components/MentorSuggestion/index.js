@@ -11,46 +11,8 @@ import { useTheme } from '@mui/system';
 import { Button, Chip, Skeleton } from '@mui/material';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-
-const mentors = [
-    {
-        avatar: <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />,
-        name: 'Remy Sharp',
-        occupation: 'Senior Engineer',
-        skills: ['React', 'Java', 'Nodejs', 'Python', 'Django'],
-    },
-    {
-        avatar: <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />,
-        name: 'Travis Howard',
-        occupation: 'Lead Product Designer',
-        skills: ['React', 'Java', 'Nodejs'],
-    },
-    {
-        avatar: <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />,
-        name: 'Cindy Baker',
-        occupation: 'CTO',
-        skills: ['React', 'Java', 'Nodejs'],
-    },
-    {
-        avatar: <Avatar alt="Remy Sharp" src="/static/images/avatar/4.jpg" />,
-        name: 'Julia Stewart',
-        occupation: 'Senior Engineer',
-        skills: ['React', 'Java', 'Nodejs'],
-    },
-    {
-        avatar: <Avatar alt="Travis Howard" src="/static/images/avatar/5.jpg" />,
-        name: 'John Smith',
-        occupation: 'Product Designer',
-        skills: ['React', 'Java', 'Nodejs'],
-    },
-    {
-        avatar: <Avatar alt="Cindy Baker" src="/static/images/avatar/6.jpg" />,
-        name: 'Daniel Wolf',
-        occupation: 'CDO',
-        skills: ['React', 'Java', 'Nodejs'],
-    },
-];
+import { Link, useNavigate } from 'react-router-dom';
+import MentorAPI from '~/API/MentorAPI';
 
 const whiteLogos = [
     'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/6560628e8573c43893fe0ace_Sydney-white.svg',
@@ -72,21 +34,39 @@ const darkLogos = [
 
 const logoStyle = {
     width: '64px',
-    opacity: 0.3,
+    height: '64px',
 };
 
 export default function MentorSuggestion() {
     const theme = useTheme();
     const logos = theme.palette.mode === 'light' ? darkLogos : whiteLogos;
-
+    const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [mentors, setMentors] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Simulate data fetching
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000); // Adjust the timeout as needed
+        const getAll = async () => {
+            try {
+                const getAllWithStatusActive = await MentorAPI.getAllWithStatusActive({ page: 1, limit: 6 });
+                setMentors(getAllWithStatusActive.listResult);
+                setLoading(false);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        getAll();
     }, []);
+
+    const handleItemClick = (index, mentorId) => {
+        setSelectedItemIndex(index);
+        navigate(`/mentor/${mentorId}`);
+    };
+
+    useEffect(() => {
+        console.log(mentors);
+    }, [mentors]);
 
     return (
         <Container
@@ -144,7 +124,8 @@ export default function MentorSuggestion() {
                               </Card>
                           </Grid>
                       ))
-                    : mentors?.map((mentor, index) => (
+                    : mentors.length > 0 &&
+                      mentors?.map((mentor, index) => (
                           <Grid item xs={12} sm={6} md={4} key={index} sx={{ display: 'flex' }}>
                               <Card
                                   sx={{
@@ -158,11 +139,16 @@ export default function MentorSuggestion() {
                                           cursor: 'pointer',
                                       },
                                   }}
-                                  onClick={() => console.log('clicked')}
+                                  onClick={() => handleItemClick(index, mentor.mentorProfile.id)}
                               >
                                   <CardContent>
                                       {mentor.skills?.map((skill, index) => (
-                                          <Chip key={index} label={skill} sx={{ mr: 1, mb: 1 }} onClick={() => {}} />
+                                          <Chip
+                                              key={index}
+                                              label={skill.skill.name}
+                                              sx={{ mr: 1, mb: 1 }}
+                                              onClick={() => {}}
+                                          />
                                       ))}
                                   </CardContent>
                                   <Box
@@ -170,24 +156,33 @@ export default function MentorSuggestion() {
                                           display: 'flex',
                                           flexDirection: 'row',
                                           justifyContent: 'space-between',
+                                          alignItems: 'center',
                                           pr: 2,
                                       }}
                                   >
                                       <CardHeader
-                                          avatar={mentor.avatar}
-                                          title={mentor.name}
-                                          subheader={mentor.occupation}
+                                          avatar={<Avatar src={mentor?.mentorProfile?.profilePicture} />}
+                                          title={
+                                              <Typography fontWeight="bold">
+                                                  {mentor?.mentorProfile?.mentorDTO?.account?.username}
+                                              </Typography>
+                                          }
+                                          subheader={mentor?.mentorProfile?.shortDescription}
                                       />
-                                      <img src={logos[index]} alt={`Logo ${index + 1}`} style={logoStyle} />
+                                      <img
+                                          src={mentor?.mentorProfile?.mentorDTO?.company?.avatarUrl}
+                                          alt={`Logo ${index + 1}`}
+                                          style={logoStyle}
+                                      />
                                   </Box>
                               </Card>
                           </Grid>
                       ))}
             </Grid>
             <Box>
-                <a style={{ color: 'white', textDecoration: 'none' }} href={'/mentor'}>
+                <Link style={{ color: 'white', textDecoration: 'none' }} to={'/mentors'}>
                     <Button variant="contained">Explore more</Button>
-                </a>
+                </Link>
             </Box>
         </Container>
     );

@@ -12,6 +12,11 @@ import { Divider, Tab } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import { useNavigate } from 'react-router-dom';
+import AccountAPI from '~/API/AccountAPI';
+import Alert from '@mui/material/Alert';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import logo from '~/assets/images/logo.png';
 
@@ -33,23 +38,44 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-    const [value, setValue] = React.useState('1');
+    const [value, setValue] = useState('1');
+    const [showAlert, setShowAlert] = useState(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.signupSuccess) {
+            setShowAlert(true);
+            const timer = setTimeout(() => {
+                setShowAlert(false);
+            }, 5000); // Show alert for 5 seconds
+            return () => clearTimeout(timer);
+        }
+    }, [location.state]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+    const navigate = useNavigate();
+
+    const handleSubmit = async (event) => {
+        try {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            await AccountAPI.login(data);
+            navigate('/');
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
         <ThemeProvider theme={defaultTheme}>
+            {showAlert && (
+                <Alert width="50%" variant="filled" severity="success">
+                    Registered Successfully
+                </Alert>
+            )}
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
                 <Grid
@@ -96,10 +122,10 @@ export default function SignInSide() {
                                             margin="normal"
                                             required
                                             fullWidth
-                                            id="email"
-                                            label="Email Address"
-                                            name="email"
-                                            autoComplete="email"
+                                            id="emailOrUsername"
+                                            label="Email Or Username"
+                                            name="emailOrUsername"
+                                            autoComplete="emailOrUsername"
                                             autoFocus
                                         />
                                         <TextField

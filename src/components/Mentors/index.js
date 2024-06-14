@@ -19,6 +19,7 @@ import {
     FormGroup,
     Modal,
     TextField,
+    Skeleton,
 } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import Pagination from '@mui/material/Pagination';
@@ -130,6 +131,7 @@ function SearchFilter() {
 
 export default function Mentors() {
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
+    const [loading, setLoading] = useState(true);
     const [mentors, setMentors] = useState([]);
     const [pagination, setPagination] = useState({
         page: 1,
@@ -152,186 +154,229 @@ export default function Mentors() {
 
     useEffect(() => {
         const getAll = async () => {
-            const getAllWithStatusActive = await MentorAPI.getAllWithStatusActive(pagination);
-            setMentors(getAllWithStatusActive.listResult);
-            setTotalPage(getAllWithStatusActive.totalPage);
-            setCountMentor(getAllWithStatusActive.totalCount);
+            try {
+                const getAllWithStatusActive = await MentorAPI.getAllWithStatusActive({ page: 1, limit: 10 });
+                setMentors(getAllWithStatusActive.listResult);
+                setTotalPage(getAllWithStatusActive.totalPage);
+                setCountMentor(getAllWithStatusActive.totalCount);
+                setLoading(false);
+            } catch (error) {
+                console.log(error);
+            }
         };
 
         getAll();
-    }, [pagination]);
+    }, []);
 
     return (
         <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
             <SearchFilter />
             <Grid container spacing={6}>
-                <Grid item xs={12} md={12}>
-                    <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
-                        {countMentor} mentors found
-                    </Typography>
-                    <Stack
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="flex-start"
-                        spacing={2}
-                        useFlexGap
-                        sx={{ width: '100%', display: { xs: 8, sm: 'flex' } }}
-                    >
-                        {mentors?.map((mentor, index) => (
+                {loading ? (
+                    Array.from(new Array(6)).map((_, index) => (
+                        <Grid item xs={12} sm={6} md={4} key={index} sx={{ display: 'flex' }}>
                             <Card
-                                key={index}
-                                variant="outlined"
-                                component={Button}
-                                onClick={() => handleItemClick(index, mentor.mentorProfile.id)}
                                 sx={{
-                                    p: 3,
-                                    height: 'fit-content',
-                                    width: '100%',
-                                    background: 'none',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between',
+                                    flexGrow: 1,
+                                    p: 1,
                                 }}
                             >
+                                <CardContent>
+                                    <Skeleton variant="text" height={30} width="80%" sx={{ mb: 1 }} />
+                                    <Skeleton variant="text" height={30} width="60%" sx={{ mb: 1 }} />
+                                    <Skeleton variant="text" height={30} width="40%" sx={{ mb: 1 }} />
+                                </CardContent>
                                 <Box
                                     sx={{
-                                        width: '100%',
                                         display: 'flex',
-                                        textAlign: 'left',
-                                        flexDirection: { xs: 'column', md: 'row' },
-                                        alignItems: { md: 'center' },
-                                        gap: 2.5,
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        pr: 2,
                                     }}
                                 >
-                                    <Box>
-                                        <Avatar
-                                            alt="avatar image"
-                                            src={mentor.mentorProfile.profilePicture}
-                                            sx={{ width: 150, height: 150 }}
-                                        />
-                                    </Box>
-                                    <Box sx={{ textTransform: 'none', width: '100%' }}>
-                                        <Box
-                                            sx={{
-                                                color: (theme) => {
-                                                    return theme.palette.mode === 'light'
-                                                        ? 'primary.main'
-                                                        : 'primary.main';
-                                                },
-                                                display: 'flex',
-                                                justifyContent: { xs: 'center', md: 'flex-start', lg: 'flex-start' },
-                                                alignItems: 'center',
-                                                gap: 5,
-                                            }}
-                                        >
-                                            <Typography
-                                                color="text.primary"
-                                                variant="body1"
-                                                fontWeight="bold"
-                                                fontSize={'24px'}
-                                            >
-                                                {mentor.mentorProfile.mentorDTO.account.username}
-                                            </Typography>
-                                            <Chip
-                                                avatar={
-                                                    <Avatar sx={{ bgcolor: 'transparent' }}>
-                                                        <StarIcon sx={{ color: '#4CAF50' }} />
-                                                    </Avatar>
-                                                }
-                                                label="Top Mentor"
-                                                sx={{
-                                                    backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
-                                                    color: '#004D40', // Màu chữ xanh đậm
-                                                    fontWeight: 'bold',
-                                                    padding: '8px',
-                                                    borderRadius: '16px',
-                                                    fontSize: '14px',
-                                                }}
-                                                size="medium"
-                                            />
-                                        </Box>
-
-                                        <Typography
-                                            color="text.secondary"
-                                            variant="body2"
-                                            sx={{ my: 1 }}
-                                            fontSize={'16px'}
-                                        >
-                                            {mentor.mentorProfile.shortDescription}
-                                        </Typography>
-                                        <Typography
-                                            color="text.secondary"
-                                            variant="body2"
-                                            sx={{ my: 2 }}
-                                            fontSize={'14px'}
-                                        >
-                                            {mentor.mentorProfile.description}
-                                        </Typography>
-                                        <CardContent>
-                                            {mentor.skills?.map((skill, index) => (
-                                                <Chip
-                                                    key={index}
-                                                    label={skill.skill.name}
-                                                    sx={{ mr: 2, mb: 1 }}
-                                                    onClick={() => {}}
-                                                />
-                                            ))}
-                                        </CardContent>
-                                        <br />
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'left',
-                                                alignItems: 'center',
-                                                width: '100%',
-                                                gap: 2,
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    // flex: 1,
-                                                    display: 'flex',
-                                                    alignItems: 'baseline',
-                                                    textAlign: 'center',
-                                                }}
-                                            >
-                                                <Typography
-                                                    variant="h4"
-                                                    sx={{
-                                                        color: '#182F5D',
-                                                        fontWeight: 'bold',
-                                                        marginRight: '4px',
-                                                    }}
-                                                >
-                                                    150 point
-                                                </Typography>
-                                                <Typography
-                                                    variant="body1"
-                                                    sx={{
-                                                        color: '#182F5D',
-                                                        fontSize: '16px',
-                                                    }}
-                                                >
-                                                    / acceptance
-                                                </Typography>
-                                            </Box>
-                                            <Link to={'/mentor/id'} style={{ textDecoration: 'none' }}>
-                                                <Button
-                                                    variant="contained"
-                                                    size="large"
-                                                    sx={{
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        backgroundColor: '#365E32',
-                                                    }}
-                                                >
-                                                    View Profile
-                                                </Button>
-                                            </Link>
-                                        </Box>
-                                    </Box>
+                                    <Skeleton variant="circular" width={40} height={40} />
+                                    <Skeleton variant="rectangular" width={64} height={64} />
                                 </Box>
                             </Card>
-                        ))}
-                    </Stack>
-                </Grid>
+                        </Grid>
+                    ))
+                ) : (
+                    <Grid item xs={12} md={12}>
+                        <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
+                            {countMentor} mentors found
+                        </Typography>
+                        <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="flex-start"
+                            spacing={2}
+                            useFlexGap
+                            sx={{ width: '100%', display: { xs: 8, sm: 'flex' } }}
+                        >
+                            {mentors.length > 0 &&
+                                mentors?.map((mentor, index) => (
+                                    <Card
+                                        key={index}
+                                        variant="outlined"
+                                        component={Button}
+                                        onClick={() => handleItemClick(index, mentor.mentorProfile.id)}
+                                        sx={{
+                                            p: 3,
+                                            height: 'fit-content',
+                                            width: '100%',
+                                            background: 'none',
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                textAlign: 'left',
+                                                flexDirection: { xs: 'column', md: 'row' },
+                                                alignItems: { md: 'center' },
+                                                gap: 2.5,
+                                            }}
+                                        >
+                                            <Box>
+                                                <Avatar
+                                                    alt="avatar image"
+                                                    src={mentor.mentorProfile.profilePicture}
+                                                    sx={{ width: 150, height: 150 }}
+                                                />
+                                            </Box>
+                                            <Box sx={{ textTransform: 'none', width: '100%' }}>
+                                                <Box
+                                                    sx={{
+                                                        color: (theme) => {
+                                                            return theme.palette.mode === 'light'
+                                                                ? 'primary.main'
+                                                                : 'primary.main';
+                                                        },
+                                                        display: 'flex',
+                                                        justifyContent: {
+                                                            xs: 'center',
+                                                            md: 'flex-start',
+                                                            lg: 'flex-start',
+                                                        },
+                                                        alignItems: 'center',
+                                                        gap: 5,
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        color="text.primary"
+                                                        variant="body1"
+                                                        fontWeight="bold"
+                                                        fontSize={'24px'}
+                                                    >
+                                                        {mentor.mentorProfile.mentorDTO.account.username}
+                                                    </Typography>
+                                                    <Chip
+                                                        avatar={
+                                                            <Avatar sx={{ bgcolor: 'transparent' }}>
+                                                                <StarIcon sx={{ color: '#4CAF50' }} />
+                                                            </Avatar>
+                                                        }
+                                                        label="Top Mentor"
+                                                        sx={{
+                                                            backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
+                                                            color: '#004D40', // Màu chữ xanh đậm
+                                                            fontWeight: 'bold',
+                                                            padding: '8px',
+                                                            borderRadius: '16px',
+                                                            fontSize: '14px',
+                                                        }}
+                                                        size="medium"
+                                                    />
+                                                </Box>
+
+                                                <Typography
+                                                    color="text.secondary"
+                                                    variant="body2"
+                                                    sx={{ my: 1 }}
+                                                    fontSize={'16px'}
+                                                >
+                                                    {mentor.mentorProfile.shortDescription}
+                                                </Typography>
+                                                <Typography
+                                                    color="text.secondary"
+                                                    variant="body2"
+                                                    sx={{ my: 2 }}
+                                                    fontSize={'14px'}
+                                                >
+                                                    {mentor.mentorProfile.description}
+                                                </Typography>
+                                                <CardContent>
+                                                    {mentor.skills?.map((skill, index) => (
+                                                        <Chip
+                                                            key={index}
+                                                            label={skill.skill.name}
+                                                            sx={{ mr: 2, mb: 1 }}
+                                                            onClick={() => {}}
+                                                        />
+                                                    ))}
+                                                </CardContent>
+                                                <br />
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        justifyContent: 'left',
+                                                        alignItems: 'center',
+                                                        width: '100%',
+                                                        gap: 2,
+                                                    }}
+                                                >
+                                                    <Box
+                                                        sx={{
+                                                            // flex: 1,
+                                                            display: 'flex',
+                                                            alignItems: 'baseline',
+                                                            textAlign: 'center',
+                                                        }}
+                                                    >
+                                                        <Typography
+                                                            variant="h4"
+                                                            sx={{
+                                                                color: '#182F5D',
+                                                                fontWeight: 'bold',
+                                                                marginRight: '4px',
+                                                            }}
+                                                        >
+                                                            150 point
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body1"
+                                                            sx={{
+                                                                color: '#182F5D',
+                                                                fontSize: '16px',
+                                                            }}
+                                                        >
+                                                            / acceptance
+                                                        </Typography>
+                                                    </Box>
+                                                    <Link to={'/mentor/id'} style={{ textDecoration: 'none' }}>
+                                                        <Button
+                                                            variant="contained"
+                                                            size="large"
+                                                            sx={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                backgroundColor: '#365E32',
+                                                            }}
+                                                        >
+                                                            View Profile
+                                                        </Button>
+                                                    </Link>
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    </Card>
+                                ))}
+                        </Stack>
+                    </Grid>
+                )}
             </Grid>
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
                 <Pagination

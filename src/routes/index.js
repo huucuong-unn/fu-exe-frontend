@@ -23,11 +23,8 @@ import CreateMentorProfile from '~/pages/CreateMentorProfile';
 import MentorHistoryForCompany from '~/pages/MentorHistoryForCompany';
 import MentorLandingPage from '~/pages/MentorLandingPage';
 import CampaignDetail from '~/pages/MentorCampainDetailPage';
-<<<<<<< HEAD
 import MenteeAdminDashboard from '~/pages/MenteeAdminDashboard';
 import AccountAdminDashboard from '~/pages/AccountAdminDashboard';
-=======
->>>>>>> ca65966285e47808c94906ad2b6d003acc86d47b
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [

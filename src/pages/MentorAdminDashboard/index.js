@@ -15,7 +15,8 @@ import Card from '@mui/material/Card';
 import { Link } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { mainListItems, secondaryListItems } from '../../components/listItems';
+import {MainListItems} from '~/components/listItems';
+import {SecondaryListItems} from '~/components/listItems';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 
 import {
@@ -302,9 +303,9 @@ export default function Dashboard() {
                     </Toolbar>
                     <Divider />
                     <List component="nav">
-                        {mainListItems}
+                        {MainListItems}
                         <Divider sx={{ my: 1 }} />
-                        {secondaryListItems}
+                        {SecondaryListItems}
                     </List>
                 </Drawer>
                 <Box

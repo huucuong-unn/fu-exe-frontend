@@ -1,4 +1,6 @@
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, Box } from '@mui/material';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import React from 'react';
 
 const mentor = {
@@ -10,14 +12,14 @@ const mentor = {
     skills: ['React', 'Java', 'Nodejs'],
 };
 
-export const MentorAbout = () => {
+export const MentorAbout = ({ description }) => {
     return (
         <Container id="mentorabout" sx={{ py: 8 }} direction={{ xs: 'column', lg: 'row' }} useFlexGap>
             <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'} sx={{ mb: 2 }}>
                 About
             </Typography>
             <Typography color="text.primary" variant="body1" fontSize={'16px'} textAlign={'justify'}>
-                {mentor?.description}
+                {description}
             </Typography>
         </Container>
     );

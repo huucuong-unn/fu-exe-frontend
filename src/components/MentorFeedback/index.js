@@ -1,4 +1,4 @@
-import { Container, Typography } from '@mui/material';
+import { Container, Typography, Box, Grid, Avatar, Divider } from '@mui/material';
 import React from 'react';
 
 const mentor = {
@@ -14,11 +14,74 @@ export const MentorFeedback = () => {
     return (
         <Container id="mentorabout" sx={{ py: 8 }} direction={{ xs: 'column', lg: 'row' }} useFlexGap>
             <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'} sx={{ mb: 2 }}>
-                Feedbacks
+                What mentees say
             </Typography>
-            <Typography color="text.primary" variant="body1" fontSize={'16px'} textAlign={'justify'}>
-                {mentor?.description}
-            </Typography>
+            <Grid container spacing={6}>
+                <Grid item xs={12} md={12}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'start',
+                            gap: 2,
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 2 }}>
+                            <Avatar
+                                alt="avatar image"
+                                src="https://cdn.mentorcruise.com/cdn-cgi/image/width=368,format=auto/https://cdn.mentorcruise.com/cache/3af8cef95c0e04cad011cfc860502d11/08f97e638ff0e583/1c22cb091d5b980b636e61ed0937b15e.jpg"
+                                sx={{ width: 50, height: 50 }}
+                            />
+                            <Box>
+                                <Typography color="black" fontWeight="bold">
+                                    Michelle
+                                </Typography>
+                                <Typography color="gray">April 28, 2022</Typography>
+                            </Box>
+                        </Box>
+                        <Box>
+                            <Typography color="black">
+                                He is very helpful in giving me confidence and good pressure to study. He also gives me
+                                good guidelines and also talks about the industry in Japan in general which is not
+                                knowledge easily found online.
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} md={12}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'start',
+                            gap: 2,
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 2 }}>
+                            <Avatar
+                                alt="avatar image"
+                                src="https://cdn.mentorcruise.com/cdn-cgi/image/width=368,format=auto/https://cdn.mentorcruise.com/cache/3af8cef95c0e04cad011cfc860502d11/08f97e638ff0e583/1c22cb091d5b980b636e61ed0937b15e.jpg"
+                                sx={{ width: 50, height: 50 }}
+                            />
+                            <Box>
+                                <Typography color="black" fontWeight="bold">
+                                    Michelle
+                                </Typography>
+                                <Typography color="gray">April 28, 2022</Typography>
+                            </Box>
+                        </Box>
+                        <Box>
+                            <Typography color="black">
+                                He is very helpful in giving me confidence and good pressure to study. He also gives me
+                                good guidelines and also talks about the industry in Japan in general which is not
+                                knowledge easily found online.
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Grid>
+            </Grid>
         </Container>
     );
 };

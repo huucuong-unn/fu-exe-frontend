@@ -1,188 +1,49 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import { Link } from 'react-router-dom';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import {
-    Avatar,
-    CardContent,
-    Checkbox,
-    Chip,
-    Divider,
-    FormControlLabel,
-    FormGroup,
-    Modal,
-    TextField,
-} from '@mui/material';
+import { Container, Grid, Typography, Card, Box, Avatar, CardContent, Button, Chip, Stack } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
-import Pagination from '@mui/material/Pagination';
-import PaginationItem from '@mui/material/PaginationItem';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import MentorAPI from '~/API/MentorAPI';
 
-const modalItems = {
-    companies: ['FPT', 'VNG', 'Nashtech', 'Tortee', 'Google', 'Facebook', 'Amazon', 'Microsoft'],
-    jobTitles: ['Software Engineer', 'Product Manager', 'UX Designer', 'CTO', 'CEO', 'Founder'],
-};
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 600,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    borderRadius: 5,
-};
-
-function SearchFilter() {
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-    return (
-        <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            alignSelf="center"
-            spacing={1}
-            useFlexGap
-            sx={{
-                pt: 2,
-                width: { xs: '100%', sm: '100%%', lg: '100%' },
-                display: 'flex',
-                justifyContent: 'center',
-                mb: 10,
-            }}
-        >
-            <TextField
-                id="outlined-basic"
-                hiddenLabel
-                size="medium"
-                variant="outlined"
-                placeholder="Search mentor name or skill"
-                inputProps={{
-                    autoComplete: 'off',
-                    'aria-label': 'Search by company, role, or skill',
-                }}
-                sx={{ width: { sx: '100%', sm: '70%', lg: '60%' } }}
-            />
-            <Button
-                variant="contained"
-                sx={{ width: 105, borderRadius: 5, backgroundColor: '#365E32' }}
-                onClick={handleOpen}
-            >
-                Filter
-            </Button>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <Typography
-                        id="modal-modal-title"
-                        variant="h6"
-                        component="h3"
-                        sx={{ textAlign: 'center', fontWeight: 'bold' }}
-                    >
-                        Filters
-                    </Typography>
-                    <Divider sx={{ my: 2 }} />
-                    <Typography id="modal-modal-title" variant="h6" component="h3" sx={{ my: 2, fontWeight: 'bold' }}>
-                        Companies
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        <FormGroup>
-                            <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 8 }}>
-                                {Array.from(modalItems.companies).map((company, index) => (
-                                    <Grid item xs={2} sm={4} md={4} key={index}>
-                                        <FormControlLabel control={<Checkbox />} label={company} />
-                                    </Grid>
-                                ))}
-                            </Grid>
-                        </FormGroup>
-                    </Typography>
-                    <Divider sx={{ my: 2 }} />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ width: 150, borderRadius: 3, display: 'flex' }}
-                        onClick={() => handleClose()}
-                    >
-                        Show Results
-                    </Button>
-                </Box>
-            </Modal>
-        </Stack>
-    );
-}
-
-export default function Mentors() {
-    const [selectedItemIndex, setSelectedItemIndex] = useState(0);
-    const [mentors, setMentors] = useState([]);
-    const [pagination, setPagination] = useState({
-        page: 1,
-        limit: 10,
-    });
-    const [totalPage, setTotalPage] = useState(0);
-    const [countMentor, setCountMentor] = useState(0);
-    const navigate = useNavigate();
-    const handlePageChange = (event, value) => {
-        setPagination((prev) => ({
-            ...prev,
-            page: value,
-        }));
-    };
-
-    const handleItemClick = (index, mentorId) => {
-        setSelectedItemIndex(index);
-        navigate(`/mentor/${mentorId}`);
-    };
+function SimilarMentor({ companyId }) {
+    const [similarMentor, setSimilarMentor] = useState([]);
 
     useEffect(() => {
-        const getAll = async () => {
-            const getAllWithStatusActive = await MentorAPI.getAllWithStatusActive(pagination);
-            setMentors(getAllWithStatusActive.listResult);
-            setTotalPage(getAllWithStatusActive.totalPage);
-            setCountMentor(getAllWithStatusActive.totalCount);
+        const getMentorsByCompanyId = async () => {
+            try {
+                const mentorData = await MentorAPI.getMentorsByCompanyId(companyId);
+                setSimilarMentor(mentorData);
+            } catch (error) {
+                console.log(error);
+            }
         };
 
-        getAll();
-    }, [pagination]);
+        getMentorsByCompanyId();
+    }, [companyId]);
+
+    useEffect(() => {
+        console.log(similarMentor);
+    }, [similarMentor]);
 
     return (
-        <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
-            <SearchFilter />
+        <Container id="mentorabout" sx={{ py: 8 }} direction={{ xs: 'column', lg: 'row' }} useFlexGap>
+            <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'} sx={{ mb: 2 }}>
+                Similar mentors
+            </Typography>
             <Grid container spacing={6}>
-                <Grid item xs={12} md={12}>
-                    <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
-                        {countMentor} mentors found
-                    </Typography>
-                    <Stack
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="flex-start"
-                        spacing={2}
-                        useFlexGap
-                        sx={{ width: '100%', display: { xs: 8, sm: 'flex' } }}
-                    >
-                        {mentors?.map((mentor, index) => (
+                {similarMentor?.map((mentor, index) => (
+                    <Grid item xs={12} md={12} key={index}>
+                        <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="flex-start"
+                            spacing={2}
+                            useFlexGap
+                            sx={{ width: '100%', display: { xs: 8, sm: 'flex' } }}
+                        >
                             <Card
-                                key={index}
                                 variant="outlined"
                                 component={Button}
-                                onClick={() => handleItemClick(index, mentor.mentorProfile.id)}
                                 sx={{
                                     p: 3,
                                     height: 'fit-content',
@@ -203,7 +64,7 @@ export default function Mentors() {
                                     <Box>
                                         <Avatar
                                             alt="avatar image"
-                                            src={mentor.mentorProfile.profilePicture}
+                                            src={mentor?.mentorProfile?.profilePicture}
                                             sx={{ width: 150, height: 150 }}
                                         />
                                     </Box>
@@ -227,7 +88,7 @@ export default function Mentors() {
                                                 fontWeight="bold"
                                                 fontSize={'24px'}
                                             >
-                                                {mentor.mentorProfile.mentorDTO.account.username}
+                                                {mentor?.mentorProfile?.mentorDTO?.account?.username}
                                             </Typography>
                                             <Chip
                                                 avatar={
@@ -247,32 +108,37 @@ export default function Mentors() {
                                                 size="medium"
                                             />
                                         </Box>
-
                                         <Typography
                                             color="text.secondary"
                                             variant="body2"
                                             sx={{ my: 1 }}
                                             fontSize={'16px'}
                                         >
-                                            {mentor.mentorProfile.shortDescription}
+                                            {mentor?.mentorProfile?.shortDescription}
                                         </Typography>
+
                                         <Typography
                                             color="text.secondary"
                                             variant="body2"
                                             sx={{ my: 2 }}
                                             fontSize={'14px'}
                                         >
-                                            {mentor.mentorProfile.description}
+                                            {mentor?.mentorProfile?.description}
                                         </Typography>
+
                                         <CardContent>
-                                            {mentor.skills?.map((skill, index) => (
-                                                <Chip
-                                                    key={index}
-                                                    label={skill.skill.name}
-                                                    sx={{ mr: 2, mb: 1 }}
-                                                    onClick={() => {}}
-                                                />
-                                            ))}
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'left',
+                                                    alignItems: 'center',
+                                                    gap: 2,
+                                                }}
+                                            >
+                                                {mentor.skills?.map((skill, index) => (
+                                                    <Chip label={skill.skill.name} key={index} />
+                                                ))}
+                                            </Box>
                                         </CardContent>
                                         <br />
                                         <Box
@@ -329,20 +195,12 @@ export default function Mentors() {
                                     </Box>
                                 </Box>
                             </Card>
-                        ))}
-                    </Stack>
-                </Grid>
+                        </Stack>
+                    </Grid>
+                ))}
             </Grid>
-            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
-                <Pagination
-                    count={totalPage} // Calculate the total number of pages
-                    page={pagination.page}
-                    onChange={handlePageChange}
-                    renderItem={(item) => (
-                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
-                    )}
-                />
-            </Box>
         </Container>
     );
 }
+
+export default SimilarMentor;

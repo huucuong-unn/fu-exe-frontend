@@ -14,13 +14,13 @@ import { MentorProfile } from '~/pages/MentorProfile';
 import SignInSide from '~/pages/SignInSide';
 import SignUp from '~/pages/SignUp';
 import { UserProfile } from '~/pages/UserProfile';
+import UserProfilesTest from '~/pages/SignUp/testUploadImage';
 import { Application } from '~/pages/Application';
 import CreateMentorAccount from '~/pages/CreateMentorAccount';
 import CreateMentorProfile from '~/pages/CreateMentorProfile';
 import MentorHistoryForCompany from '~/pages/MentorHistoryForCompany';
 import MentorLandingPage from '~/pages/MentorLandingPage';
 import CampaignDetail from '~/pages/MentorCampainDetailPage';
-
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -49,6 +49,7 @@ const publicRoutes = [
 
     //Admin
     { path: '/admin/dashboard', component: Dashboard, layout: null },
+    { path: '/test', component: UserProfilesTest, layout: null },
     { path: '/admin/dashboard/orders', component: Orders, layout: null },
 
     //Mentor

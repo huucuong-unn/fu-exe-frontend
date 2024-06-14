@@ -417,7 +417,7 @@ export default function Dashboard() {
                                 ))}
                             </CardContent>
                             <br />
-                            <Link to={'/mentor/id'}>
+                            <Link to={'/company/create-mentor-account'}>
                                 <Button
                                     variant="contained"
                                     color="primary"

@@ -12,15 +12,45 @@ import MentorAPI from '~/API/MentorAPI';
 export const MentorProfile = () => {
     const { mentorId } = useParams();
     const [mentor, setMentor] = useState({});
+    const [similarMentor, setSimilarMentor] = useState([]);
+    const [filteredSimilarMentor, setFilteredSimilarMentor] = useState([]);
 
     useEffect(() => {
-        const getMentorByMentorProfileId = async () => {
-            const mentorData = await MentorAPI.getMentorByMentorProfileId(mentorId);
-            setMentor(mentorData);
+        try {
+            const getMentorByMentorProfileId = async () => {
+                const mentorData = await MentorAPI.getMentorByMentorProfileId(mentorId);
+                setMentor(mentorData);
+            };
+
+            getMentorByMentorProfileId();
+        } catch (error) {
+            console.log(error);
+        }
+    }, [mentorId]);
+
+    useEffect(() => {
+        const getMentorsByCompanyId = async () => {
+            try {
+                const mentorData = await MentorAPI.getMentorsByCompanyId(mentor?.mentorProfile?.mentorDTO?.company?.id);
+                setSimilarMentor(mentorData);
+            } catch (error) {
+                console.log(error);
+            }
         };
 
-        getMentorByMentorProfileId();
-    }, [mentorId]);
+        getMentorsByCompanyId();
+    }, [mentor]);
+
+    useEffect(() => {
+        try {
+            if (similarMentor.length > 0) {
+                const filteredMentors = similarMentor.filter((item) => item.mentorProfile.id !== mentorId);
+                setFilteredSimilarMentor(filteredMentors);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }, [similarMentor, mentorId]);
 
     useEffect(() => {
         console.log(mentor);
@@ -29,22 +59,24 @@ export const MentorProfile = () => {
     return (
         <Container sx={{ pt: 14 }}>
             <Box>
-                <ShortMentorInfo
-                    username={mentor?.mentorProfile?.mentorDTO?.account?.username}
-                    profilePicture={mentor?.mentorProfile?.profilePicture}
-                    shortDescription={mentor?.mentorProfile?.shortDescription}
-                    linkedinURL={mentor?.mentorProfile?.linkedinUrl}
-                    facebookURL={mentor?.mentorProfile?.facebookUrl}
-                    googleMeetURL={mentor?.mentorProfile?.googleMeetUrl}
-                    requirement={mentor?.mentorProfile?.requirement}
-                />
-                <MentorAbout description={mentor?.mentorProfile?.description} />
+                {mentor && (
+                    <ShortMentorInfo
+                        username={mentor?.mentorProfile?.mentorDTO?.account?.username}
+                        profilePicture={mentor?.mentorProfile?.profilePicture}
+                        shortDescription={mentor?.mentorProfile?.shortDescription}
+                        linkedinURL={mentor?.mentorProfile?.linkedinUrl}
+                        facebookURL={mentor?.mentorProfile?.facebookUrl}
+                        googleMeetURL={mentor?.mentorProfile?.googleMeetUrl}
+                        requirement={mentor?.mentorProfile?.requirement}
+                    />
+                )}
+                {mentor && <MentorAbout description={mentor?.mentorProfile?.description} />}
                 <Divider />
                 <MentorFeedback />
                 <Divider />
-                <MentorSkill skills={mentor.skills} />
+                {mentor && <MentorSkill skills={mentor?.skills} />}
                 <Divider />
-                <SimilarMentor companyId={mentor?.mentorProfile?.mentorDTO?.company?.id} />
+                <SimilarMentor similarMentor={filteredSimilarMentor} />
             </Box>
         </Container>
     );

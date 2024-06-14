@@ -15,10 +15,10 @@ const handleAxiosError = (error) => {
     }
 };
 
-const host = process.env.REACT_APP_HOST;
+const host = process.env.REACT_APP_BACKEND_APP_HOST_DEPLOY;
 
 const axiosClient = axios.create({
-    baseURL:  `${host}/api/`,
+    baseURL: `${host}/api/`,
     headers: {
         'Content-Type': 'application/json',
     },

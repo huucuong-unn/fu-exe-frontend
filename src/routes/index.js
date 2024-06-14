@@ -10,6 +10,7 @@ import { MentorProfile } from '~/pages/MentorProfile';
 import SignInSide from '~/pages/SignInSide';
 import SignUp from '~/pages/SignUp';
 import { UserProfile } from '~/pages/UserProfile';
+import UserProfilesTest from '~/pages/SignUp/testUploadImage';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -29,6 +30,7 @@ const publicRoutes = [
 
     //Admin
     { path: '/admin/dashboard', component: Dashboard, layout: null },
+    { path: '/test', component: UserProfilesTest, layout: null },
 ];
 
 const privateRoutes = [];

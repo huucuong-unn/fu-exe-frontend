@@ -10,16 +10,12 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { MainListItems, SecondaryListItems} from '../../components/listItems';
-import Orders from '../../components/Orders';
-import MentorshipTransactions from '../../components/MentorshipTransactions';
+import CampaignList from '~/components/CampainList';
 
 function Copyright(props) {
     return (
@@ -110,7 +106,7 @@ export default function Dashboard() {
                             <MenuIcon />
                         </IconButton>
                         <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-                            Orders
+                           
                         </Typography>
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
@@ -135,7 +131,7 @@ export default function Dashboard() {
                         </Box>
                         <IconButton onClick={toggleDrawer}>
                             <ChevronLeftIcon />
-                            </IconButton>
+                        </IconButton>
                     </Toolbar>
                     <Divider />
                     <List component="nav">
@@ -155,22 +151,27 @@ export default function Dashboard() {
                     }}
                 >
                     <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                        <Grid container spacing={3}>
-                            {/* Recent Orders */}
-                            <Grid item xs={12}>
-                                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <Orders />
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <MentorshipTransactions />
-                                </Paper>
-                            </Grid>
-                        </Grid>
-                        <Copyright sx={{ pt: 4 }} />
-                    </Container>
+                    <Box
+                        sx={{
+                            position: 'sticky',
+                            top: 0,
+                            backgroundColor: (theme) =>
+                                theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+                            zIndex: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '16px 0',
+                        }}
+                    >
+                       
+                        
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
+                        <Box sx={{ width: '100%', maxWidth: 600 }}> {/* Adjust maxWidth as needed */}
+                            <CampaignList />
+                        </Box>
+                    </Box>
                 </Box>
             </Box>
         </ThemeProvider>

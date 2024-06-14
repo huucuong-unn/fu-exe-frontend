@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+import { styled, createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -10,29 +10,14 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { MainListItems, SecondaryListItems} from '../../components/listItems';
-import Orders from '../../components/Orders';
-import MentorshipTransactions from '../../components/MentorshipTransactions';
-
-function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://tortee.vercel.app/sign-in">
-                Tortee
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import { MainListItems,SecondaryListItems} from '../../components/listItems';
+import MenteeList from '../../components/MenteeList';
+import MenteeDetails from '../../components/MenteeDetails';
+import AddMenteeForm from '../../components/AddMenteeForm';
 
 const drawerWidth = 240;
 
@@ -78,13 +63,29 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     },
 }));
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
     const [open, setOpen] = React.useState(true);
+    const [selectedPage, setSelectedPage] = React.useState('MenteeList');
+    const [selectedMentee, setSelectedMentee] = React.useState(null);
+    const theme = useTheme();
+
     const toggleDrawer = () => {
         setOpen(!open);
+    };
+
+    const renderContent = () => {
+        switch (selectedPage) {
+            case 'MenteeList':
+                return <MenteeList onSelectMentee={setSelectedMentee} />;
+            case 'MenteeDetails':
+                return <MenteeDetails mentee={selectedMentee} />;
+            case 'AddMentee':
+                return <AddMenteeForm />;
+            default:
+                return <MenteeList onSelectMentee={setSelectedMentee} />;
+        }
     };
 
     return (
@@ -109,9 +110,7 @@ export default function Dashboard() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-                            Orders
-                        </Typography>
+                        
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
                                 <NotificationsIcon />
@@ -135,7 +134,7 @@ export default function Dashboard() {
                         </Box>
                         <IconButton onClick={toggleDrawer}>
                             <ChevronLeftIcon />
-                            </IconButton>
+                        </IconButton>
                     </Toolbar>
                     <Divider />
                     <List component="nav">
@@ -147,30 +146,15 @@ export default function Dashboard() {
                 <Box
                     component="main"
                     sx={{
-                        backgroundColor: (theme) =>
-                            theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+                        backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
                         flexGrow: 1,
                         height: '100vh',
                         overflow: 'auto',
+                        padding: theme.spacing(3),
                     }}
                 >
                     <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                        <Grid container spacing={3}>
-                            {/* Recent Orders */}
-                            <Grid item xs={12}>
-                                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <Orders />
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                                    <MentorshipTransactions />
-                                </Paper>
-                            </Grid>
-                        </Grid>
-                        <Copyright sx={{ pt: 4 }} />
-                    </Container>
+                    {renderContent()}
                 </Box>
             </Box>
         </ThemeProvider>

@@ -18,7 +18,7 @@ const handleAxiosError = (error) => {
 const host = process.env.REACT_APP_HOST;
 
 const axiosClient = axios.create({
-    baseURL:  `${host}/api/`,
+    baseURL: `http://localhost:8086/api/`,
     headers: {
         'Content-Type': 'application/json',
     },

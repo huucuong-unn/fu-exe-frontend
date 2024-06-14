@@ -10,17 +10,17 @@ const mentor = {
     skills: ['React', 'Java', 'Nodejs'],
 };
 
-export const MentorSkill = () => {
+export const MentorSkill = ({ skills }) => {
     return (
         <Container id="mentorskill" sx={{ py: 8 }} direction={{ xs: 'column', lg: 'row' }} useFlexGap>
             <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'} sx={{ mb: 2 }}>
                 Skills
             </Typography>
             <Box>
-                {mentor.skills?.map((skill, index) => (
+                {skills?.map((skill, index) => (
                     <Chip
                         key={index}
-                        label={skill}
+                        label={skill.skill.name}
                         sx={{ mr: 1, mb: 1, p: 2, fontSize: '14px' }}
                         onClick={() => {}}
                         size="large"

@@ -8,16 +8,15 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { Phone } from '@mui/icons-material';
 
-const mentor = {
-    profilePicture: 'https://ih1.redbubble.net/image.5481662153.7016/st,small,507x507-pad,600x600,f8f8f8.jpg',
-    shortDescription: 'Director, Engineering at Tortee',
-    title: 'Huu Cuong Le',
-    description:
-        'Passionate about technology and its social impact. Over 10 years experience delivering successful products in healthcare, eCommerce, digital media and international fundraising. Strong focus on product, user-centricity, UX and lean processes. Interested in Zen and Stoic philosophy. Enjoy deep thinking and deep work.',
-    skills: ['React', 'Java', 'Nodejs'],
-};
-
-export const ShortMentorInfo = () => {
+export const ShortMentorInfo = ({
+    username,
+    profilePicture,
+    shortDescription,
+    linkedinURL,
+    facebookURL,
+    googleMeetURL,
+    requirement,
+}) => {
     return (
         <Container
             id="shortmentorinfo"
@@ -65,7 +64,7 @@ export const ShortMentorInfo = () => {
                                 gap: 5,
                             }}
                         >
-                            <Avatar alt="avatar image" src={mentor.profilePicture} sx={{ width: 150, height: 150 }} />
+                            <Avatar alt="avatar image" src={profilePicture} sx={{ width: 150, height: 150 }} />
                             <Chip
                                 icon={<BoltIcon />}
                                 label="Top Mentor"
@@ -79,10 +78,10 @@ export const ShortMentorInfo = () => {
                         >
                             <Box sx={{ textTransform: 'none' }}>
                                 <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'30px'}>
-                                    {mentor?.title}
+                                    {username}
                                 </Typography>
                                 <Typography color="text.secondary" variant="body2" sx={{ mb: 1 }} fontSize={'18px'}>
-                                    {mentor?.shortDescription}
+                                    {shortDescription}
                                 </Typography>
                                 <Box
                                     sx={{
@@ -109,9 +108,21 @@ export const ShortMentorInfo = () => {
                                         }}
                                     >
                                         <LinkedInIcon />
-                                        <Typography color="black" variant="h7" fontWeight="bold">
-                                            Linkedin
-                                        </Typography>
+                                        <a href={linkedinURL} style={{ textDecoration: 'none' }}>
+                                            <Typography
+                                                color="black"
+                                                variant="h7"
+                                                fontWeight="bold"
+                                                sx={{
+                                                    textDecoration: 'none',
+                                                    '&:hover': {
+                                                        textDecoration: 'underline',
+                                                    },
+                                                }}
+                                            >
+                                                Linkedin
+                                            </Typography>
+                                        </a>
                                     </Box>
                                     <Box
                                         xs={12}
@@ -129,40 +140,23 @@ export const ShortMentorInfo = () => {
                                         }}
                                     >
                                         <FacebookIcon />
-                                        <Typography color="black" variant="h7" fontWeight="bold">
-                                            Facebook
-                                        </Typography>
+                                        <a href={facebookURL} style={{ textDecoration: 'none' }}>
+                                            <Typography
+                                                color="black"
+                                                variant="h7"
+                                                fontWeight="bold"
+                                                sx={{
+                                                    textDecoration: 'none',
+                                                    '&:hover': {
+                                                        textDecoration: 'underline',
+                                                    },
+                                                }}
+                                            >
+                                                Facebook
+                                            </Typography>
+                                        </a>
                                     </Box>
                                 </Box>
-
-                                {/* <Typography
-                                    color="text.primary"
-                                    variant="body2"
-                                    sx={{ mt: 3 }}
-                                    fontSize={'18px'}
-                                    fontWeight="bold"
-                                >
-                                    Skills
-                                </Typography>
-                                <CardContent sx={{ px: 0 }}>
-                                    {mentor.skills?.map((skill, index) => (
-                                        <Chip key={index} label={skill} sx={{ mr: 2, mb: 1 }} onClick={() => {}} />
-                                    ))}
-                                    <a href="#mentorskill" style={{ textDecoration: 'none', color: 'black' }}>
-                                        <Typography
-                                            color="balck"
-                                            sx={{
-                                                marginTop: 1,
-                                                textDecoration: 'underline',
-                                                '&:hover': {
-                                                    cursor: 'pointer',
-                                                },
-                                            }}
-                                        >
-                                            + 24 more
-                                        </Typography>
-                                    </a>
-                                </CardContent> */}
                                 <br />
                             </Box>
                         </Stack>
@@ -178,7 +172,7 @@ export const ShortMentorInfo = () => {
                 >
                     <Box sx={{ p: 3 }}>
                         <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'40px'}>
-                            $20 <span style={{ fontSize: '20px' }}>/ acceptance</span>
+                            150 point <span style={{ fontSize: '20px' }}>/ acceptance</span>
                         </Typography>
                         <Typography color="text.primary" variant="body1" fontSize={'16px'}>
                             The most popular way to get mentored, let's work towards your goals!{' '}
@@ -196,13 +190,13 @@ export const ShortMentorInfo = () => {
                             <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 2 }}>
                                 <GroupsIcon />
                                 <Typography color="text.primary" variant="body1" fontSize={'16px'}>
-                                    Meet at 5:30 p.m every Tuesday, Wednesday and Thursday
+                                    {requirement}
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 2 }}>
                                 <LocalPhoneIcon />
                                 <Typography color="text.primary" variant="body1" fontSize={'16px'}>
-                                    https://meet.google.com/dgk-odpa-ays
+                                    {googleMeetURL}
                                 </Typography>
                             </Box>
                         </Box>

@@ -16,16 +16,16 @@ export const MentorProfile = () => {
     const [filteredSimilarMentor, setFilteredSimilarMentor] = useState([]);
 
     useEffect(() => {
-        try {
-            const getMentorByMentorProfileId = async () => {
+        const getMentorByMentorProfileId = async () => {
+            try {
                 const mentorData = await MentorAPI.getMentorByMentorProfileId(mentorId);
                 setMentor(mentorData);
-            };
+            } catch (error) {
+                console.log(error);
+            }
+        };
 
-            getMentorByMentorProfileId();
-        } catch (error) {
-            console.log(error);
-        }
+        getMentorByMentorProfileId();
     }, [mentorId]);
 
     useEffect(() => {

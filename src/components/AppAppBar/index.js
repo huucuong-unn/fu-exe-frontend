@@ -83,16 +83,16 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 px: 0,
                             }}
                         >
-                            <a href="/">
+                            <Link to="/">
                                 <img src={logo} style={logoStyle} alt="logo of tortee" />
-                            </a>
+                            </Link>
                             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                                 <MenuItem sx={{ py: '6px', px: '12px' }}>
-                                    <a href="/mentor" style={{ textDecoration: 'none' }}>
+                                    <Link to="/mentors" style={{ textDecoration: 'none' }}>
                                         <Typography variant="body2" color="text.primary">
                                             Mentors
                                         </Typography>
-                                    </a>
+                                    </Link>
                                 </MenuItem>
                                 <Divider orientation="vertical" variant="middle" flexItem />
 
@@ -104,9 +104,11 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     </a>
                                 </MenuItem>
                                 <MenuItem onClick={() => scrollToSection('companies')} sx={{ py: '6px', px: '12px' }}>
-                                    <Typography variant="body2" color="text.primary">
-                                        Companies
-                                    </Typography>
+                                    <Link to="/company" style={{ textDecoration: 'none' }}>
+                                        <Typography variant="body2" color="text.primary">
+                                            Companies
+                                        </Typography>
+                                    </Link>
                                 </MenuItem>
                                 <MenuItem onClick={() => scrollToSection('highlights')} sx={{ py: '6px', px: '12px' }}>
                                     <a href="/#highlights" style={{ textDecoration: 'none' }}>

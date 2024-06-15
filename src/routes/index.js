@@ -37,7 +37,7 @@ const publicRoutes = [
 
     //Company
     { path: '/company', component: Companies },
-    { path: '/company/id', component: CompanyDetails },
+    { path: '/company/:companyId', component: CompanyDetails },
     { path: '/company/campaign-history', component: CompaniesCampaignHistory },
     { path: '/company/campaign-details', component: CompaniesCampaignDetail },
     { path: '/company/create-mentor-account', component: CreateMentorAccount },

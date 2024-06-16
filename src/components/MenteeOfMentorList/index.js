@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Button,
-    Typography,
-} from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import { styled } from '@mui/system';
 
 const mentees = [
@@ -26,8 +16,8 @@ const mentees = [
 ];
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
-    marginTop: theme.spacing(4),
-    boxShadow: theme.shadows[3],
+    marginTop: theme?.spacing?.(4) ?? 32,
+    boxShadow: theme?.shadows?.[3] ?? '0px 1px 3px rgba(0,0,0,0.2)',
 }));
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -35,14 +25,18 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const ActionButton = styled(Button)(({ theme }) => ({
-    margin: theme.spacing(0.5),
+    margin: theme?.spacing?.(0.5) ?? '4px',
 }));
 
 const StatusButton = styled(Button)(({ theme, status }) => ({
-    backgroundColor: status === 'Active' ? theme.palette.success.main : theme.palette.error.main,
-    color: theme.palette.common.white,
+    backgroundColor:
+        status === 'Active' ? theme?.palette?.success?.main ?? 'green' : theme?.palette?.error?.main ?? 'red',
+    color: theme?.palette?.common?.white ?? 'white',
     '&:hover': {
-        backgroundColor: status === 'Active' ? theme.palette.success.dark : theme.palette.error.dark,
+        backgroundColor:
+            status === 'Active'
+                ? theme?.palette?.success?.dark ?? 'darkgreen'
+                : theme?.palette?.error?.dark ?? 'darkred',
     },
 }));
 

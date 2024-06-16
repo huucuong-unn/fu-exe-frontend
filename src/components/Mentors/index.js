@@ -46,10 +46,14 @@ const style = {
     borderRadius: 5,
 };
 
-function SearchFilter() {
+function SearchFilter({ searchKeyword, setSearchKeyword }) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleSearchChange = (event) => {
+        setSearchKeyword(event.target.value);
+    };
 
     return (
         <Stack
@@ -76,8 +80,10 @@ function SearchFilter() {
                     'aria-label': 'Search by company, role, or skill',
                 }}
                 sx={{ width: { sx: '100%', sm: '70%', lg: '60%' } }}
+                value={searchKeyword}
+                onChange={handleSearchChange}
             />
-            <Button
+            {/* <Button
                 variant="contained"
                 sx={{ width: 105, borderRadius: 5, backgroundColor: '#365E32' }}
                 onClick={handleOpen}
@@ -124,7 +130,7 @@ function SearchFilter() {
                         Show Results
                     </Button>
                 </Box>
-            </Modal>
+            </Modal> */}
         </Stack>
     );
 }
@@ -133,12 +139,14 @@ export default function Mentors() {
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [mentors, setMentors] = useState([]);
+    const [allMentors, setAllMentors] = useState([]);
     const [pagination, setPagination] = useState({
         page: 1,
         limit: 10,
     });
     const [totalPage, setTotalPage] = useState(0);
     const [countMentor, setCountMentor] = useState(0);
+    const [searchKeyword, setSearchKeyword] = useState('');
     const navigate = useNavigate();
     const handlePageChange = (event, value) => {
         setPagination((prev) => ({
@@ -157,6 +165,7 @@ export default function Mentors() {
             try {
                 const getAllWithStatusActive = await MentorAPI.getAllWithStatusActive({ page: 1, limit: 10 });
                 setMentors(getAllWithStatusActive.listResult);
+                setAllMentors(getAllWithStatusActive.listResult);
                 setTotalPage(getAllWithStatusActive.totalPage);
                 setCountMentor(getAllWithStatusActive.totalCount);
                 setLoading(false);
@@ -168,9 +177,28 @@ export default function Mentors() {
         getAll();
     }, []);
 
+    useEffect(() => {
+        const filterMentors = () => {
+            if (searchKeyword === '') {
+                // Nếu từ khóa tìm kiếm trống, hiển thị tất cả mentors
+                setMentors(allMentors);
+            } else {
+                // Lọc danh sách mentors dựa trên từ khóa tìm kiếm
+                const filteredMentors = allMentors.filter((mentor) => {
+                    return mentor.mentorProfile.mentorDTO.account.username
+                        .toLowerCase()
+                        .includes(searchKeyword.toLowerCase());
+                });
+                setMentors(filteredMentors);
+            }
+        };
+
+        filterMentors();
+    }, [searchKeyword]);
+
     return (
         <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
-            <SearchFilter />
+            <SearchFilter searchKeyword={searchKeyword} setSearchKeyword={setSearchKeyword} />
             <Grid container spacing={6}>
                 {loading ? (
                     Array.from(new Array(6)).map((_, index) => (

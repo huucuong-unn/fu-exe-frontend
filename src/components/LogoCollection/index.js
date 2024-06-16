@@ -1,26 +1,10 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import { useTheme } from '@mui/system';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const whiteLogos = [
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/6560628e8573c43893fe0ace_Sydney-white.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/655f4d520d0517ae8e8ddf13_Bern-white.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/655f46794c159024c1af6d44_Montreal-white.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e891fa22f89efd7477a_TerraLight.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/6560a09d1f6337b1dfed14ab_colorado-white.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/655f5caa77bf7d69fb78792e_Ankara-white.svg',
-];
+import { Typography as TypographyMaterial, Grid, Box, Container, Avatar } from '@mui/material';
 
-const darkLogos = [
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/6560628889c3bdf1129952dc_Sydney-black.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/655f4d4d8b829a89976a419c_Bern-black.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/655f467502f091ccb929529d_Montreal-black.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/61f12e911fa22f2203d7514c_TerraDark.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/6560a0990f3717787fd49245_colorado-black.svg',
-    'https://assets-global.website-files.com/61ed56ae9da9fd7e0ef0a967/655f5ca4e548b0deb1041c33_Ankara-black.svg',
-];
+import CompanyAPI from '~/API/CompanyAPI';
 
 const logoStyle = {
     width: '100px',
@@ -30,21 +14,77 @@ const logoStyle = {
 };
 
 export default function LogoCollection() {
-    const theme = useTheme();
-    const logos = theme.palette.mode === 'light' ? darkLogos : whiteLogos;
+    // const theme = useTheme();
+    // const logos = theme.palette.mode === 'light' ? darkLogos : whiteLogos;
+    const [selectedItemIndex, setSelectedItemIndex] = useState(0);
+    const [companies, setCompanies] = useState([]);
+    const [sort, setSort] = useState({
+        page: 1,
+        limit: 5,
+        name: '',
+        address: '',
+    });
+    const navigate = useNavigate();
+
+    const avatarSize = {
+        xs: { width: 80, height: 80 },
+        sm: { width: 100, height: 100 },
+        md: { width: 120, height: 120 },
+    };
+
+    const handleItemClick = (index, companyId) => {
+        setSelectedItemIndex(index);
+        navigate(`/company/${companyId}`);
+    };
+
+    useEffect(() => {
+        const getAllWithStatusActive = async () => {
+            try {
+                const companiesData = await CompanyAPI.searchSortCompany(sort);
+                setCompanies(companiesData.listResult);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getAllWithStatusActive();
+    }, [sort]);
 
     return (
-        <Box id="logoCollection" sx={{ py: 4 }}>
-            <Typography component="p" variant="subtitle2" align="center" color="text.secondary">
+        <Container id="logoCollection" sx={{ py: 4 }}>
+            <TypographyMaterial component="p" variant="subtitle2" align="center" color="text.secondary">
                 Trusted by the best companies
-            </Typography>
-            <Grid container justifyContent="center" sx={{ mt: 0.5, opacity: 0.6 }}>
-                {logos.map((logo, index) => (
-                    <Grid item key={index}>
-                        <img src={logo} alt={`Fake company number ${index + 1}`} style={logoStyle} />
-                    </Grid>
-                ))}
+            </TypographyMaterial>
+            <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: 2 }}>
+                {companies.length > 0 &&
+                    companies.map((company, index) => (
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={2.4}
+                            container
+                            justifyContent="center"
+                            alignItems="center"
+                            key={index}
+                        >
+                            <Avatar
+                                src={company?.avatarUrl}
+                                sx={{
+                                    width: {
+                                        xs: avatarSize.xs.width,
+                                        sm: avatarSize.sm.width,
+                                        md: avatarSize.md.width,
+                                    },
+                                    height: {
+                                        xs: avatarSize.xs.height,
+                                        sm: avatarSize.sm.height,
+                                        md: avatarSize.md.height,
+                                    },
+                                }}
+                            />
+                        </Grid>
+                    ))}
             </Grid>
-        </Box>
+        </Container>
     );
 }

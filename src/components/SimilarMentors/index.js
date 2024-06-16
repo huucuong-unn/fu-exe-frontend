@@ -173,19 +173,18 @@ function SimilarMentor({ similarMentor }) {
                                                         / acceptance
                                                     </Typography>
                                                 </Box>
-                                                <Link to={'/mentor/id'} style={{ textDecoration: 'none' }}>
-                                                    <Button
-                                                        variant="contained"
-                                                        size="large"
-                                                        sx={{
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            backgroundColor: '#365E32',
-                                                        }}
-                                                    >
-                                                        View Profile
-                                                    </Button>
-                                                </Link>
+
+                                                <Button
+                                                    variant="contained"
+                                                    size="large"
+                                                    sx={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        backgroundColor: '#365E32',
+                                                    }}
+                                                >
+                                                    View Profile
+                                                </Button>
                                             </Box>
                                         </Box>
                                     </Box>

@@ -8,7 +8,6 @@ import {
     Skeleton,
     CardContent,
 } from '@mui/material';
-import StarIcon from '@mui/icons-material/Star';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';

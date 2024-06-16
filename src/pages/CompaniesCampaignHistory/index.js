@@ -1,29 +1,32 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import { Link } from 'react-router-dom';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import {
-    Avatar,
-    CardContent,
-    Checkbox,
-    Chip,
-    Divider,
-    FormControlLabel,
-    FormGroup,
-    Modal,
-    TextField,
-} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Avatar, CardContent, Chip, Box, Button, Card, Container, Grid, Typography } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import CampaignAPI from '~/API/CampaignAPI';
 
 function CompaniesCampaignHistory() {
-    const [selectedItemIndex, setSelectedItemIndex] = React.useState(0);
+    const [selectedItemIndex, setSelectedItemIndex] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
+    const [campaigns, setCampaigns] = useState([]);
+    const navigate = useNavigate();
+    const [sort, setSort] = useState({
+        page: 1,
+        limit: 10,
+    });
 
-    const handleItemClick = (index) => {
+    const handlePageChange = (event, value) => {
+        setSort((prev) => ({
+            ...prev,
+            page: value,
+        }));
+    };
+
+    const handleItemClick = (index, companyId) => {
         setSelectedItemIndex(index);
+        navigate(`/company/campaign-details/${companyId}`);
     };
 
     const mentors = [
@@ -68,41 +71,53 @@ function CompaniesCampaignHistory() {
         },
     ];
 
+    useEffect(() => {
+        const getAll = async () => {
+            try {
+                const campaignData = await CampaignAPI.getAll(sort);
+                setCampaigns(campaignData.listResult);
+                setTotalPage(campaignData.totalPage);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        getAll();
+    }, [sort]);
+
+    useEffect(() => {
+        console.log(campaigns);
+    }, [campaigns]);
+
     return (
-        <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
+        <Container id="campaign-history" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
             <Grid container spacing={6}>
                 <Grid item xs={12} md={12}>
                     <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
                         Campaign History
                     </Typography>
-                    {mentors.length === 0 && (
+                    {campaigns.length === 0 && (
                         <div>
                             <Typography variant="body1" color="text.secondary" sx={{ mb: { xs: 2, sm: 4 } }}>
                                 No Campaign found
                             </Typography>
                         </div>
                     )}
-                    {mentors.length > 0 &&
-                        mentors?.map((mentor, index) => (
+                    {campaigns.length > 0 &&
+                        campaigns?.map((campaign, index) => (
                             <Card
                                 key={index}
                                 variant="outlined"
                                 component={Button}
-                                onClick={() => handleItemClick(index)}
                                 sx={{
                                     p: 3,
                                     height: 'fit-content',
                                     width: '100%',
                                     background: 'none',
-                                    backgroundColor: selectedItemIndex === index ? 'action.selected' : undefined,
-                                    borderColor: (theme) => {
-                                        if (theme.palette.mode === 'light') {
-                                            return selectedItemIndex === index ? 'primary.light' : 'grey.200';
-                                        }
-                                        return selectedItemIndex === index ? 'primary.dark' : 'grey.800';
-                                    },
+
                                     position: 'relative',
                                 }}
+                                onClick={() => handleItemClick(index, campaign.id)}
                             >
                                 <Box
                                     sx={{
@@ -126,7 +141,7 @@ function CompaniesCampaignHistory() {
                                     >
                                         <Avatar
                                             alt="avatar image"
-                                            src={mentor.profilePicture}
+                                            src={campaign?.img}
                                             sx={{ width: 150, height: 150 }}
                                         />
                                     </Box>
@@ -137,7 +152,7 @@ function CompaniesCampaignHistory() {
                                             fontWeight="bold"
                                             fontSize={'24px'}
                                         >
-                                            {mentor?.title}
+                                            {campaign?.name}
                                         </Typography>
                                         <Typography
                                             color="text.secondary"
@@ -145,7 +160,17 @@ function CompaniesCampaignHistory() {
                                             sx={{ my: 1 }}
                                             fontSize={'16px'}
                                         >
-                                            {mentor?.participationTime}
+                                            {new Date(campaign?.startDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}
+                                            -{' '}
+                                            {new Date(campaign?.endDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}
                                         </Typography>
                                         <Typography
                                             color="text.secondary"
@@ -153,22 +178,22 @@ function CompaniesCampaignHistory() {
                                             sx={{ my: 2 }}
                                             fontSize={'14px'}
                                         >
-                                            {mentor?.description}
+                                            {campaign?.description}
                                         </Typography>
                                         <CardContent>
                                             <Chip
                                                 key={index}
-                                                label={mentor.status}
+                                                label={campaign.status}
                                                 sx={{ mr: 2, mb: 1 }}
                                                 onClick={() => {}}
                                                 color={
-                                                    mentor.status === 'Company-apply'
+                                                    campaign.status === 'Company-apply'
                                                         ? 'primary'
-                                                        : mentor.status === 'Mentee-apply'
+                                                        : campaign.status === 'Mentee-apply'
                                                         ? 'secondary'
-                                                        : mentor.status === 'Tranning'
+                                                        : campaign.status === 'Tranning'
                                                         ? 'success'
-                                                        : mentor.status === 'Close'
+                                                        : campaign.status === 'Close'
                                                         ? 'error'
                                                         : 'default'
                                                 }
@@ -184,7 +209,7 @@ function CompaniesCampaignHistory() {
                                                 View Campaign Detail
                                             </Button>
                                         </Link>
-                                        {mentor.status === 'Company-apply' && (
+                                        {campaign.status === 'Company-apply' && (
                                             <Link to={'/mentor/id'}>
                                                 <Button
                                                     variant="contained"
@@ -206,13 +231,23 @@ function CompaniesCampaignHistory() {
                                     }}
                                 >
                                     <Typography color="text.secondary" variant="body2" fontSize={'14px'}>
-                                        {mentor.numberOfMentor} Mentor
+                                        {mentors[0].numberOfMentor} Mentor
                                     </Typography>
                                 </Box>
                             </Card>
                         ))}
                 </Grid>
             </Grid>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                <Pagination
+                    count={totalPage}
+                    page={sort.page}
+                    onChange={handlePageChange}
+                    renderItem={(item) => (
+                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                    )}
+                />
+            </Box>
         </Container>
     );
 }

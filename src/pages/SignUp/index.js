@@ -311,26 +311,6 @@ export default function SignUp() {
                                 margin="normal"
                                 required
                                 fullWidth
-                                name="university"
-                                label="University"
-                                type="text"
-                                id="university"
-                                autoComplete="university"
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="studentCode"
-                                label="Student Code"
-                                type="text"
-                                id="studentCode"
-                                autoComplete="studentCode"
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
                                 name="password"
                                 label="Password"
                                 type="password"

@@ -1,5 +1,15 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography } from '@mui/material';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    Button,
+    Typography,
+} from '@mui/material';
 import { styled } from '@mui/system';
 
 const mentees = [
@@ -56,12 +66,12 @@ const MenteeList = ({ onSelectMentee }) => {
                             <TableCell>{mentee.name}</TableCell>
                             <TableCell>{mentee.email}</TableCell>
                             <TableCell>
-                                <StatusButton status={mentee.status}>
-                                    {mentee.status}
-                                </StatusButton>
+                                <StatusButton status={mentee.status}>{mentee.status}</StatusButton>
                             </TableCell>
                             <TableCell align="center">
-                                <ActionButton color="primary" onClick={() => onSelectMentee(mentee)}>VIEW</ActionButton>
+                                <ActionButton color="primary" onClick={() => onSelectMentee(mentee)}>
+                                    VIEW
+                                </ActionButton>
                                 <ActionButton color="secondary">EDIT</ActionButton>
                                 <ActionButton color="error">DELETE</ActionButton>
                             </TableCell>

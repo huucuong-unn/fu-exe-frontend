@@ -17,6 +17,7 @@ import AccountAPI from '~/API/AccountAPI';
 import Alert from '@mui/material/Alert';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import storageService from '~/components/StorageService/storageService';
 
 import logo from '~/assets/images/logo.png';
 
@@ -62,8 +63,14 @@ export default function SignInSide() {
         try {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
-            await AccountAPI.login(data);
-            navigate('/');
+            const userInfo = await AccountAPI.login(data);
+
+            // Check if userInfo is not undefined or null
+            if (userInfo) {
+                // Store user information in local storage
+                storageService.setItem('userInfo', userInfo);
+                navigate('/');
+            }
         } catch (error) {
             console.log(error);
         }

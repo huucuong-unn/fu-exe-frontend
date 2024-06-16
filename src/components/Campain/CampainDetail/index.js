@@ -1,20 +1,9 @@
 import React, { useState } from 'react';
+import { Box, Typography, Button, FormControl, InputLabel, Select, MenuItem, IconButton, Tooltip } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
-import {
-    Box,
-    Typography,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Button,
-    Paper,
-    IconButton,
-    Tooltip,
-} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import MenteeSection from '~/components/CampainDetailMenteeList'; // Importing MenteeSection component
+import StarIcon from '@mui/icons-material/Star';
 
 const CampaignDetail = () => {
     // Simulated campaign data
@@ -26,18 +15,23 @@ const CampaignDetail = () => {
         endDate: '2024-12-31',
         status: 'ACTIVE',
         mentees: [
-            { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-            { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
-            { id: 3, name: 'Alice Brown', email: 'alice@example.com', status: 'Needs Approval' },
-            { id: 4, name: 'Bob Johnson', email: 'bob@example.com', status: 'Needs Approval' },
-            // Add more mentees as needed
+            { id: 1, name: 'John Doe', status: 'Active' },
+            { id: 2, name: 'Jane Smith', status: 'Inactive' },
+            { id: 3, name: 'Alice Brown', status: 'Needs Approval' },
+            { id: 4, name: 'Bob Johnson', status: 'Needs Approval' },
+            { id: 5, name: 'Emma Davis', status: 'Active' },
+            { id: 6, name: 'Michael Lee', status: 'Inactive' },
+            { id: 7, name: 'Sophia Clark', status: 'Needs Approval' },
+            { id: 8, name: 'Oliver Harris', status: 'Active' },
+            { id: 9, name: 'Ava Robinson', status: 'Inactive' },
+            { id: 10, name: 'William Martinez', status: 'Needs Approval' },
         ],
     };
 
     const [filterStatus, setFilterStatus] = useState('All');
     const [page, setPage] = useState(1);
     const [menteesPerPage] = useState(5); // Number of mentees per page
-    const [showApprovalList, setShowApprovalList] = useState(false);
+    const [topMenteeIds, setTopMenteeIds] = useState([]);
 
     // Handler for selecting a mentee
     const handleSelectMentee = (mentee) => {
@@ -62,45 +56,155 @@ const CampaignDetail = () => {
         console.log(`Action ${action} performed for mentee with ID: ${menteeId}`);
     };
 
+    // Handler for moving a mentee to the top of the list
+    const handleMoveToTop = (index, menteeId) => {
+        const updatedTopMenteeIds = [...topMenteeIds];
+
+        // Check if menteeId is already in the list, remove it; otherwise add it
+        const existingIndex = updatedTopMenteeIds.indexOf(menteeId);
+        if (existingIndex !== -1) {
+            updatedTopMenteeIds.splice(existingIndex, 1);
+        } else {
+            updatedTopMenteeIds.push(menteeId);
+        }
+
+        // Update state with the new list of top mentee IDs
+        setTopMenteeIds(updatedTopMenteeIds);
+    };
+
+    // Filter and sort mentees based on current filter status and top mentees
+    const filteredMentees = campaign.mentees.filter((mentee) => {
+        if (filterStatus === 'All') {
+            return true;
+        }
+        return mentee.status === filterStatus;
+    });
+
+    // Sort mentees based on topMenteeIds
+    const sortedMentees = [...filteredMentees].sort((a, b) => {
+        const aIsTop = topMenteeIds.includes(a.id);
+        const bIsTop = topMenteeIds.includes(b.id);
+        if (aIsTop && !bIsTop) return -1;
+        if (!aIsTop && bIsTop) return 1;
+        return 0;
+    });
+
+    // Paginate mentees
+    const startIndex = (page - 1) * menteesPerPage;
+    const paginatedMentees = sortedMentees.slice(startIndex, startIndex + menteesPerPage);
+
+    // Calculate total pages for pagination component
+    const totalPages = Math.ceil(filteredMentees.length / menteesPerPage);
+
     return (
         <Box sx={{ p: 3 }}>
             <CampaignDetails campaign={campaign} />
             <Box mb={2}>
                 <Button
                     variant="contained"
-                    color={showApprovalList ? 'secondary' : 'primary'}
-                    onClick={() => setShowApprovalList((prev) => !prev)}
+                    color={filterStatus === 'Needs Approval' ? 'secondary' : 'primary'}
+                    onClick={() => setFilterStatus(filterStatus === 'Needs Approval' ? 'All' : 'Needs Approval')}
                 >
-                    {showApprovalList ? 'Hide Mentees Needing Approval' : 'Show Mentees Needing Approval'}
+                    {filterStatus === 'Needs Approval' ? 'Show All Mentees' : 'Show Mentees Needing Approval'}
                 </Button>
             </Box>
-            {showApprovalList && (
-                <MenteesNeedingApproval
-                    mentees={campaign.mentees.filter((mentee) => mentee.status === 'Needs Approval')}
-                />
+            <Box mb={2}>
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel id="filter-status-label">Filter by Status</InputLabel>
+                    <Select
+                        labelId="filter-status-label"
+                        id="filter-status"
+                        value={filterStatus}
+                        onChange={handleFilterChange}
+                        label="Filter by Status"
+                    >
+                        <MenuItem value="All">All</MenuItem>
+                        <MenuItem value="Active">Active</MenuItem>
+                        <MenuItem value="Inactive">Inactive</MenuItem>
+                        <MenuItem value="Needs Approval">Needs Approval</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+            <Box sx={{ border: '1px solid #ccc', borderRadius: 1, overflow: 'hidden' }}>
+                {paginatedMentees.map((mentee, index) => (
+                    <Box
+                        key={mentee.id}
+                        sx={{
+                            p: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            backgroundColor: index % 2 === 0 ? '#ffffff' : '#f0f0f0',
+                            borderBottom: '1px solid #ccc',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                minWidth: 40,
+                                height: 40,
+                                backgroundColor: '#333',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginRight: 2,
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                color: '#fff',
+                            }}
+                        >
+                            {startIndex + index + 1}
+                        </Box>
+                        <Box sx={{ flexGrow: 1 }}>
+                            <Typography variant="body1">{mentee.name}</Typography>
+                            <Typography variant="body2">Status: {mentee.status}</Typography>
+                        </Box>
+                        {/* Star Icon for moving mentee to top */}
+                        <Tooltip title="Move to Top">
+                            <IconButton
+                                color={topMenteeIds.includes(mentee.id) ? 'primary' : 'default'}
+                                onClick={() => handleMoveToTop(startIndex + index, mentee.id)}
+                                sx={{ mr: 1 }}
+                            >
+                                <StarIcon />
+                            </IconButton>
+                        </Tooltip>
+                        {mentee.status === 'Needs Approval' && (
+                            <Tooltip title="Approve">
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => handleAction(mentee.id, 'approve')}
+                                    sx={{ mr: 1 }}
+                                >
+                                    <CheckIcon />
+                                </IconButton>
+                            </Tooltip>
+                        )}
+                        {mentee.status === 'Needs Approval' && (
+                            <Tooltip title="Reject">
+                                <IconButton color="secondary" onClick={() => handleAction(mentee.id, 'reject')}>
+                                    <ClearIcon />
+                                </IconButton>
+                            </Tooltip>
+                        )}
+                    </Box>
+                ))}
+            </Box>
+            {totalPages > 1 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <Pagination count={totalPages} page={page} onChange={handlePageChange} color="primary" />
+                </Box>
             )}
-            <AllMentees
-                mentees={campaign.mentees}
-                filterStatus={filterStatus}
-                currentMentees={campaign.mentees.filter((mentee) => {
-                    if (filterStatus === 'All') {
-                        return true;
-                    }
-                    return mentee.status === filterStatus;
-                })}
-                totalPages={Math.ceil(campaign.mentees.length / menteesPerPage)}
-                currentPage={page}
-                onPageChange={handlePageChange}
-                onFilterChange={handleFilterChange}
-                handleAction={handleAction}
-                menteesPerPage={menteesPerPage}
-            />
+            {paginatedMentees.length === 0 && (
+                <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 2 }}>
+                    No mentees found matching the selected filter criteria.
+                </Typography>
+            )}
         </Box>
     );
 };
 
 const CampaignDetails = ({ campaign }) => (
-    <Paper sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
+    <Box sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
         <Typography variant="h6">{campaign.name}</Typography>
         <Typography variant="body2" gutterBottom>
             Description: {campaign.description}
@@ -110,54 +214,7 @@ const CampaignDetails = ({ campaign }) => (
         <Typography variant="body2" sx={{ fontWeight: 'bold', color: campaign.status === 'ACTIVE' ? 'green' : 'red' }}>
             Status: {campaign.status}
         </Typography>
-    </Paper>
-);
-
-const MenteesNeedingApproval = ({ mentees }) => (
-    <Paper sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
-        <Typography variant="h5" gutterBottom>
-            Mentees Needing Approval
-        </Typography>
-        {mentees.length > 0 ? (
-            <MenteeSection
-                mentees={mentees}
-                filterStatus="Needs Approval"
-                onSelectMentee={() => {}}
-                handleAction={() => {}}
-            />
-        ) : (
-            <Typography variant="body2">No mentees need approval at the moment.</Typography>
-        )}
-    </Paper>
-);
-
-const AllMentees = ({
-    mentees,
-    filterStatus,
-    currentMentees,
-    totalPages,
-    currentPage,
-    onPageChange,
-    onFilterChange,
-    handleAction,
-    menteesPerPage,
-}) => (
-    <Paper sx={{ p: 2, borderRadius: 1, boxShadow: 1 }}>
-        <Typography variant="h5" gutterBottom>
-            All Mentees
-        </Typography>
-        <MenteeSection
-            mentees={currentMentees}
-            filterStatus={filterStatus}
-            onSelectMentee={() => {}}
-            onFilterChange={onFilterChange}
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={onPageChange}
-            handleAction={handleAction}
-            menteesPerPage={menteesPerPage}
-        />
-    </Paper>
+    </Box>
 );
 
 export default CampaignDetail;

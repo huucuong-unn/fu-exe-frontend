@@ -10,7 +10,7 @@ import AppAppBar from '~/components/AppAppBar';
 import LogoCollection from '~/components/LogoCollection';
 
 import getLPTheme from '~/components/getLPTheme';
-import CampaignDetail from '~/components/CampainDetail'; // Import CampaignDetail component
+import CampaignDetail from '~/components/Campain/CampainDetail'; // Import CampaignDetail component
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
     return (

@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, FormControl, InputLabel, Select, MenuItem, IconButton, Tooltip } from '@mui/material';
+import {
+    Box,
+    Typography,
+    Button,
+    FormControl,
+    InputLabel,
+    Select,
+    Paper,
+    MenuItem,
+    IconButton,
+    Tooltip,
+    Modal,
+    Grid,
+} from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import StarIcon from '@mui/icons-material/Star';
+import MenteeSection from '~/components/Campain/CampainDetailMenteeList'; // Importing MenteeSection component
 
 const CampaignDetail = () => {
     // Simulated campaign data
@@ -15,16 +29,36 @@ const CampaignDetail = () => {
         endDate: '2024-12-31',
         status: 'ACTIVE',
         mentees: [
-            { id: 1, name: 'John Doe', status: 'Active' },
-            { id: 2, name: 'Jane Smith', status: 'Inactive' },
-            { id: 3, name: 'Alice Brown', status: 'Needs Approval' },
-            { id: 4, name: 'Bob Johnson', status: 'Needs Approval' },
-            { id: 5, name: 'Emma Davis', status: 'Active' },
-            { id: 6, name: 'Michael Lee', status: 'Inactive' },
-            { id: 7, name: 'Sophia Clark', status: 'Needs Approval' },
-            { id: 8, name: 'Oliver Harris', status: 'Active' },
-            { id: 9, name: 'Ava Robinson', status: 'Inactive' },
-            { id: 10, name: 'William Martinez', status: 'Needs Approval' },
+            { id: 1, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
+            {
+                id: 2,
+                name: 'Jane Smith',
+                status: 'Inactive',
+                face: '/path/to/jane.png',
+                cvLink: '/path/to/jane-cv.pdf',
+            },
+            {
+                id: 2,
+                name: 'Jane Smith',
+                status: 'Needs Approval',
+                face: '/path/to/jane.png',
+                cvLink: '/path/to/jane-cv.pdf',
+            },
+            {
+                id: 3,
+                name: 'Jane Smith',
+                status: 'Needs Approval',
+                face: '/path/to/jane.png',
+                cvLink: '/path/to/jane-cv.pdf',
+            },
+            { id: 4, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
+            { id: 5, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
+            { id: 6, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
+            { id: 7, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
+            { id: 8, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
+            { id: 9, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
+            // Add face and cvLink for other mentees as well
+            // ...
         ],
     };
 
@@ -32,11 +66,15 @@ const CampaignDetail = () => {
     const [page, setPage] = useState(1);
     const [menteesPerPage] = useState(5); // Number of mentees per page
     const [topMenteeIds, setTopMenteeIds] = useState([]);
+    const [selectedMentee, setSelectedMentee] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [showApprovalList, setShowApprovalList] = useState(false);
 
     // Handler for selecting a mentee
     const handleSelectMentee = (mentee) => {
         console.log('Selected Mentee:', mentee);
-        // Implement further logic if needed
+        setSelectedMentee(mentee);
+        setModalOpen(true);
     };
 
     // Handler for changing filter status
@@ -102,12 +140,17 @@ const CampaignDetail = () => {
             <Box mb={2}>
                 <Button
                     variant="contained"
-                    color={filterStatus === 'Needs Approval' ? 'secondary' : 'primary'}
-                    onClick={() => setFilterStatus(filterStatus === 'Needs Approval' ? 'All' : 'Needs Approval')}
+                    color={showApprovalList ? 'secondary' : 'primary'}
+                    onClick={() => setShowApprovalList((prev) => !prev)}
                 >
-                    {filterStatus === 'Needs Approval' ? 'Show All Mentees' : 'Show Mentees Needing Approval'}
+                    {showApprovalList ? 'Hide Mentees Needing Approval' : 'Show Mentees Needing Approval'}
                 </Button>
             </Box>
+            {showApprovalList && (
+                <MenteesNeedingApproval
+                    mentees={campaign.mentees.filter((mentee) => mentee.status === 'Needs Approval')}
+                />
+            )}
             <Box mb={2}>
                 <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel id="filter-status-label">Filter by Status</InputLabel>
@@ -186,6 +229,15 @@ const CampaignDetail = () => {
                                 </IconButton>
                             </Tooltip>
                         )}
+                        {/* Show Details Button */}
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => handleSelectMentee(mentee)}
+                            sx={{ textTransform: 'none', ml: 1 }}
+                        >
+                            Show Details
+                        </Button>
                     </Box>
                 ))}
             </Box>
@@ -199,6 +251,56 @@ const CampaignDetail = () => {
                     No mentees found matching the selected filter criteria.
                 </Typography>
             )}
+
+            {/* Modal to display mentee details */}
+            <Modal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+                aria-labelledby="mentee-details-modal"
+                aria-describedby="mentee-details-description"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 400,
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 4,
+                    }}
+                >
+                    <Typography variant="h6" id="modal-modal-title" sx={{ mb: 2 }}>
+                        Mentee Details
+                    </Typography>
+                    {selectedMentee && (
+                        <Grid container spacing={2}>
+                            <Grid item>
+                                {/* Display mentee's face */}
+                                <img
+                                    src={selectedMentee.face}
+                                    alt="Mentee Face"
+                                    style={{ width: 100, borderRadius: '50%' }}
+                                />
+                            </Grid>
+                            <Grid item>
+                                {/* Display mentee's name and status */}
+                                <Typography variant="body1">{selectedMentee.name}</Typography>
+                                <Typography variant="body2">Status: {selectedMentee.status}</Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                {/* Add a link to mentee's CV */}
+                                <Typography variant="body2">
+                                    <a href={selectedMentee.cvLink} target="_blank" rel="noopener noreferrer">
+                                        View CV
+                                    </a>
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    )}
+                </Box>
+            </Modal>
         </Box>
     );
 };
@@ -215,6 +317,24 @@ const CampaignDetails = ({ campaign }) => (
             Status: {campaign.status}
         </Typography>
     </Box>
+);
+const MenteesNeedingApproval = ({ mentees }) => (
+    <Paper sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
+        <Typography variant="h5" gutterBottom>
+            Mentees Needing Approval
+        </Typography>
+        {mentees.length > 0 ? (
+            <MenteeSection
+                mentees={mentees}
+                filterStatus="Needs Approval" // Hardcode the filter status here
+                onSelectMentee={() => {}}
+                handleAction={() => {}}
+                hideFilter
+            />
+        ) : (
+            <Typography variant="body2">No mentees need approval at the moment.</Typography>
+        )}
+    </Paper>
 );
 
 export default CampaignDetail;

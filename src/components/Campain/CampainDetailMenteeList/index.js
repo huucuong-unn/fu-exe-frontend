@@ -1,21 +1,20 @@
-import React from 'react';
-import { Box, Typography, FormControl, InputLabel, Select, MenuItem, IconButton, Tooltip } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, IconButton, Tooltip, Modal, Button, Grid } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import StarIcon from '@mui/icons-material/Star'; // Import Star icon
+import StarIcon from '@mui/icons-material/Star';
 
-const MenteeSection = ({
-    mentees,
-    filterStatus,
-    onSelectMentee,
-    onFilterChange,
-    totalPages,
-    currentPage,
-    onPageChange,
-    handleAction,
-    menteesPerPage,
-}) => {
+const MenteeSection = ({ mentees, onSelectMentee, handleAction, totalPages, currentPage, onPageChange }) => {
+    const [selectedMentee, setSelectedMentee] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+
+    // Handler for opening modal and setting selected mentee
+    const handleShowDetails = (mentee) => {
+        setSelectedMentee(mentee);
+        setModalOpen(true);
+    };
+
     // Handler for moving a mentee to the top of the list
     const handleMoveToTop = (index) => {
         const updatedMentees = [...mentees];
@@ -28,21 +27,6 @@ const MenteeSection = ({
 
     return (
         <>
-            <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel id="filter-status-label">Filter by Status</InputLabel>
-                <Select
-                    labelId="filter-status-label"
-                    id="filter-status"
-                    value={filterStatus}
-                    onChange={onFilterChange}
-                    label="Filter by Status"
-                >
-                    <MenuItem value="All">All</MenuItem>
-                    <MenuItem value="Active">Active</MenuItem>
-                    <MenuItem value="Inactive">Inactive</MenuItem>
-                    <MenuItem value="Needs Approval">Needs Approval</MenuItem>
-                </Select>
-            </FormControl>
             {mentees.length > 0 ? (
                 <>
                     <Box sx={{ border: '1px solid #ccc', borderRadius: 1, overflow: 'hidden' }}>
@@ -84,23 +68,35 @@ const MenteeSection = ({
                                         <StarIcon />
                                     </IconButton>
                                 </Tooltip>
+                                {/* Show Details Button */}
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={() => handleShowDetails(mentee)}
+                                    sx={{ textTransform: 'none', ml: 1 }}
+                                >
+                                    Show Details
+                                </Button>
                                 {mentee.status === 'Needs Approval' && (
-                                    <Tooltip title="Approve">
-                                        <IconButton
-                                            color="primary"
-                                            onClick={() => handleAction(mentee.id, 'approve')}
-                                            sx={{ mr: 1 }}
-                                        >
-                                            <CheckIcon />
-                                        </IconButton>
-                                    </Tooltip>
-                                )}
-                                {mentee.status === 'Needs Approval' && (
-                                    <Tooltip title="Reject">
-                                        <IconButton color="secondary" onClick={() => handleAction(mentee.id, 'reject')}>
-                                            <ClearIcon />
-                                        </IconButton>
-                                    </Tooltip>
+                                    <>
+                                        <Tooltip title="Approve">
+                                            <IconButton
+                                                color="primary"
+                                                onClick={() => handleAction(mentee.id, 'approve')}
+                                                sx={{ ml: 1 }}
+                                            >
+                                                <CheckIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="Reject">
+                                            <IconButton
+                                                color="secondary"
+                                                onClick={() => handleAction(mentee.id, 'reject')}
+                                            >
+                                                <ClearIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </>
                                 )}
                             </Box>
                         ))}
@@ -110,10 +106,60 @@ const MenteeSection = ({
                             <Pagination count={totalPages} page={currentPage} onChange={onPageChange} color="primary" />
                         </Box>
                     )}
+                    {/* Modal to display mentee details */}
+                    <Modal
+                        open={modalOpen}
+                        onClose={() => setModalOpen(false)}
+                        aria-labelledby="mentee-details-modal"
+                        aria-describedby="mentee-details-description"
+                    >
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: 400,
+                                bgcolor: 'background.paper',
+                                boxShadow: 24,
+                                p: 4,
+                            }}
+                        >
+                            <Typography variant="h6" id="modal-modal-title" sx={{ mb: 2 }}>
+                                Mentee Details
+                            </Typography>
+                            {selectedMentee && (
+                                <Grid container spacing={2}>
+                                    <Grid item>
+                                        {/* Display mentee's face */}
+                                        <Box
+                                            sx={{
+                                                width: 80,
+                                                height: 80,
+                                                backgroundColor: '#ccc',
+                                                borderRadius: '50%',
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={8}>
+                                        {/* Display mentee's details */}
+                                        <Typography variant="body1">{selectedMentee.name}</Typography>
+                                        <Typography variant="body2">Status: {selectedMentee.status}</Typography>
+                                        {/* Link to mentee's CV */}
+                                        <Typography variant="body2">
+                                            <a href={selectedMentee.cvLink} target="_blank" rel="noopener noreferrer">
+                                                CV
+                                            </a>
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            )}
+                        </Box>
+                    </Modal>
                 </>
             ) : (
                 <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-                    No mentees found matching the selected filter criteria.
+                    No mentees found.
                 </Typography>
             )}
         </>

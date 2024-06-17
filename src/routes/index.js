@@ -1,6 +1,5 @@
 import LayoutWithFooter from '~/components/Layouts/LayoutWithFooter';
 import Mentors from '~/components/Mentors';
-import Orders from '~/pages/Order';
 import Checkout from '~/pages/Checkout';
 import Companies from '~/pages/Companies';
 import CompaniesCampaignDetail from '~/pages/CompaniesCampaignDetails';
@@ -26,6 +25,9 @@ import CampaignDetail from '~/pages/MentorCampainDetailPage';
 import MenteeAdminDashboard from '~/pages/MenteeAdminDashboard';
 import AccountAdminDashboard from '~/pages/AccountAdminDashboard';
 import Payment from '~/pages/Payment/index';
+import AdMentee from '~/pages/AdMentee';
+import AdMentor from '~/pages/AdMentor';
+import AdminLayout from '~/components/Layouts/AdminLayout';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -40,7 +42,7 @@ const publicRoutes = [
     { path: '/company', component: Companies },
     { path: '/company/:companyId', component: CompanyDetails },
     { path: '/company/campaign-history', component: CompaniesCampaignHistory },
-    { path: '/company/campaign-details', component: CompaniesCampaignDetail },
+    { path: '/company/campaign-details/:campaignId', component: CompaniesCampaignDetail },
     { path: '/company/create-mentor-account', component: CreateMentorAccount },
     { path: '/company/create-mentor-profile', component: CreateMentorProfile },
     { path: '/company/create-mentor-History', component: MentorHistoryForCompany },
@@ -55,11 +57,19 @@ const publicRoutes = [
     //Admin
     { path: '/admin/dashboard', component: Dashboard, layout: null },
     { path: '/test', component: UserProfilesTest, layout: null },
+
     { path: '/admin/dashboard/orders', component: Orders, layout: null },
     { path: '/admin/dashboard/campaign', component: CampaignAdminDashboard, layout: null },
     { path: '/admin/dashboard/mentor', component: MentorAdminDashboard, layout: null },
     { path: '/admin/dashboard/mentee', component: MenteeAdminDashboard, layout: null },
     { path: '/admin/dashboard/account', component: AccountAdminDashboard, layout: null },
+    // { path: '/admin/dashboard/orders', component: Orders, layout: null },
+    // { path: '/admin/dashboard/campaign', component: CampaignAdminDashboard, layout: null },
+    // { path: '/admin/dashboard/mentor', component: MentorAdminDashboard, layout: null },
+    // { path: '/admin/dashboard/mentee', component: MenteeAdminDashboard, layout: null },
+    // { path: '/admin/dashboard/account', component: AccountAdminDashboard, layout: null },
+    { path: '/admin/mentee', component: AdMentee, layout: AdminLayout },
+    { path: '/admin/mentor', component: AdMentor, layout: AdminLayout },
 
     //Mentor
     { path: '/campaigns', component: MentorLandingPage, layout: LayoutWithFooter },

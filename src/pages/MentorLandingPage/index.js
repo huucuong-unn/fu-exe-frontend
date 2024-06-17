@@ -17,7 +17,7 @@ import Features from '~/components/Features';
 import MentorSuggestion from '~/components/MentorSuggestion';
 import FAQ from '~/components/FAQ';
 import getLPTheme from '~/components/getLPTheme';
-import CampaignList from '~/components/CampainList';
+import CampaignList from '~/components/Campain/CampainList';
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
     return (
         <Box

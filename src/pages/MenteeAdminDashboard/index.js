@@ -14,8 +14,7 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { MainListItems,SecondaryListItems} from '../../components/listItems';
-import MenteeList from '../../components/MenteeList';
+import { MainListItems, SecondaryListItems } from '../../components/listItems';
 import MenteeDetails from '../../components/MenteeDetails';
 import AddMenteeForm from '../../components/AddMenteeForm';
 
@@ -75,18 +74,18 @@ export default function Dashboard() {
         setOpen(!open);
     };
 
-    const renderContent = () => {
-        switch (selectedPage) {
-            case 'MenteeList':
-                return <MenteeList onSelectMentee={setSelectedMentee} />;
-            case 'MenteeDetails':
-                return <MenteeDetails mentee={selectedMentee} />;
-            case 'AddMentee':
-                return <AddMenteeForm />;
-            default:
-                return <MenteeList onSelectMentee={setSelectedMentee} />;
-        }
-    };
+    // const renderContent = () => {
+    //     switch (selectedPage) {
+    //         case 'MenteeList':
+    //             return <MenteeList onSelectMentee={setSelectedMentee} />;
+    //         case 'MenteeDetails':
+    //             return <MenteeDetails mentee={selectedMentee} />;
+    //         case 'AddMentee':
+    //             return <AddMenteeForm />;
+    //         default:
+    //             return <MenteeList onSelectMentee={setSelectedMentee} />;
+    //     }
+    // };
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -110,7 +109,7 @@ export default function Dashboard() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        
+
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
                                 <NotificationsIcon />
@@ -138,7 +137,7 @@ export default function Dashboard() {
                     </Toolbar>
                     <Divider />
                     <List component="nav">
-                        {MainListItems}
+                        <MainListItems />
                         <Divider sx={{ my: 1 }} />
                         {SecondaryListItems}
                     </List>
@@ -146,7 +145,8 @@ export default function Dashboard() {
                 <Box
                     component="main"
                     sx={{
-                        backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+                        backgroundColor:
+                            theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
                         flexGrow: 1,
                         height: '100vh',
                         overflow: 'auto',
@@ -154,7 +154,7 @@ export default function Dashboard() {
                     }}
                 >
                     <Toolbar />
-                    {renderContent()}
+                    {/* {renderContent()} */}
                 </Box>
             </Box>
         </ThemeProvider>

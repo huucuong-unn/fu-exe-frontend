@@ -10,25 +10,11 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
-import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { MainListItems, SecondaryListItems } from '../../components/listItems';
-import CampaignList from '~/components/Campain/CampainList';
-
-function Copyright(props) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://tortee.vercel.app/sign-in">
-                Tortee
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+import AdMentee from '~/pages/AdMentee';
 
 const drawerWidth = 240;
 
@@ -77,7 +63,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Dashboard() {
+export default function NavbarAdmin() {
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
@@ -105,13 +91,7 @@ export default function Dashboard() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography
-                            component="h1"
-                            variant="h6"
-                            color="inherit"
-                            noWrap
-                            sx={{ flexGrow: 1 }}
-                        ></Typography>
+
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
                                 <NotificationsIcon />
@@ -139,7 +119,7 @@ export default function Dashboard() {
                     </Toolbar>
                     <Divider />
                     <List component="nav">
-                        {MainListItems}
+                        <MainListItems />
                         <Divider sx={{ my: 1 }} />
                         {SecondaryListItems}
                     </List>
@@ -154,27 +134,7 @@ export default function Dashboard() {
                         overflow: 'auto',
                     }}
                 >
-                    <Toolbar />
-                    <Box
-                        sx={{
-                            position: 'sticky',
-                            top: 0,
-                            backgroundColor: (theme) =>
-                                theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
-                            zIndex: 1,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            padding: '16px 0',
-                        }}
-                    ></Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
-                        <Box sx={{ width: '100%', maxWidth: 600 }}>
-                            {' '}
-                            {/* Adjust maxWidth as needed */}
-                            <CampaignList />
-                        </Box>
-                    </Box>
+                    <AdMentee />
                 </Box>
             </Box>
         </ThemeProvider>

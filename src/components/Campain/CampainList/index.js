@@ -15,8 +15,19 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const CampaignList = () => {
     const { campaigns, loading, error, page, totalPages, setPage } = useCampaignData();
     const [selectedCampaign, setSelectedCampaign] = useState('');
+    const [selectedYear, setSelectedYear] = useState('');
     const navigate = useNavigate();
+
     const location = useLocation();
+
+    const getUniqueYears = () => {
+        const years = campaigns.map((campaign) => new Date(campaign.startDate).getFullYear());
+        return [...new Set(years)];
+    };
+
+    const handleYearChange = (event) => {
+        setSelectedYear(event.target.value);
+    };
 
     const handlePageChange = (event, value) => {
         setPage(value);
@@ -94,25 +105,46 @@ const CampaignList = () => {
             <Typography variant="h4" gutterBottom>
                 Campaigns
             </Typography>
-            <FormControl sx={{ mb: 3, minWidth: 200 }}>
-                <InputLabel id="select-campaign-label">Select Campaign</InputLabel>
-                <Select
-                    labelId="select-campaign-label"
-                    id="select-campaign"
-                    value={selectedCampaign}
-                    label="Select Campaign"
-                    onChange={handleCampaignChange}
-                >
-                    <MenuItem value="">
-                        <em>All Campaigns</em>
-                    </MenuItem>
-                    {campaigns.map((campaign) => (
-                        <MenuItem key={campaign.id} value={campaign.id}>
-                            {campaign.name}
+            <Box sx={{ display: 'flex', mb: 3 }}>
+                {/* <FormControl sx={{ minWidth: 200, mr: 2 }}>
+                    <InputLabel id="select-campaign-label">Select Campaign</InputLabel>
+                    <Select
+                        labelId="select-campaign-label"
+                        id="select-campaign"
+                        value={selectedCampaign}
+                        label="Select Campaign"
+                        onChange={handleCampaignChange}
+                    >
+                        <MenuItem value="">
+                            <em>All Campaigns</em>
                         </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                        {campaigns.map((campaign) => (
+                            <MenuItem key={campaign.id} value={campaign.id}>
+                                {campaign.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl> */}
+                <FormControl sx={{ minWidth: 200 }}>
+                    <InputLabel id="select-year-label">Select Year</InputLabel>
+                    <Select
+                        labelId="select-year-label"
+                        id="select-year"
+                        value={selectedYear}
+                        label="Select Year"
+                        onChange={handleYearChange}
+                    >
+                        <MenuItem value="">
+                            <em>All Years</em>
+                        </MenuItem>
+                        {getUniqueYears().map((year) => (
+                            <MenuItem key={year} value={year}>
+                                {year}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Box>
             {filteredCampaigns.map((campaign) => (
                 <Box
                     key={campaign.id}
@@ -129,8 +161,22 @@ const CampaignList = () => {
                         alignItems: 'center',
                         backgroundColor: campaign.status === 'INACTIVE' ? 'grey.300' : 'background.paper',
                         '&:hover': { boxShadow: 3 },
+                        position: 'relative',
                     }}
                 >
+                    <Box
+                        sx={{
+                            width: '100%',
+                            height: '15px',
+                            backgroundColor: 'steelblue',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            borderTopLeftRadius: '4px',
+                            borderTopRightRadius: '4px',
+                        }}
+                    />
+
                     <Box sx={{ flex: 1 }}>
                         <Typography variant="h6" noWrap>
                             {campaign.name}

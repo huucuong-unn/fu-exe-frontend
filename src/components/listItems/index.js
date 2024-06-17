@@ -11,40 +11,47 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
-export const MainListItems = (
-   
+export const MainListItems = () => {
+    const navigate = useNavigate();
+
+    const handleNavigate = (path) => {
+        navigate(path);
+        window.scrollTo(0, 0); // Cuộn lên đầu trang
+    };
+
+    return (
         <React.Fragment>
-            <ListItemButton>
+            <ListItemButton onClick={() => handleNavigate('/admin/dashboard')}>
                 <ListItemIcon>
                     <DashboardIcon />
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
             </ListItemButton>
-            <ListItemButton >
+            <ListItemButton onClick={() => handleNavigate('/admin/dashboard/orders')}>
                 <ListItemIcon>
                     <ShoppingCartIcon />
                 </ListItemIcon>
                 <ListItemText primary="Orders" />
             </ListItemButton>
-            <ListItemButton >
+            <ListItemButton onClick={() => handleNavigate('/admin/mentor')}>
                 <ListItemIcon>
                     <PeopleIcon />
                 </ListItemIcon>
                 <ListItemText primary="Mentor" />
             </ListItemButton>
-            <ListItemButton >
+            <ListItemButton onClick={() => handleNavigate('/admin/mentee')}>
                 <ListItemIcon>
                     <BarChartIcon />
                 </ListItemIcon>
                 <ListItemText primary="Mentee" />
             </ListItemButton>
-            <ListItemButton >
+            <ListItemButton onClick={() => handleNavigate('/admin/dashboard/campaign')}>
                 <ListItemIcon>
                     <LayersIcon />
                 </ListItemIcon>
                 <ListItemText primary="Campaign" />
             </ListItemButton>
-            <ListItemButton >
+            <ListItemButton onClick={() => handleNavigate('/admin/dashboard/account')}>
                 <ListItemIcon>
                     <LayersIcon />
                 </ListItemIcon>
@@ -52,30 +59,30 @@ export const MainListItems = (
             </ListItemButton>
         </React.Fragment>
     );
-
+};
 
 export const SecondaryListItems = (
-        <React.Fragment>
-            <ListSubheader component="div" inset>
-                Saved reports
-            </ListSubheader>
-            <ListItemButton >
-                <ListItemIcon>
-                    <AssignmentIcon />
-                </ListItemIcon>
-                <ListItemText primary="Current month" />
-            </ListItemButton>
-            <ListItemButton >
-                <ListItemIcon>
-                    <AssignmentIcon />
-                </ListItemIcon>
-                <ListItemText primary="Last quarter" />
-            </ListItemButton>
-            <ListItemButton>
-                <ListItemIcon>
-                    <AssignmentIcon />
-                </ListItemIcon>
-                <ListItemText primary="Year-end sale" />
-            </ListItemButton>
-        </React.Fragment>
-    );
+    <React.Fragment>
+        <ListSubheader component="div" inset>
+            Saved reports
+        </ListSubheader>
+        <ListItemButton>
+            <ListItemIcon>
+                <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Current month" />
+        </ListItemButton>
+        <ListItemButton>
+            <ListItemIcon>
+                <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Last quarter" />
+        </ListItemButton>
+        <ListItemButton>
+            <ListItemIcon>
+                <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Year-end sale" />
+        </ListItemButton>
+    </React.Fragment>
+);

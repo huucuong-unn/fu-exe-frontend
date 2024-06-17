@@ -28,6 +28,7 @@ import Payment from '~/pages/Payment/index';
 import AdMentee from '~/pages/AdMentee';
 import AdMentor from '~/pages/AdMentor';
 import AdminLayout from '~/components/Layouts/AdminLayout';
+import Orders from '~/components/Orders';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [

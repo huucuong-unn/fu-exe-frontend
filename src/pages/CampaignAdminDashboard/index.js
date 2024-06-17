@@ -14,8 +14,8 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { MainListItems, SecondaryListItems} from '../../components/listItems';
-import CampaignList from '~/components/CampainList';
+import { MainListItems, SecondaryListItems } from '../../components/listItems';
+import CampaignList from '~/components/Campain/CampainList';
 
 function Copyright(props) {
     return (
@@ -105,9 +105,13 @@ export default function Dashboard() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-                           
-                        </Typography>
+                        <Typography
+                            component="h1"
+                            variant="h6"
+                            color="inherit"
+                            noWrap
+                            sx={{ flexGrow: 1 }}
+                        ></Typography>
                         <IconButton color="inherit">
                             <Badge badgeContent={4} color="secondary">
                                 <NotificationsIcon />
@@ -163,12 +167,11 @@ export default function Dashboard() {
                             alignItems: 'center',
                             padding: '16px 0',
                         }}
-                    >
-                       
-                        
-                    </Box>
+                    ></Box>
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
-                        <Box sx={{ width: '100%', maxWidth: 600 }}> {/* Adjust maxWidth as needed */}
+                        <Box sx={{ width: '100%', maxWidth: 600 }}>
+                            {' '}
+                            {/* Adjust maxWidth as needed */}
                             <CampaignList />
                         </Box>
                     </Box>

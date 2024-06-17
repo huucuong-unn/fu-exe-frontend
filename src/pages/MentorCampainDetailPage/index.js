@@ -1,86 +1,88 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Typography, CircularProgress } from '@mui/material';
+import * as React from 'react';
+import PropTypes from 'prop-types';
+import CssBaseline from '@mui/material/CssBaseline';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import AppAppBar from '~/components/AppAppBar';
 
-const CampaignDetail = () => {
-    const { campaignName } = useParams();
-    const [campaign, setCampaign] = useState(null);
-    const [loading, setLoading] = useState(true);
+import LogoCollection from '~/components/LogoCollection';
 
-    useEffect(() => {
-        // Mock function to fetch campaign details based on campaignName
-        const fetchCampaignDetail = async () => {
-            // Replace with actual API call or data fetching logic
-            // Mock data
-            const mockData = {
-                id: 1,
-                name: campaignName,
-                description: 'Campaign Description',
-                startDate: '2024-01-01',
-                endDate: '2024-12-31',
-                status: 'ACTIVE', // or 'INACTIVE'
-            };
+import getLPTheme from '~/components/getLPTheme';
+import CampaignDetail from '~/components/Campain/CampainDetail'; // Import CampaignDetail component
 
-            // Simulate API call delay
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            setCampaign(mockData);
-            setLoading(false);
-        };
-
-        fetchCampaignDetail();
-    }, [campaignName]);
-
-    if (loading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-                <CircularProgress />
-            </Box>
-        );
-    }
-
-    if (!campaign) {
-        return (
-            <Box sx={{ p: 3 }}>
-                <Typography variant="h4" gutterBottom>
-                    Campaign Details
-                </Typography>
-                <Typography variant="body1">
-                    Campaign with name "{campaignName}" not found or no details available.
-                </Typography>
-            </Box>
-        );
-    }
-
+function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
     return (
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-                Campaign Details
-            </Typography>
-            <Box
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                width: '100dvw',
+                position: 'fixed',
+                bottom: 24,
+            }}
+        >
+            <ToggleButtonGroup
+                color="primary"
+                exclusive
+                value={showCustomTheme}
+                onChange={toggleCustomTheme}
+                aria-label="Platform"
                 sx={{
-                    p: 2,
-                    border: '1px solid',
-                    borderColor: 'grey.300',
-                    borderRadius: 1,
-                    boxShadow: 1,
-                    textAlign: 'left',
-                    maxWidth: '600px',
+                    backgroundColor: 'background.default',
+                    '& .Mui-selected': {
+                        pointerEvents: 'none',
+                    },
                 }}
-            >
-                <Typography variant="h6">{campaign.name}</Typography>
-                <Typography variant="body2">Description: {campaign.description}</Typography>
-                <Typography variant="body2">Start Date: {campaign.startDate}</Typography>
-                <Typography variant="body2">End Date: {campaign.endDate}</Typography>
-                <Typography variant="body2">
-                    Status:{' '}
-                    <span style={{ fontWeight: 'bold', color: campaign.status === 'ACTIVE' ? 'green' : 'red' }}>
-                        {campaign.status}
-                    </span>
-                </Typography>
-            </Box>
+            ></ToggleButtonGroup>
         </Box>
     );
+}
+
+ToggleCustomTheme.propTypes = {
+    showCustomTheme: PropTypes.shape({
+        valueOf: PropTypes.func.isRequired,
+    }).isRequired,
+    toggleCustomTheme: PropTypes.func.isRequired,
 };
 
-export default CampaignDetail;
+export default function CampainDetailage() {
+    const [mode, setMode] = React.useState('light');
+    const [showCustomTheme, setShowCustomTheme] = React.useState(true);
+    const LPtheme = createTheme(getLPTheme(mode));
+    const defaultTheme = createTheme({ palette: { mode } });
+
+    const toggleColorMode = () => {
+        setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    };
+
+    const toggleCustomTheme = () => {
+        setShowCustomTheme((prev) => !prev);
+    };
+
+    return (
+        <ThemeProvider
+            theme={showCustomTheme ? LPtheme : defaultTheme}
+            sx={{
+                fontFamily: 'Montserrat, sans-serif',
+            }}
+        >
+            <CssBaseline />
+            <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
+            <Divider />
+
+            <Box sx={{ bgcolor: 'background.default' }}>
+                {/* Replace CampaignList with CampaignDetail */}
+                <LogoCollection />
+                <CampaignDetail />
+
+                <Divider />
+
+                <Divider />
+            </Box>
+            <ToggleCustomTheme showCustomTheme={showCustomTheme} toggleCustomTheme={toggleCustomTheme} />
+        </ThemeProvider>
+    );
+}

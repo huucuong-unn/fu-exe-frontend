@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
+import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -10,13 +10,11 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
-import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { MainListItems, SecondaryListItems } from '../../components/listItems';
-import MenteeDetails from '../../components/MenteeDetails';
-import AddMenteeForm from '../../components/AddMenteeForm';
+import AdMentee from '~/pages/AdMentee';
 
 const drawerWidth = 240;
 
@@ -62,30 +60,14 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     },
 }));
 
+// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Dashboard() {
+export default function NavbarAdmin() {
     const [open, setOpen] = React.useState(true);
-    const [selectedPage, setSelectedPage] = React.useState('MenteeList');
-    const [selectedMentee, setSelectedMentee] = React.useState(null);
-    const theme = useTheme();
-
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
-    // const renderContent = () => {
-    //     switch (selectedPage) {
-    //         case 'MenteeList':
-    //             return <MenteeList onSelectMentee={setSelectedMentee} />;
-    //         case 'MenteeDetails':
-    //             return <MenteeDetails mentee={selectedMentee} />;
-    //         case 'AddMentee':
-    //             return <AddMenteeForm />;
-    //         default:
-    //             return <MenteeList onSelectMentee={setSelectedMentee} />;
-    //     }
-    // };
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -145,16 +127,14 @@ export default function Dashboard() {
                 <Box
                     component="main"
                     sx={{
-                        backgroundColor:
+                        backgroundColor: (theme) =>
                             theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
                         flexGrow: 1,
                         height: '100vh',
                         overflow: 'auto',
-                        padding: theme.spacing(3),
                     }}
                 >
-                    <Toolbar />
-                    {/* {renderContent()} */}
+                    <AdMentee />
                 </Box>
             </Box>
         </ThemeProvider>

@@ -133,15 +133,15 @@ export default function SignUp() {
             setEmailHelperText('');
         }
 
-        const dobValue = data.get('dob');
-        if (!validateDOB(dobValue)) {
-            setDobError(true);
-            setDobHelperText('You must be at least 17 years old.');
-            result = false;
-        } else {
-            setDobError(false);
-            setDobHelperText('');
-        }
+        // const dobValue = data.get('dob');
+        // if (!validateDOB(dobValue)) {
+        //     setDobError(true);
+        //     setDobHelperText('You must be at least 17 years old.');
+        //     result = false;
+        // } else {
+        //     setDobError(false);
+        //     setDobHelperText('');
+        // }
 
         const passwordValue = data.get('password');
         if (!validatePassword(passwordValue)) {
@@ -270,7 +270,7 @@ export default function SignUp() {
                                 getOptionLabel={(option) => option.name}
                                 renderInput={(params) => <TextField {...params} label="University" margin="normal" />}
                             /> */}
-                            <TextField
+                            {/* <TextField
                                 error={dobError}
                                 margin="normal"
                                 required
@@ -284,7 +284,7 @@ export default function SignUp() {
                                     shrink: true,
                                 }}
                                 helperText={dobHelperText}
-                            />
+                            /> */}
                             <TextField
                                 error={emailError}
                                 margin="normal"

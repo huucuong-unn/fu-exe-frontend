@@ -23,6 +23,7 @@ import Logout from '@mui/icons-material/Logout';
 import storageService from '~/components/StorageService/storageService';
 import { useEffect, useState } from 'react';
 import userOption from '~/components/UserOption/userOption';
+import { useNavigate } from 'react-router-dom';
 
 import logo from '~/assets/images/logo-outlined.png';
 
@@ -36,11 +37,17 @@ function AppAppBar({ mode, toggleColorMode }) {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const openForUserOption = Boolean(anchorEl);
+    const navigate = useNavigate();
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
+    };
+    const handleCloseForPoint = () => {
+        setAnchorEl(null);
+        navigate('/payment');
     };
     const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
@@ -217,8 +224,9 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     <MenuItem onClick={handleClose}>
                                         <Avatar /> Profile
                                     </MenuItem>
-                                    <MenuItem onClick={handleClose}>
-                                        <Avatar /> My account
+                                    <MenuItem onClick={handleCloseForPoint}>
+                                        <Avatar src="https://static-00.iconduck.com/assets.00/gold-coin-icon-2048x2048-loznlayl.png" />
+                                        {userInfo.point} Points
                                     </MenuItem>
                                     <Divider />
                                     <MenuItem onClick={handleClose}>

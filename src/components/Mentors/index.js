@@ -83,7 +83,7 @@ function SearchFilter({ searchKeyword, setSearchKeyword }) {
                 value={searchKeyword}
                 onChange={handleSearchChange}
             />
-            {/* <Button
+            <Button
                 variant="contained"
                 sx={{ width: 105, borderRadius: 5, backgroundColor: '#365E32' }}
                 onClick={handleOpen}
@@ -130,7 +130,7 @@ function SearchFilter({ searchKeyword, setSearchKeyword }) {
                         Show Results
                     </Button>
                 </Box>
-            </Modal> */}
+            </Modal>
         </Stack>
     );
 }

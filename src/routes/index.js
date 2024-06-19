@@ -20,9 +20,11 @@ import CreateMentorProfile from '~/pages/CreateMentorProfile';
 import MentorHistoryForCompany from '~/pages/MentorHistoryForCompany';
 import MentorLandingPage from '~/pages/MentorLandingPage';
 import CampaignDetail from '~/pages/MentorCampainDetailPage';
+import AdminLayout from '~/components/Layouts/AdminLayout';
+import AdCampaign from '~/pages/AdCampaign';
 import AdMentee from '~/pages/AdMentee';
 import AdMentor from '~/pages/AdMentor';
-import AdminLayout from '~/components/Layouts/AdminLayout';
+import AdAccount from '~/pages/AdAccount';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -59,6 +61,8 @@ const publicRoutes = [
     // { path: '/admin/dashboard/account', component: AccountAdminDashboard, layout: null },
     { path: '/admin/mentee', component: AdMentee, layout: AdminLayout },
     { path: '/admin/mentor', component: AdMentor, layout: AdminLayout },
+    { path: '/admin/campaign', component: AdCampaign, layout: AdminLayout },
+    { path: '/admin/account', component: AdAccount, layout: AdminLayout },
 
     //Mentor
     { path: '/campaigns', component: MentorLandingPage, layout: LayoutWithFooter },

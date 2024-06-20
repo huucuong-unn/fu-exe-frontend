@@ -27,7 +27,7 @@ export const MainListItems = () => {
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
             </ListItemButton>
-            <ListItemButton onClick={() => handleNavigate('/admin/dashboard/orders')}>
+            <ListItemButton onClick={() => handleNavigate('/admin/orders')}>
                 <ListItemIcon>
                     <ShoppingCartIcon />
                 </ListItemIcon>

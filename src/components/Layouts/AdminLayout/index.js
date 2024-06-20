@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { styled, createTheme, ThemeProvider, useTheme } from '@mui/material/styles';
 
-import { CssBaseline, Box, Toolbar, List, Typography, Divider, Badge, IconButton } from '@mui/material';
+import { CssBaseline, Box, Toolbar, List, Typography, Divider, Badge, IconButton, Menu, MenuItem } from '@mui/material';
 
 import MuiAppBar from '@mui/material/AppBar';
 import MuiDrawer from '@mui/material/Drawer';
@@ -61,9 +61,29 @@ const defaultTheme = createTheme();
 
 export function NavbarAdmin() {
     const [open, setOpen] = useState(true);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const handleOpenUserMenu = (event) => {
+        setAnchorElUser(event.currentTarget);
+    };
+
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
+    };
+
     const toggleDrawer = () => {
         setOpen(!open);
     };
+
+    function notificationsLabel(count) {
+        if (count === 0) {
+            return 'no notifications';
+        }
+        if (count > 99) {
+            return 'more than 99 notifications';
+        }
+        return `${count} notifications`;
+    }
 
     return (
         <AppBar position="absolute" open={open}>
@@ -85,11 +105,33 @@ export function NavbarAdmin() {
                     <MenuIcon />
                 </IconButton>
 
-                <IconButton color="inherit">
-                    <Badge badgeContent={4} color="secondary">
+                <IconButton color="inherit" aria-label={notificationsLabel(100)} onClick={handleOpenUserMenu}>
+                    <Badge badgeContent={100} color="secondary">
                         <NotificationsIcon />
                     </Badge>
                 </IconButton>
+                <Menu
+                    sx={{ mt: '45px' }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                >
+                    <MenuItem onClick={handleCloseUserMenu}>
+                        <Box>
+                            <Typography></Typography>
+                        </Box>
+                    </MenuItem>
+                </Menu>
             </Toolbar>
         </AppBar>
     );

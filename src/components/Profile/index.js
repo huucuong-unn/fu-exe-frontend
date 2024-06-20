@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, TextField, Typography, Avatar } from '@mui/material';
 import React from 'react';
 
 export const Profile = () => {
@@ -12,6 +12,23 @@ export const Profile = () => {
                     <Typography variant="h6" component="h3">
                         Personal Information
                     </Typography>
+                    <Box
+                        sx={{
+                            width: '100%',
+                            mb: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: 1,
+                        }}
+                    >
+                        <Avatar
+                            sx={{ width: 100, height: 100, bgcolor: '#f48fb1' }} // Tăng kích thước Avatar
+                        />
+                        <Typography variant="h5">150 point</Typography>
+                    </Box>
+
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                         <Grid item xs={6}>
                             <TextField
@@ -74,11 +91,7 @@ export const Profile = () => {
                             />
                         </Grid>
                     </Grid>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ width: { lg: '15%', md: '20%', xs: '80%' }, my: 4 }}
-                    >
+                    <Button variant="contained" size="medium" sx={{ my: 4, backgroundColor: '#365E32' }}>
                         Save Changes
                     </Button>
                 </Box>

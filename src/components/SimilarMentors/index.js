@@ -161,7 +161,7 @@ function SimilarMentor({ similarMentor }) {
                                                             marginRight: '4px',
                                                         }}
                                                     >
-                                                        150 point
+                                                        $90
                                                     </Typography>
                                                     <Typography
                                                         variant="body1"
@@ -170,7 +170,7 @@ function SimilarMentor({ similarMentor }) {
                                                             fontSize: '16px',
                                                         }}
                                                     >
-                                                        / acceptance
+                                                        / month
                                                     </Typography>
                                                 </Box>
 
@@ -181,6 +181,7 @@ function SimilarMentor({ similarMentor }) {
                                                         width: '100%',
                                                         height: '100%',
                                                         backgroundColor: '#365E32',
+                                                        flex: 1,
                                                     }}
                                                 >
                                                     View Profile

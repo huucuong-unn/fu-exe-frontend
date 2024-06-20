@@ -151,7 +151,12 @@ const AdMentee = () => {
                         {mentees.map((mentee) => (
                             <TableRow
                                 key={mentee.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                sx={{
+                                    '&:last-child td, &:last-child th': { border: 0 },
+                                    '&:hover': {
+                                        cursor: 'pointer',
+                                    },
+                                }}
                                 onClick={() => handleRowClick(mentee)}
                             >
                                 <TableCell component="th" scope="row">

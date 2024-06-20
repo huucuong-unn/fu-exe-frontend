@@ -15,7 +15,6 @@ import {
     Modal,
     Typography,
     Avatar,
-    Divider,
     Chip,
 } from '@mui/material';
 
@@ -157,7 +156,12 @@ function AdMentor() {
                         {mentors.map((mentor) => (
                             <TableRow
                                 key={mentor.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                sx={{
+                                    '&:last-child td, &:last-child th': { border: 0 },
+                                    '&:hover': {
+                                        cursor: 'pointer',
+                                    },
+                                }}
                                 onClick={() => handleRowClick(mentor)}
                             >
                                 <TableCell component="th" scope="row">
@@ -192,7 +196,7 @@ function AdMentor() {
                         width: 'fit-content',
                         bgcolor: '#f5f5f5',
                         boxShadow: 24,
-                        p: 4, // Tăng padding
+                        p: 4,
                         borderRadius: 2,
                         textAlign: 'left',
                     }}

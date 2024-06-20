@@ -27,7 +27,7 @@ export const MainListItems = () => {
                 </ListItemIcon>
                 <ListItemText primary="Dashboard" />
             </ListItemButton>
-            <ListItemButton onClick={() => handleNavigate('/admin/dashboard/orders')}>
+            <ListItemButton onClick={() => handleNavigate('/admin/orders')}>
                 <ListItemIcon>
                     <ShoppingCartIcon />
                 </ListItemIcon>
@@ -45,13 +45,13 @@ export const MainListItems = () => {
                 </ListItemIcon>
                 <ListItemText primary="Mentee" />
             </ListItemButton>
-            <ListItemButton onClick={() => handleNavigate('/admin/dashboard/campaign')}>
+            <ListItemButton onClick={() => handleNavigate('/admin/campaign')}>
                 <ListItemIcon>
                     <LayersIcon />
                 </ListItemIcon>
                 <ListItemText primary="Campaign" />
             </ListItemButton>
-            <ListItemButton onClick={() => handleNavigate('/admin/dashboard/account')}>
+            <ListItemButton onClick={() => handleNavigate('/admin/account')}>
                 <ListItemIcon>
                     <LayersIcon />
                 </ListItemIcon>

@@ -13,7 +13,6 @@ export const MentorProfile = () => {
     const { mentorId } = useParams();
     const [mentor, setMentor] = useState({});
     const [similarMentor, setSimilarMentor] = useState([]);
-    const [filteredSimilarMentor, setFilteredSimilarMentor] = useState([]);
 
     useEffect(() => {
         const getMentorByMentorProfileId = async () => {
@@ -31,7 +30,17 @@ export const MentorProfile = () => {
     useEffect(() => {
         const getMentorsByCompanyId = async () => {
             try {
-                const mentorData = await MentorAPI.getMentorsByCompanyId(mentor?.mentorProfile?.mentorDTO?.company?.id);
+                console.log(mentorId);
+                const params = {
+                    mentorId: mentor.mentorProfile.mentorDTO.id,
+                };
+
+                console.log(mentor.mentorProfile.mentorDTO?.company?.id);
+                const mentorData = await MentorAPI.getMentorsByCompanyIdV2(
+                    mentor?.mentorProfile.mentorDTO?.company?.id,
+                    params,
+                );
+                console.log(mentorData);
                 setSimilarMentor(mentorData);
             } catch (error) {
                 console.log(error);
@@ -42,17 +51,6 @@ export const MentorProfile = () => {
     }, [mentor]);
 
     useEffect(() => {
-        try {
-            if (similarMentor.length > 0) {
-                const filteredMentors = similarMentor.filter((item) => item.mentorProfile.id !== mentorId);
-                setFilteredSimilarMentor(filteredMentors);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }, [similarMentor, mentorId]);
-
-    useEffect(() => {
         console.log(mentor);
     }, [mentor]);
 
@@ -61,7 +59,7 @@ export const MentorProfile = () => {
             <Box>
                 {mentor && (
                     <ShortMentorInfo
-                        username={mentor?.mentorProfile?.mentorDTO?.account?.username}
+                        username={mentor?.mentorProfile?.mentorDTO?.fullName}
                         profilePicture={mentor?.mentorProfile?.profilePicture}
                         shortDescription={mentor?.mentorProfile?.shortDescription}
                         linkedinURL={mentor?.mentorProfile?.linkedinUrl}
@@ -76,7 +74,7 @@ export const MentorProfile = () => {
                 <Divider />
                 {mentor && <MentorSkill skills={mentor?.skills} />}
                 <Divider />
-                <SimilarMentor similarMentor={filteredSimilarMentor} />
+                <SimilarMentor similarMentor={similarMentor} />
             </Box>
         </Container>
     );

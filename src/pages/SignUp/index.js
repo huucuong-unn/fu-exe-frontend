@@ -298,7 +298,6 @@ export default function SignUp() {
                                 helperText={emailHelperText}
                             />
                             <TextField
-                                error={passwordError}
                                 margin="normal"
                                 required
                                 fullWidth

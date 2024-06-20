@@ -83,7 +83,7 @@ function SimilarMentor({ similarMentor }) {
                                                     fontWeight="bold"
                                                     fontSize={'24px'}
                                                 >
-                                                    {mentor?.mentorProfile?.mentorDTO?.account?.username}
+                                                    {mentor?.mentorProfile?.mentorDTO?.fullName}
                                                 </Typography>
                                                 <Chip
                                                     avatar={

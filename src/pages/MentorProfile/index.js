@@ -30,7 +30,6 @@ export const MentorProfile = () => {
     useEffect(() => {
         const getMentorsByCompanyId = async () => {
             try {
-                console.log(mentorId);
                 const params = {
                     mentorId: mentor.mentorProfile.mentorDTO.id,
                 };

@@ -20,7 +20,11 @@ import PropTypes from 'prop-types';
 import PaymentIcon from '@mui/icons-material/Payment';
 import SchoolIcon from '@mui/icons-material/School';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import ApplicationAPI from '~/API/ApplicationAPI';
+import TransactionAPI from '~/API/TransactionAPI';
+import storageService from '~/components/StorageService/storageService';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -45,8 +49,18 @@ CustomTabPanel.propTypes = {
 };
 
 function StudentHistory() {
+    const location = useLocation();
     const [value, setValue] = useState(0);
     const [selectedMentee, setSelectedMentee] = useState(null);
+    const [userInfo, setUserInfo] = useState(storageService.getItem('userInfo'));
+    const [applys, setApplys] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+
+    useEffect(() => {
+        if (location.state && location.state.selectApplyTab) {
+            setValue(1); // Select the "APPLYS" tab
+        }
+    }, [location]);
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -72,21 +86,52 @@ function StudentHistory() {
         return { name, calories, fat, carbs, protein };
     }
 
-    const rows = [
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '+ 150 point', 'Complete'),
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '- 150 point', 'Error'),
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '+ 150 point', 'In Progress'),
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '- 150 point', 'Complete'),
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '+ 150 point', 'Complete'),
-    ];
+    useEffect(() => {
+        // Fetch data only when the "APPLYS" tab is selected
+        const fetchApplications = async () => {
+            try {
+                const params = {
+                    page: 1,
+                    limit: 2,
+                    status: 'ALL',
+                    createdDate: 'desc',
+                };
+                const response = await ApplicationAPI.getApplicationByStudentId(userInfo.studentId, params, false);
 
-    const applys = [
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '+ 150 point', 'Approve'),
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '- 150 point', 'Approve'),
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '+ 150 point', 'In Progress'),
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '- 150 point', 'Reject'),
-        createData('31/10/2003:01:01', 'cf430f53-7f36-4591-b727-3fbbfd4a7da4', '+ 150 point', 'Reject'),
-    ];
+                setApplys(response.listResult);
+                console.log(applys);
+            } catch (error) {
+                console.error('Error fetching applications:', error);
+            }
+        };
+
+        fetchApplications();
+    }, []);
+
+    useEffect(() => {
+        // Fetch data only when the "APPLYS" tab is selected
+        const fetchTransactions = async () => {
+            try {
+                const params = {
+                    page: 1,
+                    limit: 2,
+                    status: 'ALL',
+                    companyId: '',
+                    mentorName: '',
+                    createdDate: 'desc',
+                };
+                const response = await TransactionAPI.getTransactionByAccountId(userInfo.id, params, false);
+
+                setTransactions(response.listResult);
+
+                console.log(transactions);
+            } catch (error) {
+                console.error('Error fetching applications:', error);
+            }
+        };
+
+        fetchTransactions();
+    }, []);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -121,31 +166,35 @@ function StudentHistory() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row) => (
-                                <StyledTableRow key={row.name}>
-                                    <StyledTableCell component="th" scope="row">
-                                        {row.name}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="left">{row.calories}</StyledTableCell>
-                                    <StyledTableCell align="left">{row.fat}</StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        <Chip
-                                            label={row.carbs}
-                                            sx={{
-                                                backgroundColor:
-                                                    row.carbs === 'Complete'
-                                                        ? 'success.main'
-                                                        : row.carbs === 'In Progress'
-                                                        ? 'info.main'
-                                                        : row.carbs === 'Error'
-                                                        ? 'error.main'
-                                                        : 'default.main',
-                                                color: 'white',
-                                            }}
-                                        />
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                            ))}
+                            {transactions.length > 0 ? (
+                                transactions.map((row) => (
+                                    <StyledTableRow key={row.name}>
+                                        <StyledTableCell component="th" scope="row">
+                                            {row.createdDate}
+                                        </StyledTableCell>
+                                        <StyledTableCell align="left">{row.id}</StyledTableCell>
+                                        <StyledTableCell align="left">{row.points}</StyledTableCell>
+                                        <StyledTableCell align="left">
+                                            <Chip
+                                                label={row.status}
+                                                sx={{
+                                                    backgroundColor:
+                                                        row.status === 'SUCCESS'
+                                                            ? 'success.main'
+                                                            : row.status === 'In Progress'
+                                                            ? 'info.main'
+                                                            : row.status === 'FAILED'
+                                                            ? 'error.main'
+                                                            : 'default.main',
+                                                    color: 'white',
+                                                }}
+                                            />
+                                        </StyledTableCell>
+                                    </StyledTableRow>
+                                ))
+                            ) : (
+                                <div></div>
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -162,40 +211,44 @@ function StudentHistory() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {applys.map((apply) => (
-                                <StyledTableRow
-                                    key={apply.name}
-                                    onClick={() => handleRowClick(apply)}
-                                    sx={{
-                                        '&:last-child td, &:last-child th': { border: 0 },
-                                        '&:hover': {
-                                            cursor: 'pointer',
-                                        },
-                                    }}
-                                >
-                                    <StyledTableCell component="th" scope="row">
-                                        {apply.name}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="left">Nguyen Thien Thanh</StyledTableCell>
-                                    <StyledTableCell align="left">Apple</StyledTableCell>
-                                    <StyledTableCell align="left">
-                                        <Chip
-                                            label={apply.carbs}
-                                            sx={{
-                                                backgroundColor:
-                                                    apply.carbs === 'Approve'
-                                                        ? 'success.main'
-                                                        : apply.carbs === 'In Progress'
-                                                        ? 'info.main'
-                                                        : apply.carbs === 'Reject'
-                                                        ? 'error.main'
-                                                        : 'default.main',
-                                                color: 'white',
-                                            }}
-                                        />
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                            ))}
+                            {applys.length > 0 ? (
+                                applys.map((apply) => (
+                                    <StyledTableRow
+                                        key={apply.id} // Assuming 'id' is a unique identifier for each application
+                                        onClick={() => handleRowClick(apply)}
+                                        sx={{
+                                            '&:last-child td, &:last-child th': { border: 0 },
+                                            '&:hover': {
+                                                cursor: 'pointer',
+                                            },
+                                        }}
+                                    >
+                                        <StyledTableCell component="th" scope="row">
+                                            {apply.createdDate}
+                                        </StyledTableCell>
+                                        <StyledTableCell align="left">{apply.mentor.fullName}</StyledTableCell>
+                                        <StyledTableCell align="left">{apply.mentor.company.name}</StyledTableCell>
+                                        <StyledTableCell align="left">
+                                            <Chip
+                                                label={apply.status}
+                                                sx={{
+                                                    backgroundColor:
+                                                        apply.status === 'APPROVED'
+                                                            ? 'success.main'
+                                                            : apply.status === 'IN PROCESS'
+                                                            ? 'info.main'
+                                                            : apply.status === 'REJECTED'
+                                                            ? 'error.main'
+                                                            : 'default.main',
+                                                    color: 'white',
+                                                }}
+                                            />
+                                        </StyledTableCell>
+                                    </StyledTableRow>
+                                ))
+                            ) : (
+                                <div></div>
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>

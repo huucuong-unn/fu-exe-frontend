@@ -7,6 +7,7 @@ import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { Phone } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 export const ShortMentorInfo = ({
     username,
@@ -16,7 +17,14 @@ export const ShortMentorInfo = ({
     facebookURL,
     googleMeetURL,
     requirement,
+    mentorId,
 }) => {
+    const navigate = useNavigate();
+
+    const handleApply = () => {
+        navigate('/user/apply', { state: { mentorId: mentorId } });
+    };
+
     return (
         <Container
             id="shortmentorinfo"
@@ -201,21 +209,20 @@ export const ShortMentorInfo = ({
                             </Box>
                         </Box>
 
-                        <Link to={'/user/apply'}>
-                            <Button
-                                variant="contained"
-                                // color="primary"
-                                sx={{
-                                    width: '100%',
-                                    mt: 2,
-                                    textTransform: 'none',
-                                    fontSize: '16px',
-                                    backgroundColor: '#365E32',
-                                }}
-                            >
-                                Apply now
-                            </Button>
-                        </Link>
+                        <Button
+                            onClick={handleApply}
+                            variant="contained"
+                            // color="primary"
+                            sx={{
+                                width: '100%',
+                                mt: 2,
+                                textTransform: 'none',
+                                fontSize: '16px',
+                                backgroundColor: '#365E32',
+                            }}
+                        >
+                            Apply now
+                        </Button>
                     </Box>
                 </Card>
             </Stack>

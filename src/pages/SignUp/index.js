@@ -169,7 +169,7 @@ export default function SignUp() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        data.append('roleName', 'admin');
+        data.append('roleName', 'student');
 
         if (validateAllField(data)) {
             try {

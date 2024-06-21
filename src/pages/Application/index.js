@@ -1,15 +1,8 @@
-import {
-    Box,
-    Button,
-    Container,
-    Typography,
-    TextField,
-    Autocomplete,
-    TextareaAutosize,
-    InputLabel,
-} from '@mui/material';
+import { Box, Button, Container, Typography, TextField, Autocomplete, InputLabel } from '@mui/material';
 import { useEffect, useState } from 'react';
-
+import ApplicationAPI from '~/API/ApplicationAPI';
+import storageService from '~/components/StorageService/storageService';
+import { useLocation, useNavigate } from 'react-router-dom';
 export const Application = () => {
     const locations = [
         'An Giang',
@@ -82,8 +75,12 @@ export const Application = () => {
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [isIntroduceValid, setIsIntroduceValid] = useState(true);
     const [isReasonApplyValid, setIsReasonApplyValid] = useState(true);
+    const [studentId, setStudentId] = useState(storageService.getItem('userInfo').studentId);
+    const location = useLocation();
+    const { mentorId } = location.state || {}; // Destructure state
+    const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         const email = event.target.email.value;
@@ -121,6 +118,19 @@ export const Application = () => {
         } else {
             setIsReasonApplyValid(true);
         }
+
+        const data = new FormData(event.currentTarget);
+        console.log(mentorId);
+        console.log(studentId);
+        data.append('mentorId', mentorId);
+        data.append('studentId', studentId);
+        console.log(data);
+        try {
+            await ApplicationAPI.createApplication(data);
+            navigate('/user/history', { state: { selectApplyTab: true } });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
@@ -156,6 +166,7 @@ export const Application = () => {
                 >
                     <TextField
                         id="username"
+                        name="fullName"
                         label="Full name"
                         variant="outlined"
                         sx={{ flex: 1 }}
@@ -164,6 +175,7 @@ export const Application = () => {
                     />
                     <TextField
                         id="email"
+                        name="email"
                         label="Email"
                         variant="outlined"
                         sx={{ flex: 1 }}
@@ -181,13 +193,20 @@ export const Application = () => {
                 >
                     <TextField
                         id="phoneNumber"
+                        name="phoneNumber"
                         label="Phone number"
                         variant="outlined"
                         sx={{ flex: 1 }}
                         error={!isPhoneNumberValid}
                         helperText={!isPhoneNumberValid ? 'Invalid phone' : ''}
                     />
-                    <TextField id="facebook-url" label="Facebook Url" variant="outlined" sx={{ flex: 1 }} />
+                    <TextField
+                        id="facebook-url"
+                        name="facebookUrl"
+                        label="Facebook Url"
+                        variant="outlined"
+                        sx={{ flex: 1 }}
+                    />
                 </Box>
                 <Box
                     sx={{
@@ -197,10 +216,11 @@ export const Application = () => {
                         gap: 2,
                     }}
                 >
-                    <TextField id="outlined-basic" label="Zalo Url" variant="outlined" sx={{ flex: 1 }} />
+                    <TextField id="zalo-url" name="zaloAccount" label="Zalo Url" variant="outlined" sx={{ flex: 1 }} />
                     <Autocomplete
                         disablePortal
-                        id="combo-box-demo"
+                        id="address"
+                        name="userAddress"
                         options={locations}
                         sx={{ width: 300, flex: 1 }}
                         renderInput={(params) => <TextField {...params} label="Address" />}
@@ -227,7 +247,7 @@ export const Application = () => {
                         <InputLabel htmlFor="upload-cv" sx={{ fontWeight: 'bold' }}>
                             Upload CV
                         </InputLabel>
-                        <TextField id="upload-cv" variant="outlined" type="file" sx={{ width: '100%' }} />
+                        <TextField id="upload-cv" name="cvFile" variant="outlined" type="file" sx={{ width: '100%' }} />
                     </Box>
                 </Box>
                 <Box
@@ -240,6 +260,7 @@ export const Application = () => {
                 >
                     <TextField
                         id="introduce"
+                        name="introduce"
                         label="Introduce"
                         multiline
                         rows={5}
@@ -249,6 +270,7 @@ export const Application = () => {
                     />
                     <TextField
                         id="reasonApply"
+                        name="reasonApply"
                         label="Reason apply"
                         multiline
                         rows={5}

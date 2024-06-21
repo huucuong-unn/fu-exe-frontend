@@ -65,6 +65,7 @@ export const MentorProfile = () => {
                         facebookURL={mentor?.mentorProfile?.facebookUrl}
                         googleMeetURL={mentor?.mentorProfile?.googleMeetUrl}
                         requirement={mentor?.mentorProfile?.requirement}
+                        mentorId={mentor?.mentorProfile?.mentorDTO?.id}
                     />
                 )}
                 {mentor && <MentorAbout description={mentor?.mentorProfile?.description} />}

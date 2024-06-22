@@ -14,23 +14,15 @@ import {
     Autocomplete,
     Button,
     Modal,
+    Chip,
     Typography,
     Avatar,
 } from '@mui/material';
 import { styled } from '@mui/system';
-
-const mentees = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
-    { id: 3, name: 'Emily Johnson', email: 'emily.johnson@example.com', status: 'Active' },
-    { id: 4, name: 'Michael Brown', email: 'michael.brown@example.com', status: 'Inactive' },
-    { id: 5, name: 'Sarah Davis', email: 'sarah.davis@example.com', status: 'Active' },
-    { id: 6, name: 'David Wilson', email: 'david.wilson@example.com', status: 'Inactive' },
-    { id: 7, name: 'Laura Martinez', email: 'laura.martinez@example.com', status: 'Active' },
-    { id: 8, name: 'James Anderson', email: 'james.anderson@example.com', status: 'Inactive' },
-    { id: 9, name: 'Patricia Thomas', email: 'patricia.thomas@example.com', status: 'Active' },
-    { id: 10, name: 'Robert Taylor', email: 'robert.taylor@example.com', status: 'Inactive' },
-];
+import { useState, useEffect } from 'react';
+import CompanyAPI from '~/API/CompanyAPI';
+import MentorApplyAPI from '~/API/MentorApply';
+import CampaignAPI from '~/API/CampaignAPI';
 
 const AdMentee = () => {
     const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
@@ -81,7 +73,15 @@ const AdMentee = () => {
         }),
     );
 
-    const [selectedMentee, setSelectedMentee] = React.useState(null);
+    const [selectedMentee, setSelectedMentee] = useState(null);
+    const [mentees, setMentees] = useState([]);
+    const [menteeName, setMenteeName] = useState('');
+    const [mentorName, setMentorName] = useState('');
+    const [campaignId, setCampaignId] = useState(null);
+    const [companyId, setCompanyId] = useState(null);
+    const [student, setStudent] = useState(null);
+    const [companies, setCompanies] = useState([]);
+    const [campaigns, setCampaigns] = useState([]);
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -91,35 +91,97 @@ const AdMentee = () => {
         setSelectedMentee(null);
     };
 
-    const student = {
-        name: 'Nguyễn Văn A',
-        code: '2019601234',
-        dob: '01/01/2001',
-        phone: '0987654321',
-        photo: 'https://example.com/avatar.jpg', // Đường dẫn ảnh đại diện
+    const handleSearch = async () => {
+        try {
+            const params = {
+                menteeName: menteeName,
+                mentorFullName: mentorName,
+                campaignId: campaignId,
+                companyId: companyId,
+                page: 1,
+                limit: 10,
+            };
+
+            const menteesData = await MentorApplyAPI.findAllByMenteeNameAndMentorFullNameAndCampaignIdAndCompanyId(
+                params,
+            );
+
+            setMentees(menteesData.listResult);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const params = {
+                    menteeName: '',
+                    mentorFullName: '',
+                    campaignId: '',
+                    companyId: '',
+                    page: 1,
+                    limit: 10,
+                };
+                const companiesData = await CompanyAPI.getAllWithStatusActiveWithoutPaging();
+                const campaignsData = await CampaignAPI.getAllWithoutPaging();
+                const menteesData = await MentorApplyAPI.findAllByMenteeNameAndMentorFullNameAndCampaignIdAndCompanyId(
+                    params,
+                );
+                setCompanies(companiesData);
+                setCampaigns(campaignsData);
+                setMentees(menteesData.listResult);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'end', gap: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, paddingRight: 2 }}>
-                <TextField id="outlined-basic" label="Mentee name..." variant="outlined" size="small" />
+                <TextField
+                    id="outlined-basic"
+                    label="Mentee name..."
+                    variant="outlined"
+                    size="small"
+                    value={menteeName}
+                    onChange={(e) => setMenteeName(e.target.value)}
+                />
+                <TextField
+                    id="outlined-basic"
+                    label="Mentor name..."
+                    variant="outlined"
+                    size="small"
+                    value={mentorName}
+                    onChange={(e) => setMentorName(e.target.value)}
+                />
                 <Autocomplete
                     disablePortal
-                    id="combo-box-demo"
-                    options=""
+                    id="campaignOption"
+                    options={campaigns}
                     sx={{ width: 300 }}
-                    renderInput={(params) => <TextField {...params} label="Mentor name..." />}
+                    getOptionLabel={(option) => option.name}
+                    onChange={(event, newValue) => {
+                        setCampaignId(newValue ? newValue.id : null);
+                    }}
+                    renderInput={(params) => <TextField {...params} label="Campaign name..." />}
                     size="small"
                 />
                 <Autocomplete
                     disablePortal
-                    id="combo-box-demo"
-                    options=""
+                    id="companyOption"
+                    options={companies}
                     sx={{ width: 300 }}
-                    renderInput={(params) => <TextField {...params} label="Campain name..." />}
+                    getOptionLabel={(option) => option.name}
+                    onChange={(event, newValue) => {
+                        setCompanyId(newValue ? newValue.id : null);
+                    }}
+                    renderInput={(params) => <TextField {...params} label="Company..." />}
                     size="small"
                 />
-                <Button variant="contained" size="medium">
+                <Button onClick={handleSearch} variant="contained" size="medium">
                     Search
                 </Button>
             </Box>
@@ -128,7 +190,7 @@ const AdMentee = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
-                                ID
+                                No
                             </TableCell>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                 Name
@@ -148,27 +210,38 @@ const AdMentee = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {mentees.map((mentee) => (
+                        {mentees.map((mentee, index) => (
                             <TableRow
-                                key={mentee.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                key={mentee.mentee.id}
+                                sx={{
+                                    '&:last-child td, &:last-child th': { border: 0 },
+                                    '&:hover': {
+                                        cursor: 'pointer',
+                                    },
+                                }}
                                 onClick={() => handleRowClick(mentee)}
                             >
                                 <TableCell component="th" scope="row">
-                                    {mentee.id}
+                                    {index + 1}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    {mentee.name}
+                                    {mentee.mentee.student.name}
                                 </TableCell>
-                                <TableCell align="left">{mentee.email}</TableCell>
-                                <TableCell align="left">Le Cong Vine</TableCell>
-                                <TableCell align="left">Spring Seasson 2024</TableCell>
+                                <TableCell align="left">{mentee.mentee.student.account.email}</TableCell>
+                                <TableCell align="left">{mentee.mentorFullName}</TableCell>
+                                <TableCell align="left">{mentee.campaignName}</TableCell>
                                 <TableCell align="left">
-                                    {' '}
-                                    <FormControlLabel
-                                        control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
-                                        label="Active"
-                                        onClick={(event) => event.stopPropagation()}
+                                    <Chip
+                                        label={mentee.status}
+                                        sx={{
+                                            backgroundColor:
+                                                mentee.status === 'DONE'
+                                                    ? 'success.main'
+                                                    : mentee.status === 'TRAINING'
+                                                    ? 'orange'
+                                                    : 'default.main',
+                                            color: 'white',
+                                        }}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -196,7 +269,7 @@ const AdMentee = () => {
                         variant="h5"
                         component="h2"
                         gutterBottom
-                        sx={{ color: '#fff', bgcolor: '#4e342e', p: 2, borderRadius: 1 }} // Tăng padding
+                        sx={{ color: '#fff', bgcolor: '#4e342e', p: 2, borderRadius: 1 }}
                     >
                         STUDENT CARD
                     </Typography>
@@ -211,13 +284,13 @@ const AdMentee = () => {
                                 gap: 2,
                             }}
                         >
-                            <Avatar
+                            {/* <Avatar
                                 alt={student.name}
                                 src={student.photo}
-                                sx={{ width: 100, height: 100, bgcolor: '#f48fb1' }} // Tăng kích thước Avatar
-                            />
+                                sx={{ width: 100, height: 100, bgcolor: '#f48fb1' }}
+                            /> */}
                             <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#795548' }}>
-                                ID: SE172594
+                                ID: {selectedMentee?.mentee.student.studentCode}
                             </Typography>
                         </Box>
 
@@ -235,7 +308,7 @@ const AdMentee = () => {
                                     Name:
                                 </Typography>
                                 <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    Nguyen Thien Thanh
+                                    {selectedMentee?.mentee.student.name}
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -243,7 +316,7 @@ const AdMentee = () => {
                                     University:
                                 </Typography>
                                 <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    FPT University
+                                    {selectedMentee?.mentee.student.university.name}
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -251,16 +324,20 @@ const AdMentee = () => {
                                     Date of birth:
                                 </Typography>
                                 <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    31/10/2003
+                                    {new Date(selectedMentee?.mentee.student.dob).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
                                 </Typography>
                             </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#795548', mr: 1 }}>
                                     Phone number:
                                 </Typography>
-                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    0967709009
-                                </Typography>
+                                {/* <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                    {selectedMentee?.mentee.student.phone}
+                                </Typography> */}
                             </Box>
                         </Box>
                     </Box>

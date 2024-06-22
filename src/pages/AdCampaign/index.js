@@ -19,6 +19,7 @@ import {
     Step,
     StepLabel,
     Card,
+    Autocomplete,
 } from '@mui/material';
 
 import PropTypes from 'prop-types';
@@ -31,7 +32,7 @@ import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function AdCampaign() {
     const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
@@ -82,9 +83,18 @@ function AdCampaign() {
         }),
     );
 
+    const steps = ['Company Apply', 'Student Apply', 'Tranning', 'Close'];
+
+    const status = ['Company Apply', 'Student Apply', 'Tranning', 'Close'];
+
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isNameValid, setIsNameValid] = useState(true);
+    const [isNumberOfSessionValid, setIsNumberOfSessionValid] = useState(true);
+    const [isMinOnlineSessionValid, setIsMinOnlineSessionValid] = useState(true);
+    const [isMinOfflineSessionValid, setIsMinOfflineSessionValid] = useState(true);
+    const [isMinSessionDurationValid, setIsMinSessionDurationValid] = useState(true);
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -237,7 +247,54 @@ function AdCampaign() {
         width: 1,
     });
 
-    const steps = ['Company Apply', 'Student Apply', 'Tranning', 'Close'];
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const name = event.target.name.value;
+        const numberOfSession = event.target.numberOfSession.value;
+        const minOnlineSession = event.target.minOnlineSession.value;
+        const minOfflineSession = event.target.minOfflineSession.value;
+        const minSessionDuration = event.target.minSessionDuration.value;
+
+        const isNumberOfSessionPositive = /^[1-9]\d*$/.test(numberOfSession);
+        const isMinOnlineSessionPositive = /^[1-9]\d*$/.test(minOnlineSession);
+        const isMinOfflineSessionPositive = /^[1-9]\d*$/.test(minOfflineSession);
+        const isMinSessionDurationPositive = /^[1-9]\d*$/.test(minSessionDuration);
+
+        if (name.length < 5 || name.length > 50) {
+            setIsNameValid(false);
+        } else {
+            setIsNameValid(true);
+        }
+
+        if (!isNumberOfSessionPositive) {
+            setIsNumberOfSessionValid(false);
+        } else {
+            setIsNumberOfSessionValid(true);
+        }
+
+        if (!isMinOnlineSessionPositive) {
+            setIsMinOnlineSessionValid(false);
+        } else {
+            setIsMinOnlineSessionValid(true);
+        }
+
+        if (!isMinOfflineSessionPositive) {
+            setIsMinOfflineSessionValid(false);
+        } else {
+            setIsMinOfflineSessionValid(true);
+        }
+
+        if (!isMinSessionDurationPositive) {
+            setIsMinSessionDurationValid(false);
+        } else {
+            setIsMinSessionDurationValid(true);
+        }
+    };
+
+    useEffect(() => {
+        console.log(isNameValid);
+    }, [isNameValid]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'end', gap: 4 }}>
@@ -247,6 +304,14 @@ function AdCampaign() {
                 </Button>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, paddingRight: 2 }}>
                     <TextField id="outlined-basic" label="Mentor name..." variant="outlined" size="small" />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={status}
+                        sx={{ width: '200px' }}
+                        size="small"
+                        renderInput={(params) => <TextField {...params} label="Status" />}
+                    />
                     <Box
                         sx={{
                             display: 'flex',
@@ -769,6 +834,8 @@ function AdCampaign() {
                         borderRadius: 2,
                         textAlign: 'center',
                     }}
+                    component="form"
+                    onSubmit={handleSubmit}
                 >
                     <Box pb={4}>
                         <Box
@@ -791,7 +858,14 @@ function AdCampaign() {
                                 Upload file
                                 <VisuallyHiddenInput type="file" />
                             </Button>
-                            <TextField id="outlined-basic" variant="outlined" label="Name" sx={{ flex: 1 }} />
+                            <TextField
+                                id="name"
+                                variant="outlined"
+                                label="Name"
+                                sx={{ flex: 1 }}
+                                error={!isNameValid}
+                                helperText={!isNameValid ? 'Name must be 5-50 characters long' : ''}
+                            />
                         </Box>
                         <Box
                             sx={{
@@ -803,16 +877,20 @@ function AdCampaign() {
                             }}
                         >
                             <TextField
-                                id="outlined-basic"
+                                id="numberOfSession"
                                 variant="outlined"
                                 label="Number of session"
                                 sx={{ flex: 1 }}
+                                error={!isNumberOfSessionValid}
+                                helperText={!isNumberOfSessionValid ? 'Must be number' : ''}
                             />
                             <TextField
-                                id="outlined-basic"
+                                id="minOnlineSession"
                                 variant="outlined"
                                 label="Min online session"
                                 sx={{ flex: 1 }}
+                                error={!isMinOnlineSessionValid}
+                                helperText={!isMinOnlineSessionValid ? 'Must be number' : ''}
                             />
                         </Box>
                         <Box
@@ -825,16 +903,20 @@ function AdCampaign() {
                             }}
                         >
                             <TextField
-                                id="outlined-basic"
+                                id="minOfflineSession"
                                 variant="outlined"
                                 label="Min offline session"
                                 sx={{ flex: 1 }}
+                                error={!isMinOfflineSessionValid}
+                                helperText={!isMinOfflineSessionValid ? 'Must be number' : ''}
                             />
                             <TextField
-                                id="outlined-basic"
+                                id="minSessionDuration"
                                 variant="outlined"
                                 label="Min session duration"
                                 sx={{ flex: 1 }}
+                                error={!isMinSessionDurationValid}
+                                helperText={!isMinSessionDurationValid ? 'Must be number' : ''}
                             />
                         </Box>
                         <Box
@@ -878,7 +960,9 @@ function AdCampaign() {
                         <Button variant="outlined" onClick={handleCloseEditModal}>
                             Close
                         </Button>
-                        <Button variant="contained">Create</Button>
+                        <Button variant="contained" type="submit">
+                            Create
+                        </Button>
                     </Box>
                 </Box>
             </Modal>

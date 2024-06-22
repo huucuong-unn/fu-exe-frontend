@@ -26,6 +26,12 @@ const CompanyAPI = {
         const authorizedConfig = this.addAuthorizationHeader({}, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
+
+    getAllWithStatusActiveWithoutPaging(includeAuthorization = false) {
+        const url = 'v1/company/company-status-true-without-paging';
+        const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
 };
 
 export default CompanyAPI;

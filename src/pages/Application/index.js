@@ -77,7 +77,7 @@ export const Application = () => {
     const [isReasonApplyValid, setIsReasonApplyValid] = useState(true);
     const [studentId, setStudentId] = useState(storageService.getItem('userInfo').studentId);
     const location = useLocation();
-    const { mentorId } = location.state || {}; // Destructure state
+    const { mentorId } = location.state || {};
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {

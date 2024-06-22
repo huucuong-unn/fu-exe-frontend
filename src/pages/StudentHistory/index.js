@@ -12,7 +12,8 @@ import {
     Paper,
     Chip,
     Modal,
-    Divider,
+    TextField,
+    Button,
 } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
@@ -52,6 +53,7 @@ function StudentHistory() {
     const location = useLocation();
     const [value, setValue] = useState(0);
     const [selectedMentee, setSelectedMentee] = useState(null);
+    const [selectedApply, setSelectedApply] = useState(null);
     const [userInfo, setUserInfo] = useState(storageService.getItem('userInfo'));
     const [applys, setApplys] = useState([]);
     const [transactions, setTransactions] = useState([]);
@@ -141,9 +143,29 @@ function StudentHistory() {
         setSelectedMentee(mentee);
     };
 
+    const handleRowApplyClick = (applyss) => {
+        setSelectedApply(applys);
+    };
+
     const handleCloseModal = () => {
         setSelectedMentee(null);
+        setSelectedApply(null);
     };
+
+    const applyss = [
+        {
+            tranningTime: '31/10/2003 - 1/1/2003',
+            mentorName: 'Le Cong Vinh',
+            companyName: 'FPT Software',
+            status: 'TRANNING',
+        },
+        {
+            tranningTime: '31/10/2003 - 1/1/2003',
+            mentorName: 'Le Cong Vinh',
+            companyName: 'FPT Software',
+            status: 'DONE',
+        },
+    ];
 
     return (
         <Container id="companies" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
@@ -152,6 +174,7 @@ function StudentHistory() {
             </Typography>
             <Tabs value={value} onChange={handleChange} aria-label="icon label tabs example">
                 <Tab icon={<PaymentIcon />} label="PAYMENTS" />
+                <Tab icon={<SchoolIcon />} label="APPLICATIONS" />
                 <Tab icon={<SchoolIcon />} label="APPLYS" />
             </Tabs>
             <CustomTabPanel value={value} index={0}>
@@ -289,6 +312,104 @@ function StudentHistory() {
                     </Box>
                 </Box>
             </Modal>
+            <CustomTabPanel value={value} index={2}>
+                <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                        <TableHead>
+                            <TableRow>
+                                <StyledTableCell align="left">Tranning Time</StyledTableCell>
+                                <StyledTableCell align="left">Mentor</StyledTableCell>
+                                <StyledTableCell align="left">Company</StyledTableCell>
+                                <StyledTableCell align="left">Status</StyledTableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {applyss.map((apply) => (
+                                <StyledTableRow
+                                    key={apply.id} // Assuming 'id' is a unique identifier for each application
+                                    onClick={() => handleRowApplyClick(apply)}
+                                    sx={{
+                                        '&:last-child td, &:last-child th': { border: 0 },
+                                        '&:hover': {
+                                            cursor: 'pointer',
+                                        },
+                                    }}
+                                >
+                                    <StyledTableCell component="th" scope="row">
+                                        {apply.tranningTime}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left">{apply.mentorName}</StyledTableCell>
+                                    <StyledTableCell align="left">{apply.companyName}</StyledTableCell>
+                                    <StyledTableCell align="left">
+                                        <Chip
+                                            label={apply.status}
+                                            sx={{
+                                                backgroundColor:
+                                                    apply.status === 'DONE'
+                                                        ? 'success.main'
+                                                        : apply.status === 'TRANNING'
+                                                        ? 'info.main'
+                                                        : 'default.main',
+                                                color: 'white',
+                                            }}
+                                        />
+                                    </StyledTableCell>
+                                </StyledTableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Modal open={Boolean(selectedApply)} onClose={handleCloseModal}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 'fit-content',
+                            bgcolor: '#f5f5f5',
+                            boxShadow: 24,
+                            p: 4,
+                            borderRadius: 2,
+                            textAlign: 'left',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 2,
+                            }}
+                        >
+                            <Typography variant="h4">Feedback</Typography>
+                            <TextField
+                                id="feedback"
+                                name="feedback"
+                                label="Feedback"
+                                multiline
+                                rows={3}
+                                sx={{ minWidth: '600px', flex: 1 }}
+                            />
+                            <Box sx={{ display: 'flex', justifyContent: 'right', alignItems: 'center', width: '100%' }}>
+                                <Button
+                                    variant="contained"
+                                    size="large"
+                                    sx={{
+                                        width: '100%',
+                                        height: '100%',
+                                        backgroundColor: '#365E32',
+                                    }}
+                                    type="submit"
+                                >
+                                    Submit
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Modal>
+            </CustomTabPanel>
         </Container>
     );
 }

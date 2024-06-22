@@ -74,7 +74,13 @@ const Payment = () => {
                 <Typography variant="h4" gutterBottom>
                     Exchange Points
                 </Typography>
-                <Paper elevation={2} sx={{ mb: 2, p: 2 }}>
+                <Paper
+                    elevation={2}
+                    sx={{
+                        mb: 2,
+                        p: 2,
+                    }}
+                >
                     <Typography variant="h6" gutterBottom>
                         Select Payment Method
                     </Typography>
@@ -84,8 +90,16 @@ const Payment = () => {
                                 key={method.id}
                                 value={method.id.toString()}
                                 control={<Radio />}
+                                sx={{ ml: 1 }}
                                 label={
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            paddingRight: 1,
+                                            paddingLeft: 1,
+                                        }}
+                                    >
                                         <img
                                             src={method.icon}
                                             alt={method.name}
@@ -97,7 +111,7 @@ const Payment = () => {
                                 style={{
                                     border:
                                         selectedPaymentMethod.id === method.id
-                                            ? '1px solid #1976d2'
+                                            ? '1px solid #365E32'
                                             : '1px solid transparent',
                                     borderRadius: '4px',
                                     marginRight: '10px',
@@ -124,7 +138,7 @@ const Payment = () => {
                                                 style={{
                                                     border:
                                                         selectedPrice.id === price.id
-                                                            ? '1px solid #1976d2'
+                                                            ? '1px solid #365E32'
                                                             : '1px solid transparent',
                                                     borderRadius: '4px',
                                                     transition: 'border 0.3s',
@@ -160,11 +174,16 @@ const Payment = () => {
                                     </ListItem>
                                     <Divider />
                                     <ListItem>
-                                        <ListItemText primary="In-Game Account Name" secondary="Bigzombie123vn" />
+                                        <ListItemText primary="Account" secondary="Bigzombie123vn" />
                                     </ListItem>
                                 </List>
                                 <Box mt={2}>
-                                    <Button variant="contained" color="primary" fullWidth onClick={handlePayment}>
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        onClick={handlePayment}
+                                        sx={{ backgroundColor: '#365E32' }}
+                                    >
                                         Process Payment
                                     </Button>
                                 </Box>

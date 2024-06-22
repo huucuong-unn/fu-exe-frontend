@@ -29,6 +29,12 @@ const MentorAPI = {
         const authorizedConfig = this.addAuthorizationHeader({}, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
+
+    getMentorsByCompanyIdV2(id, params, includeAuthorization = false) {
+        const url = `v1/mentor/similar-mentors/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
 };
 
 export default MentorAPI;

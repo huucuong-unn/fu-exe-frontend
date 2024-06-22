@@ -1,113 +1,296 @@
-import { Box, Button, Container, TextareaAutosize as BaseTextareaAutosize, Typography } from '@mui/material';
-import React, { useState } from 'react';
-import { styled } from '@mui/system';
-
-const blue = {
-    100: '#DAECFF',
-    200: '#b6daff',
-    400: '#3399FF',
-    500: '#007FFF',
-    600: '#0072E5',
-    900: '#003A75',
-};
-
-const grey = {
-    50: '#F3F6F9',
-    100: '#E5EAF2',
-    200: '#DAE2ED',
-    300: '#C7D0DD',
-    400: '#B0B8C4',
-    500: '#9DA8B7',
-    600: '#6B7A90',
-    700: '#434D5B',
-    800: '#303740',
-    900: '#1C2025',
-};
-
-const Textarea = styled(BaseTextareaAutosize)(
-    ({ theme }) => `
-    box-sizing: border-box;
-    width: 70%;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.5;
-    padding: 8px 12px;
-    border-radius: 8px;
-    color: ${grey[900]};
-    background: #fff;
-    border: 2px solid ${grey[300]};
-    box-shadow: 0px 2px 2px ${grey[50]};
-
-    &:hover {
-      border-color: ${blue[400]};
-    }
-
-    &:focus {
-      border-color: ${blue[400]};
-      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? blue[600] : blue[200]};
-    }
-
-    &:focus-visible {
-      outline: 0;
-    }
-  `,
-);
-
+import { Box, Button, Container, Typography, TextField, Autocomplete, InputLabel } from '@mui/material';
+import { useEffect, useState } from 'react';
+import ApplicationAPI from '~/API/ApplicationAPI';
+import storageService from '~/components/StorageService/storageService';
+import { useLocation, useNavigate } from 'react-router-dom';
 export const Application = () => {
-    const [text, setText] = useState('');
+    const locations = [
+        'An Giang',
+        'Ba Ria - Vung Tau',
+        'Bac Giang',
+        'Bac Kan',
+        'Bac Lieu',
+        'Bac Ninh',
+        'Ben Tre',
+        'Binh Dinh',
+        'Binh Duong',
+        'Binh Phuoc',
+        'Binh Thuan',
+        'Ca Mau',
+        'Can Tho',
+        'Cao Bang',
+        'Da Nang',
+        'Dak Lak',
+        'Dak Nong',
+        'Dien Bien',
+        'Dong Nai',
+        'Dong Thap',
+        'Gia Lai',
+        'Ha Giang',
+        'Ha Nam',
+        'Ha Noi',
+        'Ha Tinh',
+        'Hai Duong',
+        'Hai Phong',
+        'Hau Giang',
+        'Hoa Binh',
+        'Hung Yen',
+        'Khanh Hoa',
+        'Kien Giang',
+        'Kon Tum',
+        'Lai Chau',
+        'Lam Dong',
+        'Lang Son',
+        'Lao Cai',
+        'Long An',
+        'Nam Dinh',
+        'Nghe An',
+        'Ninh Binh',
+        'Ninh Thuan',
+        'Phu Tho',
+        'Phu Yen',
+        'Quang Binh',
+        'Quang Nam',
+        'Quang Ngai',
+        'Quang Ninh',
+        'Quang Tri',
+        'Soc Trang',
+        'Son La',
+        'Tay Ninh',
+        'Thai Binh',
+        'Thai Nguyen',
+        'Thanh Hoa',
+        'Thua Thien Hue',
+        'Tien Giang',
+        'Ho Chi Minh',
+        'Tra Vinh',
+        'Tuyen Quang',
+        'Vinh Long',
+        'Vinh Phuc',
+        'Yen Bai',
+    ];
 
-    const handleTextChange = (event) => {
-        setText(event.target.value);
-    };
+    const [isEmailValid, setIsEmailValid] = useState(true);
+    const [isUsernameValid, setIsUsernameValid] = useState(true);
+    const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
+    const [isIntroduceValid, setIsIntroduceValid] = useState(true);
+    const [isReasonApplyValid, setIsReasonApplyValid] = useState(true);
+    const [studentId, setStudentId] = useState(storageService.getItem('userInfo').studentId);
+    const location = useLocation();
+    const { mentorId } = location.state || {};
+    const navigate = useNavigate();
 
-    const handleCheckMinText = (event) => {
-        if (text.length < 50) {
-            window.alert('Message length must exceed 50 characters');
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const email = event.target.email.value;
+        const username = event.target.username.value;
+        const phoneNumber = event.target.phoneNumber.value;
+        const introduce = event.target.introduce.value;
+        const reasonApply = event.target.reasonApply.value;
+
+        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
+            setIsEmailValid(false);
+        } else {
+            setIsEmailValid(true);
+        }
+
+        if (username.length < 5) {
+            setIsUsernameValid(false);
+        } else {
+            setIsUsernameValid(true);
+        }
+
+        if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
+            setIsPhoneNumberValid(false);
+        } else {
+            setIsPhoneNumberValid(true);
+        }
+
+        if (introduce.length < 50) {
+            setIsIntroduceValid(false);
+        } else {
+            setIsIntroduceValid(true);
+        }
+
+        if (reasonApply.length < 50) {
+            setIsReasonApplyValid(false);
+        } else {
+            setIsReasonApplyValid(true);
+        }
+
+        const data = new FormData(event.currentTarget);
+        console.log(mentorId);
+        console.log(studentId);
+        data.append('mentorId', mentorId);
+        data.append('studentId', studentId);
+        console.log(data);
+        try {
+            await ApplicationAPI.createApplication(data);
+            navigate('/user/history', { state: { selectApplyTab: true } });
+        } catch (error) {
+            console.log(error);
         }
     };
 
+    useEffect(() => {
+        console.log(isUsernameValid);
+    }, [isUsernameValid]);
+
     return (
         <Container sx={{ py: 20 }}>
-            <Typography variant="h5" component="h3" sx={{ mb: 3 }}>
-                Apply to Tortee
+            <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
+                Application
             </Typography>
-            <Box sx={{ border: '1px solid #ccc', borderRadius: 5 }}>
-                <Box sx={{ p: 3 }}>
-                    <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-                        {text.length}/50 min character
-                    </Typography>
-                    <Textarea
-                        aria-label="minimum height"
-                        minRows={10}
-                        placeholder="Write a message to Tortee"
-                        value={text}
-                        onChange={handleTextChange}
-                        minLength={50}
+            <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{
+                    border: '1px solid #ccc',
+                    padding: 2,
+                    borderRadius: 3,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'left',
+                    gap: 2,
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'left',
+                        alignItems: 'center',
+                        gap: 2,
+                    }}
+                >
+                    <TextField
+                        id="username"
+                        name="fullName"
+                        label="Full name"
+                        variant="outlined"
+                        sx={{ flex: 1 }}
+                        error={!isUsernameValid}
+                        helperText={!isUsernameValid ? 'Username must have more than 5 characters' : ''}
                     />
-                    <br />
-                    <Box>
-                        <Typography>What to include in your message</Typography>
-                        <Typography>
-                            <b>1. Introduce yourself:</b> Describe your background and professional journey
-                        </Typography>
-                        <Typography>
-                            <b>2. State your goal:</b> Share your aspirations and the steps you’ve taken so far
-                        </Typography>
-                        <Typography>
-                            <b>3. Express your needs:</b> Tell Scott about the challenges in pursuing your goal and the
-                            kind of help you’re looking for
-                        </Typography>
-                    </Box>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={{ width: { lg: '15%', md: '20%', xs: '80%' }, my: 4 }}
-                        onClick={handleCheckMinText}
-                    >
-                        Apply
-                    </Button>
+                    <TextField
+                        id="email"
+                        name="email"
+                        label="Email"
+                        variant="outlined"
+                        sx={{ flex: 1 }}
+                        error={!isEmailValid}
+                        helperText={!isEmailValid ? 'Invalid email' : ''}
+                    />
                 </Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'left',
+                        alignItems: 'center',
+                        gap: 2,
+                    }}
+                >
+                    <TextField
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        label="Phone number"
+                        variant="outlined"
+                        sx={{ flex: 1 }}
+                        error={!isPhoneNumberValid}
+                        helperText={!isPhoneNumberValid ? 'Invalid phone' : ''}
+                    />
+                    <TextField
+                        id="facebook-url"
+                        name="facebookUrl"
+                        label="Facebook Url"
+                        variant="outlined"
+                        sx={{ flex: 1 }}
+                    />
+                </Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'left',
+                        alignItems: 'center',
+                        gap: 2,
+                    }}
+                >
+                    <TextField id="zalo-url" name="zaloAccount" label="Zalo Url" variant="outlined" sx={{ flex: 1 }} />
+                    <Autocomplete
+                        disablePortal
+                        id="address"
+                        name="userAddress"
+                        options={locations}
+                        sx={{ width: 300, flex: 1 }}
+                        renderInput={(params) => <TextField {...params} label="Address" />}
+                    />
+                </Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'left',
+                        alignItems: 'center',
+                        gap: 2,
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'start',
+                            gap: 1,
+                            flex: 1,
+                        }}
+                    >
+                        <InputLabel htmlFor="upload-cv" sx={{ fontWeight: 'bold' }}>
+                            Upload CV
+                        </InputLabel>
+                        <TextField id="upload-cv" name="cvFile" variant="outlined" type="file" sx={{ width: '100%' }} />
+                    </Box>
+                </Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'left',
+                        alignItems: 'center',
+                        gap: 2,
+                    }}
+                >
+                    <TextField
+                        id="introduce"
+                        name="introduce"
+                        label="Introduce"
+                        multiline
+                        rows={5}
+                        sx={{ width: '50%', flex: 1 }}
+                        error={!isIntroduceValid}
+                        helperText={!isIntroduceValid ? 'Introduce must have more than 50 characters' : ''}
+                    />
+                    <TextField
+                        id="reasonApply"
+                        name="reasonApply"
+                        label="Reason apply"
+                        multiline
+                        rows={5}
+                        sx={{ width: '50%', flex: 1 }}
+                        error={!isReasonApplyValid}
+                        helperText={!isReasonApplyValid ? 'Reason apply must have more than 50 characters' : ''}
+                    />
+                </Box>
+                <Button
+                    variant="contained"
+                    size="large"
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: '#365E32',
+                    }}
+                    type="submit"
+                >
+                    Submit
+                </Button>
             </Box>
         </Container>
     );

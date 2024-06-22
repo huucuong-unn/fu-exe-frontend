@@ -22,7 +22,6 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import storageService from '~/components/StorageService/storageService';
 import { useEffect, useState } from 'react';
-import userOption from '~/components/UserOption/userOption';
 import { useNavigate } from 'react-router-dom';
 
 import logo from '~/assets/images/logo-outlined.png';
@@ -44,7 +43,14 @@ function AppAppBar({ mode, toggleColorMode }) {
     };
     const handleClose = () => {
         setAnchorEl(null);
+        // navigate('/user/profile');
     };
+
+    const handleCloseHistory = () => {
+        setAnchorEl(null);
+        navigate('/user/history');
+    };
+
     const handleCloseForPoint = () => {
         setAnchorEl(null);
         navigate('/payment');
@@ -135,13 +141,13 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 </MenuItem>
                                 <Divider orientation="vertical" variant="middle" flexItem />
 
-                                <MenuItem onClick={() => scrollToSection('features')} sx={{ py: '6px', px: '12px' }}>
+                                {/* <MenuItem onClick={() => scrollToSection('features')} sx={{ py: '6px', px: '12px' }}>
                                     <a href="/#features" style={{ textDecoration: 'none' }}>
                                         <Typography variant="body2" color="text.primary">
                                             Features
                                         </Typography>
                                     </a>
-                                </MenuItem>
+                                </MenuItem> */}
                                 <MenuItem onClick={() => scrollToSection('companies')} sx={{ py: '6px', px: '12px' }}>
                                     <Link to="/company" style={{ textDecoration: 'none' }}>
                                         <Typography variant="body2" color="text.primary">
@@ -149,13 +155,20 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         </Typography>
                                     </Link>
                                 </MenuItem>
-                                <MenuItem onClick={() => scrollToSection('highlights')} sx={{ py: '6px', px: '12px' }}>
+                                <MenuItem onClick={() => scrollToSection('companies')} sx={{ py: '6px', px: '12px' }}>
+                                    <Link to="/payment" style={{ textDecoration: 'none' }}>
+                                        <Typography variant="body2" color="text.primary">
+                                            Point
+                                        </Typography>
+                                    </Link>
+                                </MenuItem>
+                                {/* <MenuItem onClick={() => scrollToSection('highlights')} sx={{ py: '6px', px: '12px' }}>
                                     <a href="/#highlights" style={{ textDecoration: 'none' }}>
                                         <Typography variant="body2" color="text.primary">
                                             Highlights
                                         </Typography>
                                     </a>
-                                </MenuItem>
+                                </MenuItem> */}
                                 {/* <MenuItem onClick={() => scrollToSection('pricing')} sx={{ py: '6px', px: '12px' }}>
                                     <Typography variant="body2" color="text.primary">
                                         Pricing
@@ -195,6 +208,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     PaperProps={{
                                         elevation: 0,
                                         sx: {
+                                            minWidth: 200,
                                             overflow: 'visible',
                                             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                                             mt: 1.5,
@@ -224,23 +238,15 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     <MenuItem onClick={handleClose}>
                                         <Avatar /> Profile
                                     </MenuItem>
+                                    <MenuItem onClick={handleCloseHistory}>
+                                        <Avatar src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToN7bD4l-dNiWcyNW1QKGyIWwmkmFME_xKbg&s" />
+                                        History
+                                    </MenuItem>
                                     <MenuItem onClick={handleCloseForPoint}>
                                         <Avatar src="https://static-00.iconduck.com/assets.00/gold-coin-icon-2048x2048-loznlayl.png" />
                                         {userInfo.point} Points
                                     </MenuItem>
                                     <Divider />
-                                    <MenuItem onClick={handleClose}>
-                                        <ListItemIcon>
-                                            <PersonAdd fontSize="small" />
-                                        </ListItemIcon>
-                                        Add another account
-                                    </MenuItem>
-                                    <MenuItem onClick={handleClose}>
-                                        <ListItemIcon>
-                                            <Settings fontSize="small" />
-                                        </ListItemIcon>
-                                        Settings
-                                    </MenuItem>
                                     <MenuItem onClick={handleClose}>
                                         <ListItemIcon>
                                             <Logout fontSize="small" />

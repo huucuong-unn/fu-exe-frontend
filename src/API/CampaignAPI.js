@@ -21,6 +21,11 @@ const CampaignAPI = {
         const authorizedConfig = this.addAuthorizationHeader({}, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
+    getAllWithoutPaging(includeAuthorization = false) {
+        const url = 'v1/campaign/campaign-without-paging';
+        const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
 };
 
 export default CampaignAPI;

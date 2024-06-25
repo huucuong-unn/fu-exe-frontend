@@ -1,8 +1,5 @@
-import React, { useState } from 'react';
+
 import {
-    Box,
-    Typography,
-    Button,
     FormControl,
     InputLabel,
     Select,
@@ -10,17 +7,39 @@ import {
     MenuItem,
     IconButton,
     Tooltip,
-    Modal,
     Grid,
+    Container,
+    Typography,
+    Card,
+    Box,
+    Avatar,
+    CardContent,
+    Step,
+    Stepper,
+    StepLabel,
+    Stack,
+    Button,
+    Chip,
+    Modal,
 } from '@mui/material';
+
 import Pagination from '@mui/material/Pagination';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import StarIcon from '@mui/icons-material/Star';
 import MenteeSection from '~/components/Campain/CampainDetailMenteeList'; // Importing MenteeSection component
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import CampaignAPI from '~/API/CampaignAPI';
 
 const CampaignDetail = () => {
-    // Simulated campaign data
+    const [filterStatus, setFilterStatus] = useState('All');
+    const [page, setPage] = useState(1);
+    const [menteesPerPage] = useState(5); // Number of mentees per page
+    const [topMenteeIds, setTopMenteeIds] = useState([]);
+    const [selectedMentee, setSelectedMentee] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [showApprovalList, setShowApprovalList] = useState(false);
     const campaign = {
         id: 1,
         name: 'Sample Campaign',
@@ -62,13 +81,30 @@ const CampaignDetail = () => {
         ],
     };
 
-    const [filterStatus, setFilterStatus] = useState('All');
-    const [page, setPage] = useState(1);
-    const [menteesPerPage] = useState(5); // Number of mentees per page
-    const [topMenteeIds, setTopMenteeIds] = useState([]);
-    const [selectedMentee, setSelectedMentee] = useState(null);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [showApprovalList, setShowApprovalList] = useState(false);
+    // NEW
+    const steps = ['Company Application', 'Mentee Application', 'Training', 'Completion'];
+    const [selectedItemIndex, setSelectedItemIndex] = useState(0);
+    const [value, setValue] = useState(0);
+    const navigate = useNavigate();
+    const { campaignId } = useParams();
+    const [campaigns, setCampaign] = useState({}); // Initialize campaign as an empty object
+
+    useEffect(() => {
+        const getById = async () => {
+            try {
+                const campaignData = await CampaignAPI.getById(campaignId);
+                setCampaign(campaignData); // Set campaign data once fetched
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        getById(); // Call the async function to fetch campaign data
+    }, [campaignId]); // useEffect dependency on campaignId to fetch data when it changes
+
+    useEffect(() => {
+        console.log(campaign); // Log campaign object when it changes
+    }, [campaign]);
 
     // Handler for selecting a mentee
     const handleSelectMentee = (mentee) => {
@@ -110,6 +146,11 @@ const CampaignDetail = () => {
         setTopMenteeIds(updatedTopMenteeIds);
     };
 
+    // If campaign hasn't been fetched yet, return loading state or null
+    if (!campaign.id) {
+        return null; // or loading state component
+    }
+
     // Filter and sort mentees based on current filter status and top mentees
     const filteredMentees = campaign.mentees.filter((mentee) => {
         if (filterStatus === 'All') {
@@ -134,8 +175,324 @@ const CampaignDetail = () => {
     // Calculate total pages for pagination component
     const totalPages = Math.ceil(filteredMentees.length / menteesPerPage);
 
+    const handleItemClick = (index, mentorId) => {
+        setSelectedItemIndex(index);
+        navigate(`/mentor/${mentorId}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCreateMentor = () => {
+        navigate('/company/create-mentor-account');
+        window.scrollTo(0, 0);
+    };
+
+    const handleRowClick = (mentor) => {
+        setSelectedMentee(mentor);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedMentee(null);
+    };
+
     return (
         <Box sx={{ p: 3 }}>
+            <Grid container spacing={6}>
+                <Grid item xs={12} md={12}>
+                    <Card
+                        variant="outlined"
+                        sx={{
+                            p: 3,
+                            height: 'fit-content',
+                            width: '100%',
+                            background: 'none',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                width: '100%',
+                                display: 'flex',
+                                textAlign: 'left',
+                                flexDirection: { xs: 'column', md: 'row' },
+                                alignItems: { md: 'center' },
+                                gap: 2.5,
+                            }}
+                        >
+                            <Box>
+                                <Avatar alt="avatar image" src={campaign?.img} sx={{ width: 150, height: 150 }} />
+                            </Box>
+                            <Box sx={{ textTransform: 'none' }}>
+                                <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
+                                    Spring Campaign 2024
+                                </Typography>
+                                <Typography color="text.secondary" variant="body2" sx={{ my: 1 }} fontSize={'16px'}>
+                                    1/1/2024 - 1/7/2024
+                                </Typography>
+                                <CardContent></CardContent>
+                            </Box>
+                        </Box>
+                        <Box sx={{ width: '100%', marginTop: 2 }}>
+                            <Stepper activeStep={2} alternativeLabel sx={{ transform: 'scale(1.1)' }}>
+                                {steps.map((label) => (
+                                    <Step key={label}>
+                                        <StepLabel>{label}</StepLabel>
+                                    </Step>
+                                ))}
+                            </Stepper>
+                        </Box>
+                    </Card>
+                </Grid>
+            </Grid>
+            <Box sx={{ width: '100%', marginTop: 2 }}>
+                <Card
+                    variant="outlined"
+                    sx={{
+                        p: 3,
+                        height: 'fit-content',
+                        width: '100%',
+                        background: 'none',
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: '100%',
+                            display: 'flex',
+                            textAlign: 'left',
+                            flexDirection: 'column',
+                            alignItems: { md: 'left' },
+                            gap: 2.5,
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                marginLeft: 2,
+                                marginRight: 2,
+                                paddingBottom: 2,
+                                borderBottom: '1px dashed #e0e0e0',
+                            }}
+                        >
+                            <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
+                                General information
+                            </Typography>
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(3, 1fr)', // Tạo 3 cột với kích thước bằng nhau
+                                gap: 2, // Khoảng cách giữa các ô
+                                marginLeft: 2,
+                                marginRight: 2,
+                                paddingBottom: 2,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    textAlign: 'left',
+                                    flexDirection: 'column',
+                                    alignItems: { md: 'start' },
+                                    justifyContent: 'left',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
+                                    <Typography color="gray" variant="h7">
+                                        Number of session
+                                    </Typography>
+                                </Box>
+                                <Typography color="black" variant="h6" fontWeight="bold">
+                                    10 sessions
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    textAlign: 'left',
+                                    flexDirection: 'column',
+                                    alignItems: { md: 'start' },
+                                    justifyContent: 'left',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
+                                    <Typography color="gray" variant="h7">
+                                        Number of online session
+                                    </Typography>
+                                </Box>
+                                <Typography color="black" variant="h6" fontWeight="bold">
+                                    10 sessions
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    textAlign: 'left',
+                                    flexDirection: 'column',
+                                    alignItems: { md: 'start' },
+                                    justifyContent: 'left',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
+                                    <Typography color="gray" variant="h7">
+                                        Number of offline session
+                                    </Typography>
+                                </Box>
+                                <Typography color="black" variant="h6" fontWeight="bold">
+                                    10 sessions
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    textAlign: 'left',
+                                    flexDirection: 'column',
+                                    alignItems: { md: 'start' },
+                                    justifyContent: 'left',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
+                                    <Typography color="gray" variant="h7">
+                                        Min duration of session
+                                    </Typography>
+                                </Box>
+                                <Typography color="black" variant="h6" fontWeight="bold">
+                                    1 hour
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    textAlign: 'left',
+                                    flexDirection: 'column',
+                                    alignItems: { md: 'start' },
+                                    justifyContent: 'left',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
+                                    <Typography color="gray" variant="h7">
+                                        Company apply date
+                                    </Typography>
+                                </Box>
+                                <Typography color="black" variant="h6" fontWeight="bold">
+                                    {new Date(campaign?.companyApplyStartDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
+                                    -{' '}
+                                    {new Date(campaign?.companyApplyEndDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    textAlign: 'left',
+                                    flexDirection: 'column',
+                                    alignItems: { md: 'start' },
+                                    justifyContent: 'left',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
+                                    <Typography color="gray" variant="h7">
+                                        Student apply date
+                                    </Typography>
+                                </Box>
+                                <Typography color="black" variant="h6" fontWeight="bold">
+                                    {new Date(campaign?.menteeApplyStartDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
+                                    -{' '}
+                                    {new Date(campaign?.menteeApplyEndDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
+                                </Typography>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    textAlign: 'left',
+                                    flexDirection: 'column',
+                                    alignItems: { md: 'start' },
+                                    justifyContent: 'left',
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
+                                    <Typography color="gray" variant="h7">
+                                        Tranning
+                                    </Typography>
+                                </Box>
+                                <Typography color="black" variant="h6" fontWeight="bold">
+                                    {new Date(campaign?.trainingStartDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
+                                    -{' '}
+                                    {new Date(campaign?.trainingEndDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Card>
+            </Box>
+            <Box sx={{ width: '100%', marginTop: 2 }}>
+                <Card
+                    variant="outlined"
+                    sx={{
+                        p: 3,
+                        height: 'fit-content',
+                        width: '100%',
+                        background: 'none',
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: '100%',
+                            display: 'flex',
+                            textAlign: 'left',
+                            flexDirection: 'column',
+                            alignItems: { md: 'left' },
+                            gap: 2.5,
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                marginLeft: 2,
+                                marginRight: 2,
+                                paddingBottom: 2,
+                                borderBottom: '1px dashed #e0e0e0',
+                            }}
+                        >
+                            <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
+                                Campaign Overview
+                            </Typography>
+                        </Box>
+                        <Box
+                            sx={{
+                                marginLeft: 2,
+                                marginRight: 2,
+                                paddingBottom: 2,
+                                borderBottom: '1px dashed #e0e0e0',
+                            }}
+                        >
+                            <Typography color="text.primary">{campaign?.description}</Typography>
+                        </Box>
+                    </Box>
+                </Card>
+            </Box>
             <CampaignDetails campaign={campaign} />
             <Box mb={2}>
                 <Button
@@ -305,6 +662,7 @@ const CampaignDetail = () => {
     );
 };
 
+
 const CampaignDetails = ({ campaign }) => (
     <Box sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
         <Typography variant="h6">{campaign.name}</Typography>
@@ -318,6 +676,8 @@ const CampaignDetails = ({ campaign }) => (
         </Typography>
     </Box>
 );
+
+
 const MenteesNeedingApproval = ({ mentees }) => (
     <Paper sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
         <Typography variant="h5" gutterBottom>

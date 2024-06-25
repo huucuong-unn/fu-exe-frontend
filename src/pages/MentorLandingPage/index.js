@@ -18,6 +18,7 @@ import MentorSuggestion from '~/components/MentorSuggestion';
 import FAQ from '~/components/FAQ';
 import getLPTheme from '~/components/getLPTheme';
 import CampaignList from '~/components/Campain/CampainList';
+import ProfileBox from '~/components/Campain/MentorProfileBox';
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
     return (
         <Box
@@ -86,7 +87,10 @@ export default function MentorLandingPage() {
             <Divider />
 
             <Box sx={{ bgcolor: 'background.default' }}>
+                <ProfileBox />
+                <Divider />
                 <CampaignList />
+
 
                 <LogoCollection />
 

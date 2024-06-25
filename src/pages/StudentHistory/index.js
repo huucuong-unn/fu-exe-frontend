@@ -92,8 +92,9 @@ function StudentHistory() {
             try {
                 const params = {
                     page: 1,
-                    limit: 2,
-                    status: 'ALL',
+                    limit: 10,
+                    mentorName: '',
+                    companyId: '',
                     createdDate: 'desc',
                 };
                 const response = await ApplicationAPI.getApplicationByStudentId(userInfo.studentId, params, false);

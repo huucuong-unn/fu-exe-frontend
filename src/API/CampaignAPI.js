@@ -26,6 +26,12 @@ const CampaignAPI = {
         const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
+
+    getAllForAdmin(params, includeAuthorization = false) {
+        const url = 'v1/campaign/campaign-for-admin';
+        const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
 };
 
 export default CampaignAPI;

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import {
     Box,
     Button,
@@ -12,7 +11,10 @@ import {
     Avatar,
     Container,
     IconButton,
+    InputLabel,
     useTheme,
+    Autocomplete,
+    Chip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
@@ -44,6 +46,8 @@ const fakeProfiles = [
     },
 ];
 
+const skills = ['Java', 'C#', 'Python']; // List of skills for autocomplete
+
 const ProfileBox = () => {
     const theme = useTheme();
 
@@ -60,6 +64,13 @@ const ProfileBox = () => {
     const [editIndex, setEditIndex] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [selectedProfileIndex, setSelectedProfileIndex] = useState(null); // Track selected profile index
+    const [isEmailValid, setIsEmailValid] = useState(true);
+    const [isUsernameValid, setIsUsernameValid] = useState(true);
+    const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
+    const [isIntroduceValid, setIsIntroduceValid] = useState(true);
+    const [isReasonApplyValid, setIsReasonApplyValid] = useState(true);
+    const [selectedSkills, setSelectedSkills] = useState([]);
+    const [currentSkill, setCurrentSkill] = useState('');
 
     const profilesPerPage = 3;
     const totalPages = Math.ceil(profiles.length / profilesPerPage);
@@ -137,7 +148,67 @@ const ProfileBox = () => {
 
     const handleViewProfile = (profileName) => {
         // Navigate to profile detail page using history
+    };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const email = event.target.email.value;
+        const username = event.target.fullName.value; // Ensure this matches the TextField name attribute
+        const phoneNumber = event.target.phoneNumber.value;
+        const introduce = event.target.description.value; // Ensure this matches the TextField name attribute
+        const reasonApply = event.target.reasonApply?.value; // Ensure this matches the TextField name attribute
+
+        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
+            setIsEmailValid(false);
+        } else {
+            setIsEmailValid(true);
+        }
+
+        if (username.length < 5) {
+            setIsUsernameValid(false);
+        } else {
+            setIsUsernameValid(true);
+        }
+
+        if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
+            setIsPhoneNumberValid(false);
+        } else {
+            setIsPhoneNumberValid(true);
+        }
+
+        if (introduce.length < 50) {
+            setIsIntroduceValid(false);
+        } else {
+            setIsIntroduceValid(true);
+        }
+
+        if (reasonApply && reasonApply.length < 50) { // Check if reasonApply exists before validation
+            setIsReasonApplyValid(false);
+        } else {
+            setIsReasonApplyValid(true);
+        }
+
+        const data = new FormData(event.currentTarget);
+        console.log(data);
+
+        try {
+            // Add your API call or state update logic here
+            console.log('Form data submitted successfully');
+        } catch (error) {
+            console.error('Error submitting form data:', error);
+        }
+    };
+
+    const handleAddSkill = () => {
+        if (currentSkill && !selectedSkills.includes(currentSkill)) {
+            setSelectedSkills([...selectedSkills, currentSkill]);
+            setCurrentSkill('');
+        }
+    };
+
+    const handleDeleteSkill = (skillToDelete) => () => {
+        setSelectedSkills(selectedSkills.filter((skill) => skill !== skillToDelete));
     };
 
     return (
@@ -221,7 +292,7 @@ const ProfileBox = () => {
                                 >
                                     <Avatar src={profile.img} sx={{ width: 56, height: 56 }} />
                                     <Button
-                                        onClick={() => handleViewProfile(profile.name)} // Pass profile name to view profile function
+                                        onClick={() => handleViewProfile(profile.name)} // Pass profile
                                         variant="outlined"
                                         color="primary"
                                     >
@@ -272,81 +343,178 @@ const ProfileBox = () => {
                         bgcolor: 'background.paper',
                         boxShadow: 24,
                         p: 4,
-                        width: 400,
+                        width: 600, // Increased width
                         maxWidth: '95%',
                     }}
                 >
                     <Typography variant="h6" gutterBottom>
-                        {editIndex !== null ? 'Edit Profile' : 'Create New Profile'}
+                        {editIndex !== null ? 'Edit Profile' : 'Fill out your new Profile'}
                     </Typography>
-                    <TextField
-                        fullWidth
-                        label="Name"
-                        variant="outlined"
-                        margin="normal"
-                        value={newProfileInfo.name}
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, name: e.target.value })}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Description"
-                        variant="outlined"
-                        margin="normal"
-                        value={newProfileInfo.description}
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, description: e.target.value })}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Start Date"
-                        type="date"
-                        variant="outlined"
-                        margin="normal"
-                        InputLabelProps={{
-                            shrink: true,
+                    <Box
+                        component="form"
+                        onSubmit={handleSubmit}
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 2,
                         }}
-                        value={newProfileInfo.startDate}
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, startDate: e.target.value })}
-                    />
-                    <TextField
-                        fullWidth
-                        label="End Date"
-                        type="date"
-                        variant="outlined"
-                        margin="normal"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        value={newProfileInfo.endDate}
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, endDate: e.target.value })}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Status"
-                        variant="outlined"
-                        margin="normal"
-                        value={newProfileInfo.status}
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, status: e.target.value })}
-                    />
-                    <TextField
-                        fullWidth
-                        label="Image URL"
-                        variant="outlined"
-                        margin="normal"
-                        value={newProfileInfo.img}
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, img: e.target.value })}
-                    />
-                    <Box sx={{ mt: 2, textAlign: 'right' }}>
-                        <Button onClick={handleCloseModal} sx={{ mr: 2 }}>
-                            Cancel
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleCreateProfile}>
-                            {editIndex !== null ? 'Save' : 'Create'}
+                    >
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'left',
+                                alignItems: 'center',
+                                gap: 2,
+                            }}
+                        >
+                        <TextField
+                            required
+                            id="fullName"
+                            name="fullName"
+                            label="Full name"
+                            variant="outlined"
+                            defaultValue={newProfileInfo.name}
+                            sx={{ flex: 1 }}
+                            error={!isUsernameValid}
+                            helperText={!isUsernameValid ? 'Username must have more than 5 characters' : ''}
+                        />
+                        <TextField
+                            required
+                            id="email"
+                            name="email"
+                            label="Email"
+                            variant="outlined"
+                            defaultValue={newProfileInfo.email}
+                            sx={{ flex: 1 }}
+                            error={!isEmailValid}
+                            helperText={!isEmailValid ? 'Invalid email' : ''}
+                        />
+                        </Box>
+
+                        <TextField
+                            required
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            label="Phone number"
+                            variant="outlined"
+                            defaultValue={newProfileInfo.phoneNumber}
+                            error={!isPhoneNumberValid}
+                            helperText={!isPhoneNumberValid ? 'Invalid phone' : ''}
+                        />
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'left',
+                                alignItems: 'center',
+                                gap: 2,
+                            }}
+                        >
+                        <TextField
+                            id="facebookUrl"
+                            name="facebookUrl"
+                            label="Facebook Url"
+                            variant="outlined"
+                            sx={{ flex: 1 }}
+                            defaultValue={newProfileInfo.facebookUrl}
+                        />
+                        <TextField
+                            id="linkedinUrl"
+                            name="linkedinUrl"
+                            label="Linkedin Url"
+                            variant="outlined"
+                            sx={{ flex: 1 }}
+                            defaultValue={newProfileInfo.linkedinUrl}
+                        />
+                        </Box>
+                        {/*<InputLabel htmlFor="upload-cv" sx={{ fontWeight: 'bold' }}>*/}
+                        {/*    Upload CV*/}
+                        {/*</InputLabel>*/}
+                        {/*<TextField*/}
+                        {/*    id="upload-cv"*/}
+                        {/*    name="cvFile"*/}
+                        {/*    type="file"*/}
+                        {/*    variant="outlined"*/}
+                        {/*    sx={{ mb: 2 }}*/}
+                        {/*/>*/}
+                        <TextField
+                            required
+                            id="linkgooglemeet"
+                            name="linkgooglemeet"
+                            label="Link Google Meet"
+                            multiline
+                            rows={5}
+                            variant="outlined"
+                            defaultValue={newProfileInfo.description}
+
+                        />
+                        <TextField
+                            required
+                            id="description"
+                            name="description"
+                            label="Description"
+                            multiline
+                            rows={5}
+                            variant="outlined"
+                            defaultValue={newProfileInfo.description}
+                            error={!isIntroduceValid}
+                            helperText={!isIntroduceValid ? 'Description must have more than 50 characters' : ''}
+                        />
+                        {editIndex === null && (
+                            <>
+                                <Autocomplete
+                                    disablePortal
+                                    id="combo-box-skills"
+                                    options={skills}
+                                    value={currentSkill}
+                                    onChange={(event, newValue) => setCurrentSkill(newValue)}
+                                    sx={{ width: '100%' }}
+                                    renderInput={(params) => <TextField {...params} label="Skill" variant="outlined" />}
+                                />
+                                <Button variant="contained" onClick={handleAddSkill}>
+                                    Add Skill
+                                </Button>
+                                {selectedSkills.length > 0 && (
+                                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                        {selectedSkills.map((skill, index) => (
+                                            <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
+                                        ))}
+                                    </Box>
+                                )}
+
+                            </>
+                        )}
+
+                        <Button
+                            variant="contained"
+                            size="large"
+                            sx={{
+                                width: '100%',
+                                backgroundColor: '#365E32',
+                            }}
+                            type="submit"
+                        >
+                            {editIndex !== null ? 'Save Changes' : 'Submit'}
                         </Button>
                     </Box>
                 </Box>
             </Modal>
         </Container>
     );
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        };
 
 export default ProfileBox;

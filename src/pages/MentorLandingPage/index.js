@@ -76,8 +76,9 @@ export default function MentorLandingPage() {
     };
 
     return (
+        // showCustomTheme ? LPtheme :
         <ThemeProvider
-            theme={showCustomTheme ? LPtheme : defaultTheme}
+            theme={ defaultTheme}
             sx={{
                 fontFamily: 'Montserrat, sans-serif',
             }}
@@ -86,16 +87,19 @@ export default function MentorLandingPage() {
             <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
             <Divider />
 
+
+
             <Box sx={{ bgcolor: 'background.default' }}>
                 <ProfileBox />
                 <Divider />
                 <CampaignList />
 
 
+
                 <LogoCollection />
 
                 <Divider />
-                <MentorSuggestion />
+
                 <Divider />
                 <FAQ />
                 <Divider />

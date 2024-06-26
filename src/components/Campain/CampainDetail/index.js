@@ -195,7 +195,7 @@ const CampaignDetail = () => {
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
             <Grid container spacing={6}>
                 <Grid item xs={12} md={12}>
                     <Card
@@ -474,6 +474,7 @@ const CampaignDetail = () => {
                                 marginRight: 2,
                                 paddingBottom: 2,
                                 borderBottom: '1px dashed #e0e0e0',
+
                             }}
                         >
                             <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
@@ -493,8 +494,14 @@ const CampaignDetail = () => {
                     </Box>
                 </Card>
             </Box>
-            <CampaignDetails campaign={campaign} />
-            <Box mb={2}>
+
+            <Box mb={2}
+                 sx={{
+                     marginLeft: 2,
+                     marginRight: 2,
+                     marginTop: 1
+
+                 }}>
                 <Button
                     variant="contained"
                     color={showApprovalList ? 'secondary' : 'primary'}
@@ -550,6 +557,7 @@ const CampaignDetail = () => {
                                 fontSize: 20,
                                 fontWeight: 'bold',
                                 color: '#fff',
+
                             }}
                         >
                             {startIndex + index + 1}
@@ -658,22 +666,14 @@ const CampaignDetail = () => {
                     )}
                 </Box>
             </Modal>
-        </Box>
+        </Container>
     );
 };
 
 
 const CampaignDetails = ({ campaign }) => (
     <Box sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
-        <Typography variant="h6">{campaign.name}</Typography>
-        <Typography variant="body2" gutterBottom>
-            Description: {campaign.description}
-        </Typography>
-        <Typography variant="body2">Start Date: {campaign.startDate}</Typography>
-        <Typography variant="body2">End Date: {campaign.endDate}</Typography>
-        <Typography variant="body2" sx={{ fontWeight: 'bold', color: campaign.status === 'ACTIVE' ? 'green' : 'red' }}>
-            Status: {campaign.status}
-        </Typography>
+
     </Box>
 );
 

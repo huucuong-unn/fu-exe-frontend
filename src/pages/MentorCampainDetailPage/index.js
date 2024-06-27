@@ -64,7 +64,7 @@ export default function CampainDetailage() {
 
     return (
         <ThemeProvider
-            theme={showCustomTheme ? LPtheme : defaultTheme}
+            theme={defaultTheme}
             sx={{
                 fontFamily: 'Montserrat, sans-serif',
             }}
@@ -75,7 +75,7 @@ export default function CampainDetailage() {
 
             <Box sx={{ bgcolor: 'background.default' }}>
                 {/* Replace CampaignList with CampaignDetail */}
-                <LogoCollection />
+
                 <CampaignDetail />
 
                 <Divider />

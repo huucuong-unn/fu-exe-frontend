@@ -1,24 +1,32 @@
-import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
-import Pagination from '@mui/material/Pagination';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
+import React, { useState, useEffect } from 'react';
+import {
+    Avatar,
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    CircularProgress,
+    Container,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
+    Typography,
+    Pagination,
+    PaginationItem
+} from '@mui/material';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import useCampaignData from '~/hooks/Campaign/useCampaignData';
-import { useNavigate, useLocation } from 'react-router-dom';
 
 const CampaignList = () => {
     const { campaigns, loading, error, page, totalPages, setPage } = useCampaignData();
-    const [selectedCampaign, setSelectedCampaign] = useState('');
     const [selectedYear, setSelectedYear] = useState('');
     const navigate = useNavigate();
-
-    const location = useLocation();
+    const [selectedItemIndex, setSelectedItemIndex] = useState(null);
 
     const getUniqueYears = () => {
         const years = campaigns.map((campaign) => new Date(campaign.startDate).getFullYear());
@@ -33,17 +41,22 @@ const CampaignList = () => {
         setPage(value);
     };
 
-    const handleCampaignChange = (event) => {
-        setSelectedCampaign(event.target.value);
+    const handleItemClick = (index, campaignId) => {
+        setSelectedItemIndex(index);
+        navigateToCampaignDetail(campaignId);
     };
 
-    const navigateToCampaignDetail = (campaignName) => {
-        navigate(`/campaign/${encodeURIComponent(campaignName)}`);
+    const navigateToCampaignDetail = (campaignId) => {
+        navigate(`/campaign/${campaignId}`);
     };
 
-    const filteredCampaigns = selectedCampaign
-        ? campaigns.filter((campaign) => campaign.id === selectedCampaign)
+    const filteredCampaigns = selectedYear
+        ? campaigns.filter((campaign) => new Date(campaign.startDate).getFullYear() === parseInt(selectedYear))
         : campaigns;
+
+    useEffect(() => {
+        console.log(campaigns);
+    }, [campaigns]);
 
     if (loading) {
         return (
@@ -64,7 +77,7 @@ const CampaignList = () => {
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    minHeight: '80vh', // Adjust the height as needed
+                    minHeight: '80vh',
                     flexDirection: 'column',
                     p: 3,
                 }}
@@ -80,8 +93,8 @@ const CampaignList = () => {
                         borderRadius: 1,
                         boxShadow: 1,
                         textAlign: 'center',
-                        width: '80%', // Adjust width as needed
-                        mx: 'auto', // Center horizontally
+                        width: '80%',
+                        mx: 'auto',
                     }}
                 >
                     <Typography variant="body1">No campaigns available for now</Typography>
@@ -91,132 +104,165 @@ const CampaignList = () => {
     }
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                p: 3,
-                width: '100%', // Ensure the inner Box takes full width
-                maxWidth: '800px', // Optionally set a max-width for the list
-                margin: '0 auto', // Center horizontally
-            }}
-        >
-            <Typography variant="h4" gutterBottom>
-                Campaigns
-            </Typography>
-            <Box sx={{ display: 'flex', mb: 3 }}>
-                {/* <FormControl sx={{ minWidth: 200, mr: 2 }}>
-                    <InputLabel id="select-campaign-label">Select Campaign</InputLabel>
-                    <Select
-                        labelId="select-campaign-label"
-                        id="select-campaign"
-                        value={selectedCampaign}
-                        label="Select Campaign"
-                        onChange={handleCampaignChange}
-                    >
-                        <MenuItem value="">
-                            <em>All Campaigns</em>
-                        </MenuItem>
-                        {campaigns.map((campaign) => (
-                            <MenuItem key={campaign.id} value={campaign.id}>
-                                {campaign.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl> */}
-                <FormControl sx={{ minWidth: 200 }}>
-                    <InputLabel id="select-year-label">Select Year</InputLabel>
-                    <Select
-                        labelId="select-year-label"
-                        id="select-year"
-                        value={selectedYear}
-                        label="Select Year"
-                        onChange={handleYearChange}
-                    >
-                        <MenuItem value="">
-                            <em>All Years</em>
-                        </MenuItem>
-                        {getUniqueYears().map((year) => (
-                            <MenuItem key={year} value={year}>
-                                {year}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </Box>
-            {filteredCampaigns.map((campaign) => (
-                <Box
-                    key={campaign.id}
-                    sx={{
-                        mb: 2,
-                        p: 2,
-                        border: '1px solid',
-                        borderColor: 'grey.300',
-                        borderRadius: 1,
-                        boxShadow: 1,
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        backgroundColor: campaign.status === 'INACTIVE' ? 'grey.300' : 'background.paper',
-                        '&:hover': { boxShadow: 3 },
-                        position: 'relative',
-                    }}
-                >
-                    <Box
-                        sx={{
-                            width: '100%',
-                            height: '15px',
-                            backgroundColor: 'steelblue',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            borderTopLeftRadius: '4px',
-                            borderTopRightRadius: '4px',
-                        }}
-                    />
-
-                    <Box sx={{ flex: 1 }}>
-                        <Typography variant="h6" noWrap>
-                            {campaign.name}
-                        </Typography>
-                        <Tooltip title={`Start Date: ${campaign.startDate}`} arrow>
-                            <Typography variant="body2" color="textSecondary" noWrap>
-                                Start Date: {campaign.startDate}
-                            </Typography>
-                        </Tooltip>
+        <Container id="campaign-history" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
+            <Grid container spacing={6}>
+                <Grid item xs={12} md={12}>
+                    <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
+                        Campaigns
+                    </Typography>
+                    <Box sx={{ display: 'flex', mb: 3 }}>
+                        <FormControl sx={{ minWidth: 200 }}>
+                            <InputLabel id="select-year-label">Select Year</InputLabel>
+                            <Select
+                                labelId="select-year-label"
+                                id="select-year"
+                                value={selectedYear}
+                                label="Select Year"
+                                onChange={handleYearChange}
+                            >
+                                <MenuItem value="">
+                                    <em>All Years</em>
+                                </MenuItem>
+                                {getUniqueYears().map((year) => (
+                                    <MenuItem key={year} value={year}>
+                                        {year}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                fontWeight: 'bold',
-                                color: campaign.status === 'ACTIVE' ? 'green' : 'text.primary',
-                                backgroundColor: campaign.status === 'INACTIVE' ? 'error.main' : 'transparent',
-                                padding: '4px 8px',
-                                borderRadius: '4px',
-                            }}
-                        >
-                            {campaign.status === 'INACTIVE' && 'ENDING'}
-                            {campaign.status === 'ACTIVE' && 'PROGRESS'}
-                            {!campaign.status && 'SOON'}
-                        </Typography>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            onClick={() => navigateToCampaignDetail(campaign.name)}
-                            sx={{ ml: 2 }}
-                        >
-                            View Details
-                        </Button>
+                    <Grid container spacing={6}>
+                        {filteredCampaigns.map((campaign, index) => (
+                            <Grid item xs={12} md={12} key={index}>
+                                <Card
+                                    variant="outlined"
+                                    component={Button}
+                                    sx={{
+                                        p: 3,
+                                        height: 'fit-content',
+                                        width: '100%',
+                                        background: 'none',
+                                        position: 'relative',
+                                    }}
+                                    onClick={() => handleItemClick(index, campaign.id)}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            textAlign: 'left',
+                                            flexDirection: { xs: 'column', md: 'row' },
+                                            alignItems: { md: 'center' },
+                                            gap: 2.5,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                color: (theme) => {
+                                                    if (theme.palette.mode === 'light') {
+                                                        return selectedItemIndex === index ? 'primary.main' : 'grey.300';
+                                                    }
+                                                    return selectedItemIndex === index ? 'primary.main' : 'grey.700';
+                                                },
+                                            }}
+                                        >
+                                            <Avatar
+                                                alt="avatar image"
+                                                src={campaign?.img}
+                                                sx={{ width: 150, height: 150 }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ textTransform: 'none' }}>
+                                            <Typography
+                                                color="text.primary"
+                                                variant="body1"
+                                                fontWeight="bold"
+                                                fontSize={'24px'}
+                                            >
+                                                {campaign.name}
+                                            </Typography>
+                                            <Typography
+                                                color="text.secondary"
+                                                variant="body2"
+                                                sx={{ my: 1 }}
+                                                fontSize={'16px'}
+                                            >
+                                                {new Date(campaign.startDate).toLocaleDateString('en-GB', {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric',
+                                                })} - {new Date(campaign.endDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}
+                                            </Typography>
+                                            <Typography
+                                                color="text.secondary"
+                                                variant="body2"
+                                                sx={{ my: 2 }}
+                                                fontSize={'14px'}
+                                            >
+                                                {campaign.description}
+                                            </Typography>
+                                            <CardContent>
+                                                <Chip
+                                                    label={campaign.status}
+                                                    sx={{ mr: 2, mb: 1 }}
+                                                    color={
+                                                        campaign.status === 'Company-apply'
+                                                            ? 'primary'
+                                                            : campaign.status === 'Mentee-apply'
+                                                                ? 'secondary'
+                                                                : campaign.status === 'Tranning'
+                                                                    ? 'success'
+                                                                    : campaign.status === 'Close'
+                                                                        ? 'error'
+                                                                        : 'default'
+                                                    }
+                                                />
+                                            </CardContent>
+                                            <Link to={`/company/campaign-details/${campaign.id}`}>
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    sx={{ width: { lg: '40%', md: '70%', xs: '80%' } }}
+                                                >
+                                                    View Campaign Detail
+                                                </Button>
+                                            </Link>
+                                        </Box>
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            right: 0,
+                                            m: 2,
+                                        }}
+                                    >
+                                        <Typography color="text.secondary" variant="body2" fontSize={'14px'}>
+                                            Your Mentee: {campaign.numberOfMentee}
+                                        </Typography>
+                                    </Box>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                        <Pagination
+                            count={totalPages}
+                            page={page}
+                            onChange={handlePageChange}
+                            renderItem={(item) => (
+                                <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                            )}
+                            color="primary"
+                        />
                     </Box>
-                </Box>
-            ))}
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Pagination count={totalPages} page={page} onChange={handlePageChange} color="primary" />
-            </Box>
-        </Box>
+                </Grid>
+            </Grid>
+        </Container>
     );
 };
 

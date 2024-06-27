@@ -12,6 +12,7 @@ const getCampaignData = async (page = 1, limit = 10) => {
             id: campaign.id,
             name: campaign.name,
             status: campaign.status,
+            img: campaign.img,
             description: campaign.description || 'No description available',
             startDate: new Date(campaign.startDate).toLocaleDateString(),
             endDate: new Date(campaign.endDate).toLocaleDateString(),

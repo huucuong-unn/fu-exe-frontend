@@ -31,62 +31,138 @@ import SchoolIcon from '@mui/icons-material/School';
 import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
-
 import { useEffect, useState } from 'react';
+import CampaignAPI from '~/API/CampaignAPI';
 
-function AdCampaign() {
-    const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
-        ({ theme }) => ({
-            width: 42,
-            height: 26,
+const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
+    ({ theme }) => ({
+        width: 42,
+        height: 26,
+        padding: 0,
+        '& .MuiSwitch-switchBase': {
             padding: 0,
-            '& .MuiSwitch-switchBase': {
-                padding: 0,
-                margin: 2,
-                transitionDuration: '300ms',
-                '&.Mui-checked': {
-                    transform: 'translateX(16px)',
-                    color: '#fff',
-                    '& + .MuiSwitch-track': {
-                        backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
-                        opacity: 1,
-                        border: 0,
-                    },
-                    '&.Mui-disabled + .MuiSwitch-track': {
-                        opacity: 0.5,
-                    },
-                },
-                '&.Mui-focusVisible .MuiSwitch-thumb': {
-                    color: '#33cf4d',
-                    border: '6px solid #fff',
-                },
-                '&.Mui-disabled .MuiSwitch-thumb': {
-                    color: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[600],
+            margin: 2,
+            transitionDuration: '300ms',
+            '&.Mui-checked': {
+                transform: 'translateX(16px)',
+                color: '#fff',
+                '& + .MuiSwitch-track': {
+                    backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
+                    opacity: 1,
+                    border: 0,
                 },
                 '&.Mui-disabled + .MuiSwitch-track': {
-                    opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+                    opacity: 0.5,
                 },
             },
-            '& .MuiSwitch-thumb': {
-                boxSizing: 'border-box',
-                width: 22,
-                height: 22,
+            '&.Mui-focusVisible .MuiSwitch-thumb': {
+                color: '#33cf4d',
+                border: '6px solid #fff',
             },
-            '& .MuiSwitch-track': {
-                borderRadius: 26 / 2,
-                backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
-                opacity: 1,
-                transition: theme.transitions.create(['background-color'], {
-                    duration: 500,
-                }),
+            '&.Mui-disabled .MuiSwitch-thumb': {
+                color: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[600],
             },
-        }),
+            '&.Mui-disabled + .MuiSwitch-track': {
+                opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+            },
+        },
+        '& .MuiSwitch-thumb': {
+            boxSizing: 'border-box',
+            width: 22,
+            height: 22,
+        },
+        '& .MuiSwitch-track': {
+            borderRadius: 26 / 2,
+            backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+            opacity: 1,
+            transition: theme.transitions.create(['background-color'], {
+                duration: 500,
+            }),
+        },
+    }),
+);
+
+const steps = ['Company Apply', 'Student Apply', 'Training', 'Close'];
+const statusOptions = ['Company Apply', 'Student Apply', 'Training', 'Close'];
+
+const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+    [`&.${stepConnectorClasses.alternativeLabel}`]: {
+        top: 22,
+    },
+    [`&.${stepConnectorClasses.active}`]: {
+        [`& .${stepConnectorClasses.line}`]: {
+            backgroundImage: 'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+        },
+    },
+    [`&.${stepConnectorClasses.completed}`]: {
+        [`& .${stepConnectorClasses.line}`]: {
+            backgroundImage: 'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+        },
+    },
+    [`& .${stepConnectorClasses.line}`]: {
+        height: 3,
+        border: 0,
+        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : '#eaeaf0',
+        borderRadius: 1,
+    },
+}));
+
+const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
+    zIndex: 1,
+    color: '#fff',
+    width: 50,
+    height: 50,
+    display: 'flex',
+    borderRadius: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...(ownerState.active && {
+        backgroundImage: 'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+        boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+    }),
+    ...(ownerState.completed && {
+        backgroundImage: 'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+    }),
+}));
+
+function ColorlibStepIcon(props) {
+    const { active, completed, className } = props;
+
+    const icons = {
+        1: <ApartmentIcon />,
+        2: <AccountCircleIcon />,
+        3: <SchoolIcon />,
+        4: <DoDisturbOnIcon />,
+    };
+
+    return (
+        <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
+            {icons[String(props.icon)]}
+        </ColorlibStepIconRoot>
     );
+}
 
-    const steps = ['Company Apply', 'Student Apply', 'Tranning', 'Close'];
+ColorlibStepIcon.propTypes = {
+    active: PropTypes.bool,
+    className: PropTypes.string,
+    completed: PropTypes.bool,
+    icon: PropTypes.node,
+};
 
-    const status = ['Company Apply', 'Student Apply', 'Tranning', 'Close'];
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 
+function AdCampaign() {
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -95,6 +171,31 @@ function AdCampaign() {
     const [isMinOnlineSessionValid, setIsMinOnlineSessionValid] = useState(true);
     const [isMinOfflineSessionValid, setIsMinOfflineSessionValid] = useState(true);
     const [isMinSessionDurationValid, setIsMinSessionDurationValid] = useState(true);
+    const [campaigns, setCampaigns] = useState([]);
+    const [searchParams, setSearchParams] = useState({
+        mentorName: '',
+        status: '',
+        startDate: '',
+        endDate: '',
+    });
+
+    const fetchCampaigns = async (params) => {
+        try {
+            const campaignData = await CampaignAPI.getAllForAdmin(params);
+            setCampaigns(campaignData.listResult);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCampaigns({
+            campaignName: null,
+            status: null,
+            page: 1,
+            limit: 10,
+        });
+    }, []);
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -120,181 +221,28 @@ function AdCampaign() {
         setIsCreateModalOpen(false);
     };
 
-    const campaigns = [
-        {
-            id: 1,
-            name: 'Spring season',
-            campaignDuration: '1/1/2024 - 1/12/2024',
-            companyApplyDuration: '1/3/2024 - 1/6/2024',
-            menteeApplyDuration: '1/6/2024 - 1/9/2024',
-            tranningDuration: '1/9/2024 - 1/12/2024',
-            status: 'companyApply',
-        },
-        {
-            id: 2,
-            name: 'Spring season',
-            campaignDuration: '1/1/2024 - 1/12/2024',
-            companyApplyDuration: '1/3/2024 - 1/6/2024',
-            menteeApplyDuration: '1/6/2024 - 1/9/2024',
-            tranningDuration: '1/9/2024 - 1/12/2024',
-            status: 'menteeApply',
-        },
-        {
-            id: 3,
-            name: 'Spring season',
-            campaignDuration: '1/1/2024 - 1/12/2024',
-            companyApplyDuration: '1/3/2024 - 1/6/2024',
-            menteeApplyDuration: '1/6/2024 - 1/9/2024',
-            tranningDuration: '1/9/2024 - 1/12/2024',
-            status: 'tranning',
-        },
-        {
-            id: 4,
-            name: 'Spring season',
-            campaignDuration: '1/1/2024 - 1/12/2024',
-            companyApplyDuration: '1/3/2024 - 1/6/2024',
-            menteeApplyDuration: '1/6/2024 - 1/9/2024',
-            tranningDuration: '1/9/2024 - 1/12/2024',
-            status: 'close',
-        },
-    ];
-
-    const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
-        [`&.${stepConnectorClasses.alternativeLabel}`]: {
-            top: 22,
-        },
-        [`&.${stepConnectorClasses.active}`]: {
-            [`& .${stepConnectorClasses.line}`]: {
-                backgroundImage: 'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
-            },
-        },
-        [`&.${stepConnectorClasses.completed}`]: {
-            [`& .${stepConnectorClasses.line}`]: {
-                backgroundImage: 'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
-            },
-        },
-        [`& .${stepConnectorClasses.line}`]: {
-            height: 3,
-            border: 0,
-            backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : '#eaeaf0',
-            borderRadius: 1,
-        },
-    }));
-
-    const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
-        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
-        zIndex: 1,
-        color: '#fff',
-        width: 50,
-        height: 50,
-        display: 'flex',
-        borderRadius: '50%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        ...(ownerState.active && {
-            backgroundImage: 'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
-            boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
-        }),
-        ...(ownerState.completed && {
-            backgroundImage: 'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
-        }),
-    }));
-
-    function ColorlibStepIcon(props) {
-        const { active, completed, className } = props;
-
-        const icons = {
-            1: <ApartmentIcon />,
-            2: <AccountCircleIcon />,
-            3: <SchoolIcon />,
-            4: <DoDisturbOnIcon />,
-        };
-
-        return (
-            <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
-                {icons[String(props.icon)]}
-            </ColorlibStepIconRoot>
-        );
-    }
-
-    ColorlibStepIcon.propTypes = {
-        /**
-         * Whether this step is active.
-         * @default false
-         */
-        active: PropTypes.bool,
-        className: PropTypes.string,
-        /**
-         * Mark the step as completed. Is passed to child components.
-         * @default false
-         */
-        completed: PropTypes.bool,
-        /**
-         * The label displayed in the step icon.
-         */
-        icon: PropTypes.node,
+    const handleSearch = () => {
+        fetchCampaigns({
+            campaignName: searchParams.mentorName,
+            status: searchParams.status,
+            startDate: searchParams.startDate,
+            endDate: searchParams.endDate,
+            page: 1,
+            limit: 10,
+        });
     };
-
-    const VisuallyHiddenInput = styled('input')({
-        clip: 'rect(0 0 0 0)',
-        clipPath: 'inset(50%)',
-        height: 1,
-        overflow: 'hidden',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        whiteSpace: 'nowrap',
-        width: 1,
-    });
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         const name = event.target.name.value;
-        const numberOfSession = event.target.numberOfSession.value;
-        const minOnlineSession = event.target.minOnlineSession.value;
-        const minOfflineSession = event.target.minOfflineSession.value;
-        const minSessionDuration = event.target.minSessionDuration.value;
-
-        const isNumberOfSessionPositive = /^[1-9]\d*$/.test(numberOfSession);
-        const isMinOnlineSessionPositive = /^[1-9]\d*$/.test(minOnlineSession);
-        const isMinOfflineSessionPositive = /^[1-9]\d*$/.test(minOfflineSession);
-        const isMinSessionDurationPositive = /^[1-9]\d*$/.test(minSessionDuration);
 
         if (name.length < 5 || name.length > 50) {
             setIsNameValid(false);
         } else {
             setIsNameValid(true);
         }
-
-        if (!isNumberOfSessionPositive) {
-            setIsNumberOfSessionValid(false);
-        } else {
-            setIsNumberOfSessionValid(true);
-        }
-
-        if (!isMinOnlineSessionPositive) {
-            setIsMinOnlineSessionValid(false);
-        } else {
-            setIsMinOnlineSessionValid(true);
-        }
-
-        if (!isMinOfflineSessionPositive) {
-            setIsMinOfflineSessionValid(false);
-        } else {
-            setIsMinOfflineSessionValid(true);
-        }
-
-        if (!isMinSessionDurationPositive) {
-            setIsMinSessionDurationValid(false);
-        } else {
-            setIsMinSessionDurationValid(true);
-        }
     };
-
-    useEffect(() => {
-        console.log(isNameValid);
-    }, [isNameValid]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'end', gap: 4 }}>
@@ -303,13 +251,22 @@ function AdCampaign() {
                     Create
                 </Button>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, paddingRight: 2 }}>
-                    <TextField id="outlined-basic" label="Mentor name..." variant="outlined" size="small" />
+                    <TextField
+                        id="outlined-basic"
+                        label="Mentor name..."
+                        variant="outlined"
+                        size="small"
+                        value={searchParams.mentorName}
+                        onChange={(e) => setSearchParams({ ...searchParams, mentorName: e.target.value })}
+                    />
                     <Autocomplete
                         disablePortal
                         id="combo-box-demo"
-                        options={status}
+                        options={statusOptions}
                         sx={{ width: '200px' }}
                         size="small"
+                        value={searchParams.status}
+                        onChange={(event, newValue) => setSearchParams({ ...searchParams, status: newValue })}
                         renderInput={(params) => <TextField {...params} label="Status" />}
                     />
                     <Box
@@ -332,7 +289,14 @@ function AdCampaign() {
                             }}
                         >
                             <Typography>Start date</Typography>
-                            <TextField id="outlined-basic" variant="outlined" size="small" type="date" />
+                            <TextField
+                                id="outlined-basic"
+                                variant="outlined"
+                                size="small"
+                                type="date"
+                                value={searchParams.startDate}
+                                onChange={(e) => setSearchParams({ ...searchParams, startDate: e.target.value })}
+                            />
                         </Box>
                         <Typography>to</Typography>
                         <Box
@@ -344,10 +308,17 @@ function AdCampaign() {
                             }}
                         >
                             <Typography>End date</Typography>
-                            <TextField id="outlined-basic" variant="outlined" size="small" type="date" />
+                            <TextField
+                                id="outlined-basic"
+                                variant="outlined"
+                                size="small"
+                                type="date"
+                                value={searchParams.endDate}
+                                onChange={(e) => setSearchParams({ ...searchParams, endDate: e.target.value })}
+                            />
                         </Box>
                     </Box>
-                    <Button variant="contained" size="medium">
+                    <Button variant="contained" size="medium" onClick={handleSearch}>
                         Search
                     </Button>
                 </Box>
@@ -372,7 +343,7 @@ function AdCampaign() {
                                 Mentee apply duration
                             </TableCell>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
-                                Tranning duration
+                                Training duration
                             </TableCell>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                 Status
@@ -380,7 +351,7 @@ function AdCampaign() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {campaigns.map((campaign) => (
+                        {campaigns.map((campaign, index) => (
                             <TableRow
                                 key={campaign.id}
                                 sx={{
@@ -392,24 +363,32 @@ function AdCampaign() {
                                 onClick={() => handleRowClick(campaign)}
                             >
                                 <TableCell component="th" scope="row">
-                                    {campaign.id}
+                                    {index + 1}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
                                     {campaign.name}
                                 </TableCell>
-                                <TableCell align="left">{campaign.campaignDuration}</TableCell>
-                                <TableCell align="left">{campaign.companyApplyDuration}</TableCell>
-                                <TableCell align="left">{campaign.menteeApplyDuration}</TableCell>
-                                <TableCell align="left">{campaign.tranningDuration}</TableCell>
+                                <TableCell align="left">
+                                    {campaign.startDate} - {campaign.endDate}
+                                </TableCell>
+                                <TableCell align="left">
+                                    {campaign.companyApplyStartDate} - {campaign.companyApplyEndDate}
+                                </TableCell>
+                                <TableCell align="left">
+                                    {campaign.menteeApplyStartDate} - {campaign.menteeApplyEndDate}
+                                </TableCell>
+                                <TableCell align="left">
+                                    {campaign.trainingStartDate} - {campaign.trainingEndDate}
+                                </TableCell>
                                 <TableCell align="left">
                                     <Chip
                                         label={
                                             campaign.status === 'companyApply'
-                                                ? 'Company apply'
+                                                ? 'Company Apply'
                                                 : campaign.status === 'menteeApply'
                                                 ? 'Mentee Apply'
-                                                : campaign.status === 'tranning'
-                                                ? 'Tranning'
+                                                : campaign.status === 'training'
+                                                ? 'Training'
                                                 : campaign.status === 'close'
                                                 ? 'Close'
                                                 : 'default'
@@ -421,7 +400,7 @@ function AdCampaign() {
                                                 ? 'primary'
                                                 : campaign.status === 'menteeApply'
                                                 ? 'secondary'
-                                                : campaign.status === 'tranning'
+                                                : campaign.status === 'training'
                                                 ? 'success'
                                                 : campaign.status === 'close'
                                                 ? 'error'
@@ -457,7 +436,7 @@ function AdCampaign() {
                             m: 2,
                         }}
                         variant="contained"
-                        onClick={handleOpenEditModal} // Hoặc bất kỳ hàm xử lý nào bạn muốn
+                        onClick={handleOpenEditModal}
                     >
                         Edit
                     </Button>
@@ -471,9 +450,13 @@ function AdCampaign() {
                         }}
                     >
                         <Avatar sx={{ width: 150, height: 150, bgcolor: '#f48fb1' }} />
-                        <Typography variant="h5">Spring Season 2024</Typography>
+                        <Typography variant="h5">{selectedMentee?.name}</Typography>
                         <Stack sx={{ width: '100%' }} spacing={4}>
-                            <Stepper alternativeLabel activeStep={2} connector={<ColorlibConnector />}>
+                            <Stepper
+                                alternativeLabel
+                                activeStep={steps.indexOf(selectedMentee?.status)}
+                                connector={<ColorlibConnector />}
+                            >
                                 {steps.map((label) => (
                                     <Step key={label}>
                                         <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
@@ -521,7 +504,7 @@ function AdCampaign() {
                                 <Box
                                     sx={{
                                         display: 'grid',
-                                        gridTemplateColumns: 'repeat(3, 1fr)', // Tạo 3 cột với kích thước bằng nhau
+                                        gridTemplateColumns: 'repeat(3, 1fr)',
                                         gap: 5,
                                         marginLeft: 2,
                                         marginRight: 2,
@@ -540,7 +523,7 @@ function AdCampaign() {
                                             Campaign duration
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            1/1/2024 - 1/12/2024
+                                            {selectedMentee?.startDate} - {selectedMentee?.endDate}
                                         </Typography>
                                     </Box>
                                     <Box
@@ -558,7 +541,8 @@ function AdCampaign() {
                                             Company apply duration
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            1/3/2024 - 1/6/2024
+                                            {selectedMentee?.companyApplyStartDate} -{' '}
+                                            {selectedMentee?.companyApplyEndDate}
                                         </Typography>
                                     </Box>
                                     <Box
@@ -576,7 +560,8 @@ function AdCampaign() {
                                             Mentee apply duration
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            1/6/2024 - 1/9/2024
+                                            {selectedMentee?.menteeApplyStartDate} -{' '}
+                                            {selectedMentee?.menteeApplyEndDate}
                                         </Typography>
                                     </Box>
                                     <Box
@@ -591,10 +576,10 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Tranning duration
+                                            Training duration
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            1/9/2024 - 1/12/2024
+                                            {selectedMentee?.trainingStartDate} - {selectedMentee?.trainingEndDate}
                                         </Typography>
                                     </Box>
                                     <Box
@@ -645,7 +630,7 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Number of session
+                                            Number of sessions
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
                                             100
@@ -663,7 +648,7 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Min online session
+                                            Min online sessions
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
                                             100
@@ -681,7 +666,7 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Min offline session
+                                            Min offline sessions
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
                                             100
@@ -743,13 +728,13 @@ function AdCampaign() {
                             <TextField
                                 id="outlined-basic"
                                 variant="outlined"
-                                label="Number of session"
+                                label="Number of sessions"
                                 sx={{ flex: 1 }}
                             />
                             <TextField
                                 id="outlined-basic"
                                 variant="outlined"
-                                label="Min online session"
+                                label="Min online sessions"
                                 sx={{ flex: 1 }}
                             />
                         </Box>
@@ -765,7 +750,7 @@ function AdCampaign() {
                             <TextField
                                 id="outlined-basic"
                                 variant="outlined"
-                                label="Min offline session"
+                                label="Min offline sessions"
                                 sx={{ flex: 1 }}
                             />
                             <TextField
@@ -879,18 +864,18 @@ function AdCampaign() {
                             <TextField
                                 id="numberOfSession"
                                 variant="outlined"
-                                label="Number of session"
+                                label="Number of sessions"
                                 sx={{ flex: 1 }}
                                 error={!isNumberOfSessionValid}
-                                helperText={!isNumberOfSessionValid ? 'Must be number' : ''}
+                                helperText={!isNumberOfSessionValid ? 'Must be a number' : ''}
                             />
                             <TextField
                                 id="minOnlineSession"
                                 variant="outlined"
-                                label="Min online session"
+                                label="Min online sessions"
                                 sx={{ flex: 1 }}
                                 error={!isMinOnlineSessionValid}
-                                helperText={!isMinOnlineSessionValid ? 'Must be number' : ''}
+                                helperText={!isMinOnlineSessionValid ? 'Must be a number' : ''}
                             />
                         </Box>
                         <Box
@@ -905,10 +890,10 @@ function AdCampaign() {
                             <TextField
                                 id="minOfflineSession"
                                 variant="outlined"
-                                label="Min offline session"
+                                label="Min offline sessions"
                                 sx={{ flex: 1 }}
                                 error={!isMinOfflineSessionValid}
-                                helperText={!isMinOfflineSessionValid ? 'Must be number' : ''}
+                                helperText={!isMinOfflineSessionValid ? 'Must be a number' : ''}
                             />
                             <TextField
                                 id="minSessionDuration"
@@ -916,7 +901,7 @@ function AdCampaign() {
                                 label="Min session duration"
                                 sx={{ flex: 1 }}
                                 error={!isMinSessionDurationValid}
-                                helperText={!isMinSessionDurationValid ? 'Must be number' : ''}
+                                helperText={!isMinSessionDurationValid ? 'Must be a number' : ''}
                             />
                         </Box>
                         <Box
@@ -957,7 +942,7 @@ function AdCampaign() {
                         </Box>
                     </Box>
                     <Box sx={{ position: 'absolute', bottom: 10, right: 10, display: 'flex', gap: 2 }}>
-                        <Button variant="outlined" onClick={handleCloseEditModal}>
+                        <Button variant="outlined" onClick={handleCloseCreateModal}>
                             Close
                         </Button>
                         <Button variant="contained" type="submit">

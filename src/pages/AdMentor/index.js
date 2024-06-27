@@ -16,115 +16,147 @@ import {
     Typography,
     Avatar,
     Chip,
+    CircularProgress,
 } from '@mui/material';
 
 import { styled } from '@mui/system';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import CompanyAPI from '~/API/CompanyAPI';
+import CampaignAPI from '~/API/CampaignAPI';
+import MentorAPI from '~/API/MentorAPI';
 
-function AdMentor() {
-    const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
-        ({ theme }) => ({
-            width: 42,
-            height: 26,
+const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
+    ({ theme }) => ({
+        width: 42,
+        height: 26,
+        padding: 0,
+        '& .MuiSwitch-switchBase': {
             padding: 0,
-            '& .MuiSwitch-switchBase': {
-                padding: 0,
-                margin: 2,
-                transitionDuration: '300ms',
-                '&.Mui-checked': {
-                    transform: 'translateX(16px)',
-                    color: '#fff',
-                    '& + .MuiSwitch-track': {
-                        backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
-                        opacity: 1,
-                        border: 0,
-                    },
-                    '&.Mui-disabled + .MuiSwitch-track': {
-                        opacity: 0.5,
-                    },
-                },
-                '&.Mui-focusVisible .MuiSwitch-thumb': {
-                    color: '#33cf4d',
-                    border: '6px solid #fff',
-                },
-                '&.Mui-disabled .MuiSwitch-thumb': {
-                    color: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[600],
+            margin: 2,
+            transitionDuration: '300ms',
+            '&.Mui-checked': {
+                transform: 'translateX(16px)',
+                color: '#fff',
+                '& + .MuiSwitch-track': {
+                    backgroundColor: theme.palette.mode === 'dark' ? '#2ECA45' : '#65C466',
+                    opacity: 1,
+                    border: 0,
                 },
                 '&.Mui-disabled + .MuiSwitch-track': {
-                    opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+                    opacity: 0.5,
                 },
             },
-            '& .MuiSwitch-thumb': {
-                boxSizing: 'border-box',
-                width: 22,
-                height: 22,
+            '&.Mui-focusVisible .MuiSwitch-thumb': {
+                color: '#33cf4d',
+                border: '6px solid #fff',
             },
-            '& .MuiSwitch-track': {
-                borderRadius: 26 / 2,
-                backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
-                opacity: 1,
-                transition: theme.transitions.create(['background-color'], {
-                    duration: 500,
-                }),
+            '&.Mui-disabled .MuiSwitch-thumb': {
+                color: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[600],
             },
-        }),
-    );
+            '&.Mui-disabled + .MuiSwitch-track': {
+                opacity: theme.palette.mode === 'light' ? 0.7 : 0.3,
+            },
+        },
+        '& .MuiSwitch-thumb': {
+            boxSizing: 'border-box',
+            width: 22,
+            height: 22,
+        },
+        '& .MuiSwitch-track': {
+            borderRadius: 26 / 2,
+            backgroundColor: theme.palette.mode === 'light' ? '#E9E9EA' : '#39393D',
+            opacity: 1,
+            transition: theme.transitions.create(['background-color'], {
+                duration: 500,
+            }),
+        },
+    }),
+);
 
-    const [selectedMentee, setSelectedMentee] = useState(null);
+function AdMentor() {
+    const [selectedMentor, setselectedMentor] = useState(null);
+    const [companies, setCompanies] = useState([]);
+    const [mentors, setMentors] = useState([]);
+    const [mentorName, setMentorName] = useState('');
+    const [campaignId, setCampaignId] = useState(null);
+    const [companyId, setCompanyId] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const params = {
+                    mentorFullName: null,
+                    campaignId: null,
+                    companyId: null,
+                    page: 1,
+                    limit: 10,
+                };
+                const companiesData = await CompanyAPI.getAllWithStatusActiveWithoutPaging();
+                const mentorsData = await MentorAPI.getMentorsForAdminSearch(params);
+                setCompanies(companiesData);
+                setMentors(mentorsData.listResult);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     const handleRowClick = (mentee) => {
-        setSelectedMentee(mentee);
+        setselectedMentor(mentee);
+        console.log(mentee.mentorProfile.profilePicture);
     };
 
     const handleCloseModal = () => {
-        setSelectedMentee(null);
+        setselectedMentor(null);
     };
 
-    const mentors = [
-        { id: 1, name: 'John Doe', email: 'john@example.com', company: 'FPT Software', numberOfMentee: 2 },
-        { id: 2, name: 'Jane Smith', email: 'jane@example.com', company: 'Apple', numberOfMentee: 2 },
-        {
-            id: 3,
-            name: 'Emily Johnson',
-            email: 'emily.johnson@example.com',
-            company: 'FPT Software',
-            numberOfMentee: 2,
-        },
-        { id: 4, name: 'Michael Brown', email: 'michael.brown@example.com', company: 'Apple', numberOfMentee: 2 },
-        { id: 5, name: 'Sarah Davis', email: 'sarah.davis@example.com', company: 'FPT Software', numberOfMentee: 2 },
-        { id: 6, name: 'David Wilson', email: 'david.wilson@example.com', company: 'Apple', numberOfMentee: 2 },
-        {
-            id: 7,
-            name: 'Laura Martinez',
-            email: 'laura.martinez@example.com',
-            company: 'FPT Software',
-            numberOfMentee: 2,
-        },
-        { id: 8, name: 'James Anderson', email: 'james.anderson@example.com', company: 'Apple', numberOfMentee: 2 },
-        {
-            id: 9,
-            name: 'Patricia Thomas',
-            email: 'patricia.thomas@example.com',
-            company: 'FPT Software',
-            numberOfMentee: 2,
-        },
-        { id: 10, name: 'Robert Taylor', email: 'robert.taylor@example.com', company: 'Apple', numberOfMentee: 2 },
-    ];
+    const handleSearch = async () => {
+        try {
+            const params = {
+                mentorName: mentorName,
+                campaignId: campaignId,
+                companyId: companyId,
+                page: 1,
+                limit: 10,
+            };
+            const mentorsData = await MentorAPI.getMentorsForAdminSearch(params);
+            setMentors(mentorsData.listResult);
+        } catch (error) {
+            console.error('Error searching mentors:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'end', gap: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, paddingRight: 2 }}>
-                <TextField id="outlined-basic" label="Mentor name..." variant="outlined" size="small" />
+                <TextField
+                    id="outlined-basic"
+                    label="Mentor name..."
+                    variant="outlined"
+                    size="small"
+                    value={mentorName}
+                    onChange={(e) => setMentorName(e.target.value)}
+                />
                 <Autocomplete
                     disablePortal
-                    id="combo-box-demo"
-                    options=""
+                    id="companyOption"
+                    options={companies}
                     sx={{ width: 300 }}
-                    renderInput={(params) => <TextField {...params} label="Company name..." />}
+                    getOptionLabel={(option) => option.name}
+                    onChange={(event, newValue) => {
+                        setCompanyId(newValue ? newValue.id : null);
+                    }}
+                    renderInput={(params) => <TextField {...params} label="Company..." />}
                     size="small"
                 />
-                <Button variant="contained" size="medium">
+                <Button variant="contained" size="medium" onClick={handleSearch}>
                     Search
                 </Button>
             </Box>
@@ -153,9 +185,9 @@ function AdMentor() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {mentors.map((mentor) => (
+                        {mentors.map((mentor, index) => (
                             <TableRow
-                                key={mentor.id}
+                                key={mentor.mentorProfile.mentorDTO.id}
                                 sx={{
                                     '&:last-child td, &:last-child th': { border: 0 },
                                     '&:hover': {
@@ -165,20 +197,19 @@ function AdMentor() {
                                 onClick={() => handleRowClick(mentor)}
                             >
                                 <TableCell component="th" scope="row">
-                                    {mentor.id}
+                                    {index + 1}
                                 </TableCell>
                                 <TableCell component="th" scope="row">
-                                    {mentor.name}
+                                    {mentor.mentorProfile.mentorDTO.fullName}
                                 </TableCell>
-                                <TableCell align="left">{mentor.email}</TableCell>
-                                <TableCell align="left">{mentor.company}</TableCell>
-                                <TableCell align="left">{mentor.numberOfMentee}</TableCell>
+                                <TableCell align="left">{mentor.mentorProfile.mentorDTO.account.email}</TableCell>
+                                <TableCell align="left">{mentor.mentorProfile.mentorDTO.company.name}</TableCell>
+                                <TableCell align="left">{mentor.totalMentees}</TableCell>
                                 <TableCell align="left">
-                                    {' '}
                                     <FormControlLabel
                                         control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
                                         label="Active"
-                                        onClick={(event) => event.stopPropagation()} // Ngăn chặn sự kiện click lan ra
+                                        onClick={(event) => event.stopPropagation()}
                                     />
                                 </TableCell>
                             </TableRow>
@@ -186,7 +217,7 @@ function AdMentor() {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Modal open={Boolean(selectedMentee)} onClose={handleCloseModal}>
+            <Modal open={Boolean(selectedMentor)} onClose={handleCloseModal}>
                 <Box
                     sx={{
                         position: 'absolute',
@@ -201,120 +232,131 @@ function AdMentor() {
                         textAlign: 'left',
                     }}
                 >
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                gap: 1,
-                            }}
-                        >
-                            <Avatar sx={{ width: 180, height: 180, bgcolor: '#f48fb1' }} />
-                            <Typography variant="h5">FPT Software</Typography>
-                        </Box>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'start',
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'start',
-                                    borderBottom: '2px solid black',
-                                    marginBottom: 0.5,
-                                }}
-                            >
-                                <Typography variant="h4">Nguyen Thien Thanh</Typography>
-                                <Typography variant="h6">Software Engineer at Tortee</Typography>
+                    {selectedMentor && (
+                        <>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        gap: 1,
+                                    }}
+                                >
+                                    <Avatar
+                                        src={IMGAGE_HOST + selectedMentor.mentorProfile.profilePicture}
+                                        sx={{ width: 180, height: 180, bgcolor: '#f48fb1' }}
+                                    />
+                                    <Typography variant="h5">
+                                        {selectedMentor.mentorProfile.mentorDTO.companyName}
+                                    </Typography>
+                                </Box>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'start',
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'start',
+                                            borderBottom: '2px solid black',
+                                            marginBottom: 0.5,
+                                        }}
+                                    >
+                                        <Typography variant="h4">
+                                            {selectedMentor.mentorProfile.mentorDTO.FullName}
+                                        </Typography>
+                                        <Typography variant="h6">
+                                            {selectedMentor.mentorProfile.mentorDTO.jobTitle}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                            Phone:
+                                        </Typography>
+                                        <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                            {selectedMentor.mentorProfile.mentorDTO.phone}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                            Email:
+                                        </Typography>
+                                        <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                            {selectedMentor.mentorProfile.mentorDTO.account.email}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                            LinkedIn:
+                                        </Typography>
+                                        <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                            {selectedMentor.mentorProfile.linkedinUrl}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                            Facebook:
+                                        </Typography>
+                                        <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                            {selectedMentor.mentorProfile.facebookUrl}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                            Google Meet:
+                                        </Typography>
+                                        <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                            {selectedMentor.mentorProfile.googleMeetUrl}
+                                        </Typography>
+                                    </Box>
+                                </Box>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                    Phone:
-                                </Typography>
-                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    0967709009
-                                </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                    Email:
-                                </Typography>
-                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    nguyenthanh311003@gmail.com
+                            <Box sx={{ marginTop: 2 }}>
+                                <Box sx={{ borderBottom: '2px solid black' }}>
+                                    <Typography variant="h5">About</Typography>
+                                </Box>
+                                <Typography sx={{ marginTop: 1 }}>
+                                    {selectedMentor.mentorProfile.shortDescription}
                                 </Typography>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                    Linkedin:
-                                </Typography>
-                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    https://www.facebook.com/profile.php?id=100012330215584
-                                </Typography>
+                            <Box sx={{ marginTop: 3 }}>
+                                <Box sx={{ borderBottom: '2px solid black' }}>
+                                    <Typography variant="h5">Skills</Typography>
+                                </Box>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'left',
+                                        alignItems: 'center',
+                                        gap: 1,
+                                        marginTop: 1,
+                                    }}
+                                >
+                                    {selectedMentor.skills.map((skill, index) => (
+                                        <Chip key={index} label={skill.skill.name} />
+                                    ))}
+                                </Box>
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                    Facebook:
-                                </Typography>
-                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    https://www.facebook.com/profile.php?id=100012330215584
-                                </Typography>
+                            <Box sx={{ marginTop: 3 }}>
+                                <Box sx={{ borderBottom: '2px solid black' }}>
+                                    <Typography variant="h5">Certificates</Typography>
+                                </Box>
+                                {/* {selectedMentor.mentorProfile.mentorDTO.certificates.map((certificate, index) => (
+                                    <Typography key={index} sx={{ marginTop: 1 }}>
+                                        {certificate}
+                                    </Typography>
+                                ))} */}
                             </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                    Google meet:
-                                </Typography>
-                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    https://www.facebook.com/profile.php?id=100012330215584
-                                </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                    Require date:
-                                </Typography>
-                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                    Monday, Saturday, Sunday
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-                    <Box sx={{ marginTop: 2 }}>
-                        <Box sx={{ borderBottom: '2px solid black' }}>
-                            <Typography variant="h5">About</Typography>
-                        </Box>
-                        <Typography sx={{ marginTop: 1 }}>
-                            Passionate about technology and its social impact. Over 10 years experience delivering
-                            successful products in healthcare, eCommerce, digital media and international fundraising.
-                            Strong focus on product, user-centricity, UX and lean processes. Interested in Zen and Stoic
-                            philosophy. Enjoy deep thinking and deep work.
-                        </Typography>
-                    </Box>
-                    <Box sx={{ marginTop: 3 }}>
-                        <Box sx={{ borderBottom: '2px solid black' }}>
-                            <Typography variant="h5">Skill</Typography>
-                        </Box>
-                        <Box
-                            sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1, marginTop: 1 }}
-                        >
-                            <Chip label="Java" />
-                            <Chip label="C#" />
-                            <Chip label="Python" />
-                        </Box>
-                    </Box>
-                    <Box sx={{ marginTop: 3 }}>
-                        <Box sx={{ borderBottom: '2px solid black' }}>
-                            <Typography variant="h5">Certificate</Typography>
-                        </Box>
-                        <Typography sx={{ marginTop: 1 }}>Master of Java Backend</Typography>
-                        <Typography sx={{ marginTop: 1 }}>Master of React js</Typography>
-                    </Box>
+                        </>
+                    )}
                 </Box>
             </Modal>
         </Box>

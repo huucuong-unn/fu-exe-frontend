@@ -18,6 +18,7 @@ import MentorSuggestion from '~/components/MentorSuggestion';
 import FAQ from '~/components/FAQ';
 import getLPTheme from '~/components/getLPTheme';
 import CampaignList from '~/components/Campain/CampainList';
+import ProfileBox from '~/components/Campain/MentorProfileBox';
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
     return (
         <Box
@@ -75,8 +76,9 @@ export default function MentorLandingPage() {
     };
 
     return (
+        // showCustomTheme ? LPtheme :
         <ThemeProvider
-            theme={showCustomTheme ? LPtheme : defaultTheme}
+            theme={ defaultTheme}
             sx={{
                 fontFamily: 'Montserrat, sans-serif',
             }}
@@ -85,13 +87,19 @@ export default function MentorLandingPage() {
             <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
             <Divider />
 
+
+
             <Box sx={{ bgcolor: 'background.default' }}>
+                <ProfileBox />
+                <Divider />
                 <CampaignList />
+
+
 
                 <LogoCollection />
 
                 <Divider />
-                <MentorSuggestion />
+
                 <Divider />
                 <FAQ />
                 <Divider />

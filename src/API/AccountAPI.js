@@ -34,6 +34,18 @@ const AccountAPI = {
     login(data, includeAuthorization = false) {
         return axiosClient.post('/v1/auth/login', data);
     },
+
+    getAccountForAdminSearch(params, includeAuthorization = false) {
+        const url = `/v1/account/account-for-admin`;
+        const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
+
+    changeStatus(id, includeAuthorization = false) {
+        const url = `/v1/account/change-status/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
+        return axiosClient.put(url, authorizedConfig);
+    },
 };
 
 export default AccountAPI;

@@ -15,6 +15,7 @@ import UniversityAPI from '../../API/UniversityAPI'; // Importing your Universit
 import AccountAPI from '../../API/AccountAPI';
 import Autocomplete from '@mui/material/Autocomplete';
 import Avatar from '@mui/material/Avatar';
+import { InputLabel } from '@mui/material';
 
 function Copyright(props) {
     return (
@@ -314,53 +315,154 @@ export default function SignUp() {
                             >
                                 {imageSelected ? 'Remove Avatar' : 'Please Choose Avatar'}
                             </Button>
-                            <TextField
-                                error={usernameError}
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Username"
-                                name="username"
-                                autoComplete="username"
-                                autoFocus
-                                helperText={usernameHelperText}
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="name"
-                                label="fullName"
-                                name="name"
-                                autoComplete="name"
-                            />
-                            <Autocomplete
-                                disablePortal
-                                required
-                                fullWidth
-                                id="universityId"
-                                name="universityId"
-                                options={universities}
-                                getOptionLabel={(option) => option.name}
-                                renderInput={(params) => <TextField {...params} label="University" margin="normal" />}
-                            />
-                            <TextField
-                                error={dobError}
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="dob"
-                                label="Date of Birth"
-                                type="date"
-                                defaultValue="2000-05-31"
-                                id="dob"
-                                InputLabelProps={{
-                                    shrink: true,
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'left',
+                                    alignItems: 'center',
+                                    gap: 2,
                                 }}
-                                helperText={dobHelperText}
-                            />
-                            <TextField margin="normal" required fullWidth name="studentCode" label="Student Code" />
+                            >
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'start',
+                                        mt: 2,
+                                        gap: 1,
+                                        flex: 1,
+                                    }}
+                                >
+                                    <InputLabel htmlFor="upload-cv" sx={{ fontWeight: 'bold' }}>
+                                        Front Of Student Card
+                                    </InputLabel>
+                                    <TextField
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        id="name"
+                                        name="name"
+                                        type="file"
+                                        sx={{ mt: 0 }}
+                                    />
+                                </Box>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'start',
+                                        mt: 2,
+                                        gap: 1,
+                                        flex: 1,
+                                    }}
+                                >
+                                    <InputLabel htmlFor="upload-cv" sx={{ fontWeight: 'bold' }}>
+                                        Back Of Student Card
+                                    </InputLabel>
+                                    <TextField
+                                        margin="normal"
+                                        required
+                                        fullWidth
+                                        id="name"
+                                        name="name"
+                                        type="file"
+                                        sx={{ mt: 0 }}
+                                    />
+                                </Box>
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'left',
+                                    alignItems: 'center',
+                                    gap: 2,
+                                }}
+                            >
+                                <TextField
+                                    error={usernameError}
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="username"
+                                    label="Username"
+                                    name="username"
+                                    autoComplete="username"
+                                    autoFocus
+                                    helperText={usernameHelperText}
+                                    sx={{ flex: 1 }}
+                                />
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="name"
+                                    label="FullName"
+                                    name="name"
+                                    autoComplete="name"
+                                    sx={{ flex: 1 }}
+                                />
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'left',
+                                    alignItems: 'center',
+                                    gap: 2,
+                                }}
+                            >
+                                <Autocomplete
+                                    disablePortal
+                                    required
+                                    fullWidth
+                                    id="universityId"
+                                    name="universityId"
+                                    options={universities}
+                                    getOptionLabel={(option) => option.name}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="University" margin="normal" />
+                                    )}
+                                />
+                                <TextField
+                                    error={dobError}
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    name="dob"
+                                    label="Date of Birth"
+                                    type="date"
+                                    defaultValue="2000-05-31"
+                                    id="dob"
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    helperText={dobHelperText}
+                                />
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'left',
+                                    alignItems: 'center',
+                                    gap: 2,
+                                }}
+                            >
+                                <TextField margin="normal" required fullWidth name="studentCode" label="Student Code" />
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="phone"
+                                    label="Phone Number"
+                                    name="phone"
+                                    autoComplete="phone"
+                                />
+                            </Box>
+
                             <TextField
                                 error={emailError}
                                 margin="normal"
@@ -372,15 +474,6 @@ export default function SignUp() {
                                 autoComplete="email"
                                 type="email"
                                 helperText={emailHelperText}
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="phone"
-                                label="Phone Number"
-                                name="phone"
-                                autoComplete="phone"
                             />
                             <TextField
                                 margin="normal"

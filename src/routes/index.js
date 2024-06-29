@@ -28,6 +28,7 @@ import Payment from '~/pages/Payment/index';
 import StudentHistory from '~/pages/StudentHistory';
 import AdOrder from '~/pages/AdOrders';
 import AdDashboard from '~/pages/AdDashboard';
+import SignUpForCompany from '~/pages/SignUpForCompany';
 import NotAuthorized from '~/pages/NotAuthorized';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
@@ -44,6 +45,7 @@ const publicRoutes = [
     { path: '/company', component: Companies },
 
     { path: '/company/:companyId', component: CompanyDetails },
+    { path: '/company/sign-up', component: SignUpForCompany, layout: null },
 
     //Auth
     { path: '/sign-in', component: SignInSide, layout: null },

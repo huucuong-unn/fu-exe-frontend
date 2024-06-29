@@ -28,6 +28,7 @@ import Payment from '~/pages/Payment/index';
 import StudentHistory from '~/pages/StudentHistory';
 import AdOrder from '~/pages/AdOrders';
 import AdDashboard from '~/pages/AdDashboard';
+import SignUpForCompany from '~/pages/SignUpForCompany';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -47,6 +48,7 @@ const publicRoutes = [
     { path: '/company/create-mentor-account', component: CreateMentorAccount },
     { path: '/company/create-mentor-profile', component: CreateMentorProfile },
     { path: '/company/create-mentor-History', component: MentorHistoryForCompany },
+    { path: '/company/sign-up', component: SignUpForCompany, layout: null },
 
     //Auth
     { path: '/sign-in', component: SignInSide, layout: null },

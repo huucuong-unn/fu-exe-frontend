@@ -42,6 +42,7 @@ export default function SignInSide() {
     const [value, setValue] = useState('1');
     const [showAlert, setShowAlert] = useState(false);
     const location = useLocation();
+    const [loginWithRole, setLoginWithRole] = useState('student');
 
     useEffect(() => {
         if (location.state?.signupSuccess) {
@@ -55,6 +56,20 @@ export default function SignInSide() {
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
+        switch (newValue) {
+            case '1':
+                setLoginWithRole('student');
+                break;
+            case '2':
+                setLoginWithRole('mentor');
+                break;
+            case '3':
+                setLoginWithRole('company');
+                break;
+            // Add more cases as needed
+            default:
+                setLoginWithRole('');
+        }
     };
 
     const navigate = useNavigate();
@@ -63,6 +78,7 @@ export default function SignInSide() {
         try {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
+            data.append('loginWithRole', loginWithRole);
             const userInfo = await AccountAPI.login(data);
 
             // Check if userInfo is not undefined or null
@@ -175,7 +191,7 @@ export default function SignInSide() {
                                             fullWidth
                                             id="email"
                                             label="Email Address"
-                                            name="email"
+                                            name="emailOrUsername"
                                             autoComplete="email"
                                             autoFocus
                                         />

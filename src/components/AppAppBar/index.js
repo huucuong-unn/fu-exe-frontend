@@ -41,9 +41,25 @@ function AppAppBar({ mode, toggleColorMode }) {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+    const handleLogout = () => {
+        setAnchorEl(null);
+        // Remove user information from localStorage
+        localStorage.removeItem('userInfo');
+
+        // Redirect to the sign-up page
+        navigate('/sign-in');
+    };
     const handleClose = () => {
         setAnchorEl(null);
-        // navigate('/user/profile');
+    };
+
+    const handleProfile = () => {
+        setAnchorEl(null);
+        // Remove user information from localStorage
+        localStorage.removeItem('userInfo');
+
+        // Redirect to the sign-up page
+        navigate('/sign-in');
     };
 
     const handleCloseHistory = () => {
@@ -58,7 +74,7 @@ function AppAppBar({ mode, toggleColorMode }) {
     const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     // Initialize userInfo with localStorage value
-    const [userInfo, setUserInfo] = useState(storageService.getItem('userInfo') || {});
+    const [userInfo, setUserInfo] = useState(storageService.getItem('userInfo') || null);
 
     useEffect(() => {
         // This useEffect is now only for updating userInfo if it changes in localStorage
@@ -247,7 +263,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         {userInfo.point} Points
                                     </MenuItem>
                                     <Divider />
-                                    <MenuItem onClick={handleClose}>
+                                    <MenuItem onClick={handleLogout}>
                                         <ListItemIcon>
                                             <Logout fontSize="small" />
                                         </ListItemIcon>

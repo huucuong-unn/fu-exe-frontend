@@ -18,6 +18,14 @@ const AccountAPI = {
             },
         });
     },
+
+    createAccountForCompany(data, includeAuthorization = false) {
+        return axiosClient.post('/v1/account/create-company', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
     uploadImage(userProfile, form, includeAuthorization = false) {
         return axiosClient.post(`/v1/account/upload-image/${userProfile}`, form, {
             headers: {

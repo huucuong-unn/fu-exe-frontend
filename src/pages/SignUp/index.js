@@ -341,8 +341,8 @@ export default function SignUp() {
                                         margin="normal"
                                         required
                                         fullWidth
-                                        id="name"
-                                        name="name"
+                                        id="front"
+                                        name="front"
                                         type="file"
                                         sx={{ mt: 0 }}
                                     />
@@ -359,14 +359,14 @@ export default function SignUp() {
                                     }}
                                 >
                                     <InputLabel htmlFor="upload-cv" sx={{ fontWeight: 'bold' }}>
-                                        Back Of Student Card
+                                        front Of Student Card
                                     </InputLabel>
                                     <TextField
                                         margin="normal"
                                         required
                                         fullWidth
-                                        id="name"
-                                        name="name"
+                                        id="back"
+                                        name="back"
                                         type="file"
                                         sx={{ mt: 0 }}
                                     />

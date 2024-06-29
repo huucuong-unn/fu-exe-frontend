@@ -87,7 +87,7 @@ function AdMentor() {
         const fetchData = async () => {
             try {
                 const params = {
-                    mentorFullName: null,
+                    mentorName: null,
                     campaignId: null,
                     companyId: null,
                     page: 1,

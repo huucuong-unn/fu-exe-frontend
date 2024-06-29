@@ -224,9 +224,9 @@ export default function SignInSide() {
                                             margin="normal"
                                             required
                                             fullWidth
-                                            id="email"
-                                            label="Email Address"
-                                            name="email"
+                                            id="3"
+                                            label="Email or Username"
+                                            name="emailOrUsername"
                                             autoComplete="email"
                                             autoFocus
                                         />

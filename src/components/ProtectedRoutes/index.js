@@ -7,6 +7,8 @@ const ProtectedRoutes = ({ roleName }) => {
         switch (roleName) {
             case 'admin':
                 return user.role == 'admin' ? <Outlet /> : <Navigate to="/NotAuthoried" />;
+            case 'company':
+                return user.role == 'company' ? <Outlet /> : <Navigate to="/NotAuthoried" />;
             case 'mentor':
                 return user.role == 'mentor' ? <Outlet /> : <Navigate to="/NotAuthoried" />;
             case 'student':

@@ -10,10 +10,11 @@ import {
     Typography,
     InputLabel,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '~/assets/images/logo.png';
+import AccountAPI from '~/API/AccountAPI';
+import { Link } from 'react-router-dom';
 
 function Copyright(props) {
     return (
@@ -30,8 +31,126 @@ function Copyright(props) {
 
 function SignUpForCompany() {
     const defaultTheme = createTheme();
+    const dateInWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const [avatar, setAvatar] = useState(null);
+    const [imageError, setImageError] = useState(false);
+    const [imageHelperText, setImageHelperText] = useState('');
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [universities, setUniversities] = useState([]);
+    const [imageSelected, setImageSelected] = useState(false);
+    const [formValues, setFormValues] = useState({
+        username: '',
+        password: '',
+        confirmPassword: '',
+        email: '',
+        name: '',
+        companyType: '',
+        companySize: '',
+        country: '',
+        phone: '',
+        start: '',
+        end: '',
+        description: '',
+        address: '',
+        companyWebsiteUrl: '',
+        facebookUrl: '',
+    });
 
-    const dateInWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Satuday', 'Sunday'];
+    const handleAvatarChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setAvatar(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+    const handleImageUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const fileType = file.type;
+            const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (validImageTypes.includes(fileType)) {
+                setImageError(false);
+                setImageHelperText('');
+                const reader = new FileReader();
+                reader.onload = () => {
+                    setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+                setImageFile(file);
+                setImageSelected(true);
+            } else {
+                setImageError(true);
+                setImageHelperText('Only JPEG, JPG, and PNG files are allowed.');
+                setImagePreview(null);
+                setImageFile(null);
+            }
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setImagePreview(null);
+        setImageFile(null);
+        setImageError(false);
+        setImageHelperText('');
+        setImageSelected(false);
+        document.getElementById('avatarUrl').value = null;
+    };
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        data.append('roleName', 'student');
+
+        const createAccountRequest = {
+            username: data.get('username'),
+            password: data.get('password'),
+            email: data.get('email'),
+            avatarUrl: data.get('avatarUrl'),
+            roleName: 'company',
+        };
+
+        // Append `createAccountRequest` fields to FormData
+        data.append('createAccountRequest.username', createAccountRequest.username);
+        data.append('createAccountRequest.password', createAccountRequest.password);
+        data.append('createAccountRequest.email', createAccountRequest.email);
+        data.append('createAccountRequest.avatarUrl', data.get('avatarUrl'));
+        data.append('createAccountRequest.roleName', createAccountRequest.roleName);
+
+        // Append `requestObject` fields to FormData
+        data.append('createCompanyRequest.name', data.get('name'));
+        data.append('createCompanyRequest.country', formValues.address);
+        data.append('createCompanyRequest.address', data.get('address'));
+        data.append('createCompanyRequest.avatarUrl', data.get('avatarUrl'));
+        data.append('createCompanyRequest.facebookUrl', data.get('facebookUrl'));
+
+        data.append('createCompanyRequest.companyWebsiteUrl', data.get('companyWebsiteUrl'));
+
+        data.append('createCompanyRequest.description', data.get('description'));
+
+        data.append('createCompanyRequest.workingTime', formValues.start + '-' + formValues.end);
+
+        data.append('createCompanyRequest.companySize', data.get('companySize'));
+        data.append('createCompanyRequest.companyType', formValues.companyType);
+
+        try {
+            const result = await AccountAPI.createAccountForCompany(data);
+            //navigate('/sign-in', { state: { signupSuccess: true } });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
@@ -64,13 +183,13 @@ function SignUpForCompany() {
                         <Typography component="h1" variant="h4">
                             Sign up as mentee
                         </Typography>
-
-                        <Box component="form" sx={{ mt: 5 }}>
+                        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 5 }}>
                             <TextField
                                 type="file"
                                 id="avatarUrl"
                                 name="avatarUrl"
                                 style={{ display: 'none' }}
+                                onChange={handleImageUpload}
                                 accept="image/jpeg, image/jpg, image/png"
                             />
 
@@ -84,14 +203,22 @@ function SignUpForCompany() {
                             >
                                 <Avatar
                                     alt="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.svgrepo.com%2Fsvg%2F452030%2Favatar-default&psig=AOvVaw2Eepet3Jt6CuwNIc10izZr&ust=1718112366877000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOi0-r2R0YYDFQAAAAAdAAAAABAE"
+                                    src={imagePreview}
                                     sx={{ width: 90, height: 90, border: 'solid 2px black' }}
                                     helperText="Avatar"
                                 />
                             </Box>
-                            <Button variant="contained" sx={{ mt: 2, ml: '50%', transform: 'translate(-50%)' }}>
-                                Please Choose Avatar
+                            <Button
+                                variant="contained"
+                                sx={{ mt: 2, ml: '50%', transform: 'translate(-50%)' }}
+                                onClick={
+                                    imageSelected
+                                        ? handleRemoveImage
+                                        : () => document.getElementById('avatarUrl').click()
+                                }
+                            >
+                                {imageSelected ? 'Remove Avatar' : 'Please Choose Avatar'}
                             </Button>
-
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -109,6 +236,8 @@ function SignUpForCompany() {
                                     name="username"
                                     autoComplete="username"
                                     autoFocus
+                                    value={formValues.username}
+                                    onChange={handleInputChange}
                                     sx={{ flex: 1 }}
                                 />
                                 <TextField
@@ -116,13 +245,14 @@ function SignUpForCompany() {
                                     required
                                     fullWidth
                                     id="name"
-                                    label="FullName"
+                                    label="Full Name"
                                     name="name"
                                     autoComplete="name"
+                                    value={formValues.name}
+                                    onChange={handleInputChange}
                                     sx={{ flex: 1 }}
                                 />
                             </Box>
-
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -135,9 +265,14 @@ function SignUpForCompany() {
                                     disablePortal
                                     required
                                     fullWidth
-                                    id="universityId"
-                                    name="universityId"
-                                    getOptionLabel={(option) => option.name}
+                                    id="companyType"
+                                    name="companyType"
+                                    options={['Type1', 'Type2', 'Type3']}
+                                    getOptionLabel={(option) => option}
+                                    value={formValues.companyType}
+                                    onChange={(event, newValue) =>
+                                        setFormValues({ ...formValues, companyType: newValue })
+                                    }
                                     renderInput={(params) => (
                                         <TextField {...params} label="Company Type" margin="normal" />
                                     )}
@@ -146,12 +281,13 @@ function SignUpForCompany() {
                                     margin="normal"
                                     required
                                     fullWidth
-                                    name="dob"
-                                    label="Company size"
-                                    id="dob"
+                                    name="companySize"
+                                    label="Company Size"
+                                    id="companySize"
+                                    value={formValues.companySize}
+                                    onChange={handleInputChange}
                                 />
                             </Box>
-
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -164,9 +300,12 @@ function SignUpForCompany() {
                                     disablePortal
                                     required
                                     fullWidth
-                                    id="universityId"
-                                    name="universityId"
-                                    getOptionLabel={(option) => option.name}
+                                    id="country"
+                                    name="country"
+                                    options={['Country1', 'Country2', 'Country3']}
+                                    getOptionLabel={(option) => option}
+                                    value={formValues.country}
+                                    onChange={(event, newValue) => setFormValues({ ...formValues, country: newValue })}
                                     renderInput={(params) => <TextField {...params} label="Country" margin="normal" />}
                                 />
                                 <TextField
@@ -177,37 +316,10 @@ function SignUpForCompany() {
                                     label="Phone Number"
                                     name="phone"
                                     autoComplete="phone"
+                                    value={formValues.phone}
+                                    onChange={handleInputChange}
                                 />
                             </Box>
-                            {/* <Box
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'left',
-                                    alignItems: 'center',
-                                    gap: 2,
-                                }}
-                            >
-                                <Autocomplete
-                                    disablePortal
-                                    required
-                                    fullWidth
-                                    id="universityId"
-                                    name="universityId"
-                                    getOptionLabel={(option) => option.name}
-                                    renderInput={(params) => <TextField {...params} label="Start" margin="normal" />}
-                                />
-                                -
-                                <Autocomplete
-                                    disablePortal
-                                    required
-                                    fullWidth
-                                    id="universityId"
-                                    name="universityId"
-                                    getOptionLabel={(option) => option.name}
-                                    renderInput={(params) => <TextField {...params} label="End" margin="normal" />}
-                                />
-                            </Box> */}
-
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -235,9 +347,13 @@ function SignUpForCompany() {
                                         disablePortal
                                         required
                                         fullWidth
-                                        id="universityId"
-                                        name="universityId"
+                                        id="start"
+                                        name="start"
                                         options={dateInWeek}
+                                        value={formValues.start}
+                                        onChange={(event, newValue) =>
+                                            setFormValues({ ...formValues, start: newValue })
+                                        }
                                         renderInput={(params) => (
                                             <TextField {...params} label="Start" margin="normal" />
                                         )}
@@ -258,52 +374,59 @@ function SignUpForCompany() {
                                         disablePortal
                                         required
                                         fullWidth
-                                        id="universityId"
-                                        name="universityId"
+                                        id="end"
+                                        name="end"
                                         options={dateInWeek}
+                                        value={formValues.end}
+                                        onChange={(event, newValue) => setFormValues({ ...formValues, end: newValue })}
                                         renderInput={(params) => <TextField {...params} label="End" margin="normal" />}
                                     />
                                 </Box>
                             </Box>
 
                             <TextField
-                                id="introduce"
-                                name="introduce"
-                                label="Introduce"
+                                id="description"
+                                name="description"
+                                label="description"
                                 multiline
                                 rows={5}
                                 sx={{ width: '100%', flex: 1 }}
+                                value={formValues.description}
+                                onChange={handleInputChange}
                             />
 
                             <TextField
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="email"
+                                id="address"
                                 label="Address"
-                                name="email"
-                                autoComplete="email"
-                                type="email"
+                                name="address"
+                                autoComplete="address"
+                                value={formValues.address}
+                                onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="email"
-                                label="Company Websize Url"
-                                name="email"
-                                autoComplete="email"
-                                type="email"
+                                id="companyWebsiteUrl"
+                                label="Company Website Url"
+                                name="companyWebsiteUrl"
+                                autoComplete="companyWebsiteUrl"
+                                value={formValues.companyWebsiteUrl}
+                                onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="email"
+                                id="facebookUrl"
                                 label="Facebook Url"
-                                name="email"
-                                autoComplete="email"
-                                type="email"
+                                name="facebookUrl"
+                                autoComplete="facebookUrl"
+                                value={formValues.facebookUrl}
+                                onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
@@ -314,8 +437,9 @@ function SignUpForCompany() {
                                 name="email"
                                 autoComplete="email"
                                 type="email"
+                                value={formValues.email}
+                                onChange={handleInputChange}
                             />
-
                             <TextField
                                 margin="normal"
                                 required
@@ -325,6 +449,8 @@ function SignUpForCompany() {
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
+                                value={formValues.password}
+                                onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
@@ -335,11 +461,12 @@ function SignUpForCompany() {
                                 type="password"
                                 id="confirmPassword"
                                 autoComplete="current-password"
+                                value={formValues.confirmPassword}
+                                onChange={handleInputChange}
                             />
                             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                                 Sign Up
                             </Button>
-
                             <Grid container>
                                 <Grid item xs>
                                     <Link to="/sign-in" variant="body2">

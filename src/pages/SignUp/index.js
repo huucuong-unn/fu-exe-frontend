@@ -50,17 +50,17 @@ export default function SignUp() {
     const [imageSelected, setImageSelected] = useState(false);
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const response = await UniversityAPI.getAllForDropDownList();
-    //             setUniversities(response);
-    //         } catch (error) {
-    //             console.error('Error fetching universities:', error);
-    //         }
-    //     };
-    //     fetchData();
-    // }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await UniversityAPI.getAllForDropDownList();
+                setUniversities(response);
+            } catch (error) {
+                console.error('Error fetching universities:', error);
+            }
+        };
+        fetchData();
+    }, []);
 
     const validateEmail = (email) => {
         const emailRegex =
@@ -133,15 +133,15 @@ export default function SignUp() {
             setEmailHelperText('');
         }
 
-        // const dobValue = data.get('dob');
-        // if (!validateDOB(dobValue)) {
-        //     setDobError(true);
-        //     setDobHelperText('You must be at least 17 years old.');
-        //     result = false;
-        // } else {
-        //     setDobError(false);
-        //     setDobHelperText('');
-        // }
+        const dobValue = data.get('dob');
+        if (!validateDOB(dobValue)) {
+            setDobError(true);
+            setDobHelperText('You must be at least 17 years old.');
+            result = false;
+        } else {
+            setDobError(false);
+            setDobHelperText('');
+        }
 
         const passwordValue = data.get('password');
         if (!validatePassword(passwordValue)) {
@@ -166,10 +166,74 @@ export default function SignUp() {
         return result;
     };
 
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+    //     const data = new FormData(event.currentTarget);
+    //     data.append('roleName', 'student');
+
+    //     const createAccountRequest = {
+    //         username: data.get('username'),
+    //         password: data.get('password'),
+    //         email: data.get('email'),
+    //         avatarUrl: data.get('avatarUrl'),
+    //         roleName: data.get('roleName'),
+    //     };
+
+    //     const requestObject = {
+    //         name: data.get('name'),
+    //         dob: data.get('dob'),
+    //         studentCode: data.get('studentCode'),
+    //         universityId: 'hello',
+    //     };
+
+    //     const dataRequest = {
+    //         createAccountRequest: createAccountRequest,
+    //         requestObject: requestObject,
+    //     };
+
+    //     console.log(dataRequest);
+
+    //     if (validateAllField(data)) {
+    //         try {
+    //             const result = await AccountAPI.createAccount(dataRequest);
+    //             navigate('/sign-in', { state: { signupSuccess: true } });
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    // };
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         data.append('roleName', 'student');
+
+        const createAccountRequest = {
+            username: data.get('username'),
+            password: data.get('password'),
+            email: data.get('email'),
+            avatarUrl: data.get('avatarUrl'),
+            roleName: data.get('roleName'),
+        };
+
+        // Append `createAccountRequest` fields to FormData
+        data.append('createAccountRequest.username', createAccountRequest.username);
+        data.append('createAccountRequest.password', createAccountRequest.password);
+        data.append('createAccountRequest.email', createAccountRequest.email);
+        data.append('createAccountRequest.avatarUrl', createAccountRequest.avatarUrl);
+        data.append('createAccountRequest.roleName', createAccountRequest.roleName);
+
+        const requestObject = {
+            name: data.get('name'),
+            dob: data.get('dob'),
+            studentCode: data.get('studentCode'),
+            universityId: '02e14861-f8a7-43d3-9c5f-8239d61d49d2',
+        };
+
+        // Append `requestObject` fields to FormData
+        data.append('studentRequest.name', requestObject.name);
+        data.append('studentRequest.dob', requestObject.dob);
+        data.append('studentRequest.studentCode', requestObject.studentCode);
+        data.append('studentRequest.universityId', requestObject.universityId);
 
         if (validateAllField(data)) {
             try {
@@ -180,6 +244,7 @@ export default function SignUp() {
             }
         }
     };
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
@@ -261,16 +326,26 @@ export default function SignUp() {
                                 autoFocus
                                 helperText={usernameHelperText}
                             />
-                            {/* <Autocomplete
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="name"
+                                label="fullName"
+                                name="name"
+                                autoComplete="name"
+                            />
+                            <Autocomplete
                                 disablePortal
                                 required
                                 fullWidth
-                                id="university"
+                                id="universityId"
+                                name="universityId"
                                 options={universities}
                                 getOptionLabel={(option) => option.name}
                                 renderInput={(params) => <TextField {...params} label="University" margin="normal" />}
-                            /> */}
-                            {/* <TextField
+                            />
+                            <TextField
                                 error={dobError}
                                 margin="normal"
                                 required
@@ -284,7 +359,8 @@ export default function SignUp() {
                                     shrink: true,
                                 }}
                                 helperText={dobHelperText}
-                            /> */}
+                            />
+                            <TextField margin="normal" required fullWidth name="studentCode" label="Student Code" />
                             <TextField
                                 error={emailError}
                                 margin="normal"

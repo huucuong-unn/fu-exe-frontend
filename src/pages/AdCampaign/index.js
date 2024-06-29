@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
     Table,
     TableBody,
@@ -21,17 +22,16 @@ import {
     Card,
     Autocomplete,
 } from '@mui/material';
-
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
-
-import ApartmentIcon from '@mui/icons-material/Apartment';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SchoolIcon from '@mui/icons-material/School';
-import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import {
+    Apartment as ApartmentIcon,
+    AccountCircle as AccountCircleIcon,
+    School as SchoolIcon,
+    DoDisturbOn as DoDisturbOnIcon,
+    CloudUpload as CloudUploadIcon,
+} from '@mui/icons-material';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
-import { useEffect, useState } from 'react';
 import CampaignAPI from '~/API/CampaignAPI';
 
 const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
@@ -82,8 +82,8 @@ const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVis
     }),
 );
 
-const steps = ['Company Apply', 'Student Apply', 'Training', 'Close'];
-const statusOptions = ['Company Apply', 'Student Apply', 'Training', 'Close'];
+const steps = ['COMPANY_APPLY', 'STUDENT_APPLY', 'TRAINING', 'CLOSE'];
+const statusOptions = ['COMPANY_APPLY', 'STUDENT_APPLY', 'TRAINING', 'CLOSE'];
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -172,11 +172,30 @@ function AdCampaign() {
     const [isMinOfflineSessionValid, setIsMinOfflineSessionValid] = useState(true);
     const [isMinSessionDurationValid, setIsMinSessionDurationValid] = useState(true);
     const [campaigns, setCampaigns] = useState([]);
+    const [imageError, setImageError] = useState(false);
+    const [imageHelperText, setImageHelperText] = useState('');
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [universities, setUniversities] = useState([]);
+    const [imageSelected, setImageSelected] = useState(false);
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
     const [searchParams, setSearchParams] = useState({
-        mentorName: '',
+        campaignName: '',
         status: '',
         startDate: '',
         endDate: '',
+    });
+
+    const [newCampaign, setNewCampaign] = useState({
+        name: '',
+        startDate: '',
+        endDate: '',
+        companyApplyStartDate: '',
+        companyApplyEndDate: '',
+        menteeApplyStartDate: '',
+        menteeApplyEndDate: '',
+        trainingStartDate: '',
+        trainingEndDate: '',
     });
 
     const fetchCampaigns = async (params) => {
@@ -223,7 +242,7 @@ function AdCampaign() {
 
     const handleSearch = () => {
         fetchCampaigns({
-            campaignName: searchParams.mentorName,
+            campaignName: searchParams.campaignName,
             status: searchParams.status,
             startDate: searchParams.startDate,
             endDate: searchParams.endDate,
@@ -235,12 +254,80 @@ function AdCampaign() {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const name = event.target.name.value;
-
+        const name = newCampaign.name;
         if (name.length < 5 || name.length > 50) {
             setIsNameValid(false);
+            return;
         } else {
             setIsNameValid(true);
+        }
+
+        // Additional validation for other fields can be added here
+        // For simplicity, we'll assume the other fields are valid
+
+        try {
+            const formData = new FormData();
+            formData.append('name', newCampaign.name);
+            formData.append('startDate', newCampaign.startDate);
+            formData.append('endDate', newCampaign.endDate);
+            formData.append('companyApplyStartDate', newCampaign.companyApplyStartDate);
+            formData.append('companyApplyEndDate', newCampaign.companyApplyEndDate);
+            formData.append('menteeApplyStartDate', newCampaign.menteeApplyStartDate);
+            formData.append('menteeApplyEndDate', newCampaign.menteeApplyEndDate);
+            formData.append('trainingStartDate', newCampaign.trainingStartDate);
+            formData.append('trainingEndDate', newCampaign.trainingEndDate);
+            formData.append('img', imageFile);
+
+            console.log(formData);
+            // Assuming CampaignAPI.createCampaign is a function that sends a POST request to create a new campaign
+            const response = await CampaignAPI.createCampaign(formData);
+
+            setNewCampaign(null);
+            // console.log('Campaign created successfully:', response);
+
+            // Close the modal and refresh the campaign list
+            setIsCreateModalOpen(false);
+            fetchCampaigns({
+                campaignName: null,
+                status: null,
+                page: 1,
+                limit: 10,
+            });
+        } catch (error) {
+            console.error('Error creating campaign:', error);
+            // Handle error (e.g., display an error message to the user)
+        }
+    };
+
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setNewCampaign((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleImageUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const fileType = file.type;
+            const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (validImageTypes.includes(fileType)) {
+                setImageError(false);
+                setImageHelperText('');
+                const reader = new FileReader();
+                reader.onload = () => {
+                    setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+                setImageFile(file);
+                setImageSelected(true);
+            } else {
+                setImageError(true);
+                setImageHelperText('Only JPEG, JPG, and PNG files are allowed.');
+                setImagePreview(null);
+                setImageFile(null);
+            }
         }
     };
 
@@ -253,11 +340,11 @@ function AdCampaign() {
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, paddingRight: 2 }}>
                     <TextField
                         id="outlined-basic"
-                        label="Mentor name..."
+                        label="Campaign name..."
                         variant="outlined"
                         size="small"
-                        value={searchParams.mentorName}
-                        onChange={(e) => setSearchParams({ ...searchParams, mentorName: e.target.value })}
+                        value={searchParams.campaignName}
+                        onChange={(e) => setSearchParams({ ...searchParams, campaignName: e.target.value })}
                     />
                     <Autocomplete
                         disablePortal
@@ -269,55 +356,6 @@ function AdCampaign() {
                         onChange={(event, newValue) => setSearchParams({ ...searchParams, status: newValue })}
                         renderInput={(params) => <TextField {...params} label="Status" />}
                     />
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'end',
-                            justifyContent: 'center',
-                            gap: 2,
-                            border: '1px solid #ccc',
-                            borderRadius: 2,
-                            padding: 2,
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'start',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <Typography>Start date</Typography>
-                            <TextField
-                                id="outlined-basic"
-                                variant="outlined"
-                                size="small"
-                                type="date"
-                                value={searchParams.startDate}
-                                onChange={(e) => setSearchParams({ ...searchParams, startDate: e.target.value })}
-                            />
-                        </Box>
-                        <Typography>to</Typography>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'start',
-                                justifyContent: 'center',
-                            }}
-                        >
-                            <Typography>End date</Typography>
-                            <TextField
-                                id="outlined-basic"
-                                variant="outlined"
-                                size="small"
-                                type="date"
-                                value={searchParams.endDate}
-                                onChange={(e) => setSearchParams({ ...searchParams, endDate: e.target.value })}
-                            />
-                        </Box>
-                    </Box>
                     <Button variant="contained" size="medium" onClick={handleSearch}>
                         Search
                     </Button>
@@ -356,9 +394,7 @@ function AdCampaign() {
                                 key={campaign.id}
                                 sx={{
                                     '&:last-child td, &:last-child th': { border: 0 },
-                                    '&:hover': {
-                                        cursor: 'pointer',
-                                    },
+                                    '&:hover': { cursor: 'pointer' },
                                 }}
                                 onClick={() => handleRowClick(campaign)}
                             >
@@ -369,40 +405,80 @@ function AdCampaign() {
                                     {campaign.name}
                                 </TableCell>
                                 <TableCell align="left">
-                                    {campaign.startDate} - {campaign.endDate}
+                                    {new Date(campaign?.startDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}{' '}
+                                    -{' '}
+                                    {new Date(campaign?.endDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
                                 </TableCell>
                                 <TableCell align="left">
-                                    {campaign.companyApplyStartDate} - {campaign.companyApplyEndDate}
+                                    {new Date(campaign?.companyApplyStartDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}{' '}
+                                    -{' '}
+                                    {new Date(campaign?.companyApplyEndDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
                                 </TableCell>
                                 <TableCell align="left">
-                                    {campaign.menteeApplyStartDate} - {campaign.menteeApplyEndDate}
+                                    {new Date(campaign?.menteeApplyStartDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}{' '}
+                                    -{' '}
+                                    {new Date(campaign?.menteeApplyEndDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
                                 </TableCell>
                                 <TableCell align="left">
-                                    {campaign.trainingStartDate} - {campaign.trainingEndDate}
+                                    {new Date(campaign?.trainingStartDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}{' '}
+                                    -{' '}
+                                    {new Date(campaign?.trainingEndDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}
                                 </TableCell>
                                 <TableCell align="left">
                                     <Chip
                                         label={
-                                            campaign.status === 'companyApply'
+                                            campaign.status === 'COMPANY_APPLY'
                                                 ? 'Company Apply'
-                                                : campaign.status === 'menteeApply'
-                                                ? 'Mentee Apply'
-                                                : campaign.status === 'training'
+                                                : campaign.status === 'STUDENT_APPLY'
+                                                ? 'Student Apply'
+                                                : campaign.status === 'TRAINING'
                                                 ? 'Training'
-                                                : campaign.status === 'close'
+                                                : campaign.status === 'CLOSE'
                                                 ? 'Close'
                                                 : 'default'
                                         }
                                         sx={{ mr: 2, mb: 1 }}
                                         onClick={() => {}}
                                         color={
-                                            campaign.status === 'companyApply'
+                                            campaign.status === 'COMPANY_APPLY'
                                                 ? 'primary'
-                                                : campaign.status === 'menteeApply'
+                                                : campaign.status === 'STUDENT_APPLY'
                                                 ? 'secondary'
-                                                : campaign.status === 'training'
+                                                : campaign.status === 'TRAINING'
                                                 ? 'success'
-                                                : campaign.status === 'close'
+                                                : campaign.status === 'CLOSE'
                                                 ? 'error'
                                                 : 'default'
                                         }
@@ -449,7 +525,22 @@ function AdCampaign() {
                             gap: 2,
                         }}
                     >
-                        <Avatar sx={{ width: 150, height: 150, bgcolor: '#f48fb1' }} />
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: 2,
+                            }}
+                        >
+                            <Avatar
+                                alt="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.svgrepo.com%2Fsvg%2F452030%2Favatar-default&psig=AOvVaw2Eepet3Jt6CuwNIc10izZr&ust=1718112366877000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOi0-r2R0YYDFQAAAAAdAAAAABAE"
+                                src={IMGAGE_HOST + selectedMentee?.img}
+                                sx={{ width: 90, height: 90, border: 'solid 2px black' }}
+                                helperText="Avatar"
+                            />
+                        </Box>
                         <Typography variant="h5">{selectedMentee?.name}</Typography>
                         <Stack sx={{ width: '100%' }} spacing={4}>
                             <Stepper
@@ -498,7 +589,7 @@ function AdCampaign() {
                                         fontWeight="bold"
                                         fontSize={'24px'}
                                     >
-                                        General information
+                                        General Information
                                     </Typography>
                                 </Box>
                                 <Box
@@ -520,16 +611,23 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Campaign duration
+                                            Campaign Duration
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            {selectedMentee?.startDate} - {selectedMentee?.endDate}
+                                            {new Date(selectedMentee?.startDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}{' '}
+                                            -{' '}
+                                            {new Date(selectedMentee?.endDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}
                                         </Typography>
                                     </Box>
                                     <Box
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
                                         sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -538,17 +636,26 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Company apply duration
+                                            Company Apply Duration
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            {selectedMentee?.companyApplyStartDate} -{' '}
-                                            {selectedMentee?.companyApplyEndDate}
+                                            {new Date(selectedMentee?.companyApplyStartDate).toLocaleDateString(
+                                                'en-GB',
+                                                {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric',
+                                                },
+                                            )}{' '}
+                                            -{' '}
+                                            {new Date(selectedMentee?.companyApplyEndDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}
                                         </Typography>
                                     </Box>
                                     <Box
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
                                         sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -557,17 +664,26 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Mentee apply duration
+                                            Mentee Apply Duration
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            {selectedMentee?.menteeApplyStartDate} -{' '}
-                                            {selectedMentee?.menteeApplyEndDate}
+                                            {new Date(selectedMentee?.menteeApplyStartDate).toLocaleDateString(
+                                                'en-GB',
+                                                {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric',
+                                                },
+                                            )}{' '}
+                                            -{' '}
+                                            {new Date(selectedMentee?.menteeApplyEndDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}
                                         </Typography>
                                     </Box>
                                     <Box
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
                                         sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -576,16 +692,23 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Training duration
+                                            Training Duration
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            {selectedMentee?.trainingStartDate} - {selectedMentee?.trainingEndDate}
+                                            {new Date(selectedMentee?.trainingStartDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}{' '}
+                                            -{' '}
+                                            {new Date(selectedMentee?.trainingEndDate).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric',
+                                            })}
                                         </Typography>
                                     </Box>
                                     <Box
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
                                         sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -594,16 +717,13 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Number of mentors
+                                            Number of Mentors
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            50
+                                            {selectedMentee?.numberOfMentors}
                                         </Typography>
                                     </Box>
                                     <Box
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
                                         sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -612,16 +732,13 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Number of mentees
+                                            Number of Mentees
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            100
+                                            {selectedMentee?.numberOfMentees}
                                         </Typography>
                                     </Box>
                                     <Box
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
                                         sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -630,16 +747,13 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Number of sessions
+                                            Number of Sessions
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            100
+                                            {selectedMentee?.numberOfSessions}
                                         </Typography>
                                     </Box>
                                     <Box
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
                                         sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -648,16 +762,13 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Min online sessions
+                                            Min Online Sessions
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            100
+                                            {selectedMentee?.minOnlineSessions}
                                         </Typography>
                                     </Box>
                                     <Box
-                                        xs={12}
-                                        sm={6}
-                                        md={4}
                                         sx={{
                                             display: 'flex',
                                             flexDirection: 'column',
@@ -666,10 +777,10 @@ function AdCampaign() {
                                         }}
                                     >
                                         <Typography color="gray" variant="h7">
-                                            Min offline sessions
+                                            Min Offline Sessions
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
-                                            100
+                                            {selectedMentee?.minOfflineSessions}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -693,7 +804,7 @@ function AdCampaign() {
                         textAlign: 'center',
                     }}
                 >
-                    <Box pb={4}>
+                    <Box pb={4} component="form">
                         <Box
                             sx={{
                                 display: 'flex',
@@ -724,20 +835,7 @@ function AdCampaign() {
                                 gap: 2,
                                 mt: 2,
                             }}
-                        >
-                            <TextField
-                                id="outlined-basic"
-                                variant="outlined"
-                                label="Number of sessions"
-                                sx={{ flex: 1 }}
-                            />
-                            <TextField
-                                id="outlined-basic"
-                                variant="outlined"
-                                label="Min online sessions"
-                                sx={{ flex: 1 }}
-                            />
-                        </Box>
+                        ></Box>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -826,82 +924,35 @@ function AdCampaign() {
                         <Box
                             sx={{
                                 display: 'flex',
-                                flexDirection: 'column',
+                                flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 gap: 2,
                             }}
                         >
-                            <Avatar sx={{ width: 150, height: 150, bgcolor: '#f48fb1' }} />
-                            <Button
-                                component="label"
-                                role={undefined}
-                                variant="contained"
-                                tabIndex={-1}
-                                startIcon={<CloudUploadIcon />}
-                            >
-                                Upload file
-                                <VisuallyHiddenInput type="file" />
-                            </Button>
+                            <Avatar
+                                alt="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.svgrepo.com%2Fsvg%2F452030%2Favatar-default&psig=AOvVaw2Eepet3Jt6CuwNIc10izZr&ust=1718112366877000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOi0-r2R0YYDFQAAAAAdAAAAABAE"
+                                src={imagePreview}
+                                sx={{ width: 90, height: 90, border: 'solid 2px black' }}
+                                helperText="Avatar"
+                            />
+                            <TextField
+                                type="file"
+                                id="avatarUrl"
+                                name="avatarUrl"
+                                onChange={handleImageUpload}
+                                accept="image/jpeg, image/jpg, image/png"
+                            />
                             <TextField
                                 id="name"
+                                name="name"
                                 variant="outlined"
                                 label="Name"
                                 sx={{ flex: 1 }}
                                 error={!isNameValid}
                                 helperText={!isNameValid ? 'Name must be 5-50 characters long' : ''}
-                            />
-                        </Box>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                gap: 2,
-                                mt: 2,
-                            }}
-                        >
-                            <TextField
-                                id="numberOfSession"
-                                variant="outlined"
-                                label="Number of sessions"
-                                sx={{ flex: 1 }}
-                                error={!isNumberOfSessionValid}
-                                helperText={!isNumberOfSessionValid ? 'Must be a number' : ''}
-                            />
-                            <TextField
-                                id="minOnlineSession"
-                                variant="outlined"
-                                label="Min online sessions"
-                                sx={{ flex: 1 }}
-                                error={!isMinOnlineSessionValid}
-                                helperText={!isMinOnlineSessionValid ? 'Must be a number' : ''}
-                            />
-                        </Box>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                gap: 2,
-                                mt: 2,
-                            }}
-                        >
-                            <TextField
-                                id="minOfflineSession"
-                                variant="outlined"
-                                label="Min offline sessions"
-                                sx={{ flex: 1 }}
-                                error={!isMinOfflineSessionValid}
-                                helperText={!isMinOfflineSessionValid ? 'Must be a number' : ''}
-                            />
-                            <TextField
-                                id="minSessionDuration"
-                                variant="outlined"
-                                label="Min session duration"
-                                sx={{ flex: 1 }}
-                                error={!isMinSessionDurationValid}
-                                helperText={!isMinSessionDurationValid ? 'Must be a number' : ''}
+                                value={newCampaign?.name}
+                                onChange={handleInputChange}
                             />
                         </Box>
                         <Box
@@ -925,7 +976,15 @@ function AdCampaign() {
                                 }}
                             >
                                 <Typography>Start date</Typography>
-                                <TextField id="outlined-basic" variant="outlined" size="small" type="date" />
+                                <TextField
+                                    id="startDate"
+                                    name="startDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                    value={newCampaign?.startDate}
+                                    onChange={handleInputChange}
+                                />
                             </Box>
                             <Typography>to</Typography>
                             <Box
@@ -937,11 +996,175 @@ function AdCampaign() {
                                 }}
                             >
                                 <Typography>End date</Typography>
-                                <TextField id="outlined-basic" variant="outlined" size="small" type="date" />
+                                <TextField
+                                    id="endDate"
+                                    name="endDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                    value={newCampaign?.endDate}
+                                    onChange={handleInputChange}
+                                />
+                            </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'end',
+                                justifyContent: 'center',
+                                gap: 2,
+                                border: '1px solid #ccc',
+                                borderRadius: 2,
+                                padding: 2,
+                                mt: 2,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'start',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Typography>Company apply start date</Typography>
+                                <TextField
+                                    id="companyApplyStartDate"
+                                    name="companyApplyStartDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                    value={newCampaign?.companyApplyStartDate}
+                                    onChange={handleInputChange}
+                                />
+                            </Box>
+                            <Typography>to</Typography>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'start',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Typography>Company apply end date</Typography>
+                                <TextField
+                                    id="companyApplyEndDate"
+                                    name="companyApplyEndDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                    value={newCampaign?.companyApplyEndDate}
+                                    onChange={handleInputChange}
+                                />
+                            </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'end',
+                                justifyContent: 'center',
+                                gap: 2,
+                                border: '1px solid #ccc',
+                                borderRadius: 2,
+                                padding: 2,
+                                mt: 2,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'start',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Typography>Mentee apply start date</Typography>
+                                <TextField
+                                    id="menteeApplyStartDate"
+                                    name="menteeApplyStartDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                    value={newCampaign?.menteeApplyStartDate}
+                                    onChange={handleInputChange}
+                                />
+                            </Box>
+                            <Typography>to</Typography>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'start',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Typography>Mentee apply end date</Typography>
+                                <TextField
+                                    id="menteeApplyEndDate"
+                                    name="menteeApplyEndDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                    value={newCampaign?.menteeApplyEndDate}
+                                    onChange={handleInputChange}
+                                />
+                            </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'end',
+                                justifyContent: 'center',
+                                gap: 2,
+                                border: '1px solid #ccc',
+                                borderRadius: 2,
+                                padding: 2,
+                                mt: 2,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'start',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Typography>Training start date</Typography>
+                                <TextField
+                                    id="trainingStartDate"
+                                    name="trainingStartDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                    value={newCampaign?.trainingStartDate}
+                                    onChange={handleInputChange}
+                                />
+                            </Box>
+                            <Typography>to</Typography>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'start',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Typography>Training end date</Typography>
+                                <TextField
+                                    id="trainingEndDate"
+                                    name="trainingEndDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                    value={newCampaign?.trainingEndDate}
+                                    onChange={handleInputChange}
+                                />
                             </Box>
                         </Box>
                     </Box>
-                    <Box sx={{ position: 'absolute', bottom: 10, right: 10, display: 'flex', gap: 2 }}>
+                    <Box sx={{ position: 'absolute', bottom: 4, right: 10, display: 'flex', gap: 2 }}>
                         <Button variant="outlined" onClick={handleCloseCreateModal}>
                             Close
                         </Button>

@@ -32,6 +32,13 @@ const CampaignAPI = {
         const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
+    createCampaign(data, includeAuthorization = false) {
+        return axiosClient.post('v1/campaign/create', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
 };
 
 export default CampaignAPI;

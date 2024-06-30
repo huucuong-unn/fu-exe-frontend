@@ -14,7 +14,6 @@ import SignUp from '~/pages/SignUp';
 import { UserProfile } from '~/pages/UserProfile';
 import UserProfilesTest from '~/pages/SignUp/testUploadImage';
 import { Application } from '~/pages/Application';
-import CreateMentorAccount from '~/pages/CreateMentorAccount';
 import CreateMentorProfile from '~/pages/CreateMentorProfile';
 import MentorHistoryForCompany from '~/pages/MentorHistoryForCompany';
 import MentorLandingPage from '~/pages/MentorLandingPage';
@@ -77,7 +76,6 @@ const publicRoutes = [
     //company
     { path: '/company/campaign-history', component: CompaniesCampaignHistory },
     { path: '/company/campaign-details/:campaignId', component: CompaniesCampaignDetail },
-    { path: '/company/create-mentor-account', component: CreateMentorAccount },
     { path: '/company/create-mentor-profile', component: CreateMentorProfile },
     { path: '/company/create-mentor-History', component: MentorHistoryForCompany },
 ];

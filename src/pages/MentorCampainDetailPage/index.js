@@ -11,6 +11,7 @@ import LogoCollection from '~/components/LogoCollection';
 
 import getLPTheme from '~/components/getLPTheme';
 import CampaignDetail from '~/components/Campain/CampainDetail'; // Import CampaignDetail component
+import ScrollToTop from '~/components/ScrollToTop'; // Import CampaignDetail component
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
     return (
@@ -75,6 +76,7 @@ export default function CampainDetailage() {
 
             <Box sx={{ bgcolor: 'background.default' }}>
                 {/* Replace CampaignList with CampaignDetail */}
+
 
                 <CampaignDetail />
 

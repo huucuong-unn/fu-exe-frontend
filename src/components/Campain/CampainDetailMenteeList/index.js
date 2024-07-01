@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Typography, IconButton, Tooltip, Modal, Button, Grid } from '@mui/material';
+import {
+    Grid, Box, Typography, IconButton, Tooltip, Button, Modal, TextField
+} from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -8,11 +10,32 @@ import StarIcon from '@mui/icons-material/Star';
 const MenteeSection = ({ mentees, onSelectMentee, handleAction, totalPages, currentPage, onPageChange }) => {
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [actionType, setActionType] = useState('');
+    const [message, setMessage] = useState('');
 
     // Handler for opening modal and setting selected mentee
     const handleShowDetails = (mentee) => {
         setSelectedMentee(mentee);
         setModalOpen(true);
+    };
+
+    const handleConfirm = () => {
+        // Handle the approve or reject action with the message
+        console.log(`Mentee ID: ${selectedMentee.id}, Action: ${actionType}, Message: ${message}`);
+        handleAction(selectedMentee.id, actionType, message); // Assuming handleAction accepts an additional message argument
+        handleClose();
+    };
+
+    const handleOpen = (mentee, action) => {
+        setSelectedMentee(mentee);
+        setActionType(action);
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setMessage('');
     };
 
     // Handler for moving a mentee to the top of the list
@@ -82,7 +105,7 @@ const MenteeSection = ({ mentees, onSelectMentee, handleAction, totalPages, curr
                                         <Tooltip title="Approve">
                                             <IconButton
                                                 color="primary"
-                                                onClick={() => handleAction(mentee.id, 'approve')}
+                                                onClick={() => handleOpen(mentee, 'approve')}
                                                 sx={{ ml: 1 }}
                                             >
                                                 <CheckIcon />
@@ -91,7 +114,7 @@ const MenteeSection = ({ mentees, onSelectMentee, handleAction, totalPages, curr
                                         <Tooltip title="Reject">
                                             <IconButton
                                                 color="secondary"
-                                                onClick={() => handleAction(mentee.id, 'reject')}
+                                                onClick={() => handleOpen(mentee, 'reject')}
                                             >
                                                 <ClearIcon />
                                             </IconButton>
@@ -154,6 +177,47 @@ const MenteeSection = ({ mentees, onSelectMentee, handleAction, totalPages, curr
                                     </Grid>
                                 </Grid>
                             )}
+                        </Box>
+                    </Modal>
+                    {/* Modal for approve/reject actions */}
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-title"
+                        aria-describedby="modal-description"
+                    >
+                        <Box sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 400,
+                            bgcolor: 'background.paper',
+                            border: '2px solid #000',
+                            boxShadow: 24,
+                            p: 4,
+                        }}>
+                            <Typography id="modal-title" variant="h6" component="h2">
+                                {actionType === 'approve' ? 'Approve Mentee' : 'Reject Mentee'}
+                            </Typography>
+                            <Typography id="modal-description" sx={{ mt: 2 }}>
+                                What do you want to tell {selectedMentee?.name}?
+                            </Typography>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={4}
+                                variant="outlined"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                sx={{ mt: 2 }}
+                            />
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                                <Button onClick={handleClose} sx={{ mr: 2 }}>Cancel</Button>
+                                <Button variant="contained" color="primary" onClick={handleConfirm}>
+                                    Confirm
+                                </Button>
+                            </Box>
                         </Box>
                     </Modal>
                 </>

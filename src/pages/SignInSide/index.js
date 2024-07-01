@@ -86,6 +86,11 @@ export default function SignInSide() {
                 // Store user information in local storage
                 storageService.setItem('userInfo', userInfo);
                 navigate('/');
+                if (loginWithRole === 'mentor') {
+                    navigate('/campaigns');  // Navigate to the campaigns page
+                } else {
+                    navigate('/');  // Navigate to the home page for other roles
+                }
             }
         } catch (error) {
             console.log(error);

@@ -47,7 +47,8 @@ const CampaignList = () => {
     };
 
     const navigateToCampaignDetail = (campaignId) => {
-        navigate(`/campaign/${campaignId}`);
+        navigate(`/campaigns/${campaignId}`);
+        window.scrollTo(0, 0);
     };
 
     const filteredCampaigns = selectedYear
@@ -222,7 +223,6 @@ const CampaignList = () => {
                                                     }
                                                 />
                                             </CardContent>
-                                            <Link to={`/company/campaign-details/${campaign.id}`}>
                                                 <Button
                                                     variant="contained"
                                                     color="primary"
@@ -230,7 +230,7 @@ const CampaignList = () => {
                                                 >
                                                     View Campaign Detail
                                                 </Button>
-                                            </Link>
+
                                         </Box>
                                     </Box>
                                     <Box

@@ -57,7 +57,7 @@ const publicRoutes = [
     { path: '/campaigns', component: MentorLandingPage, layout: LayoutWithFooter },
 
     // Campaign detail route
-    { path: '/campaign/:campaignName', component: CampaignDetail, layout: LayoutWithFooter },
+    { path: '/campaigns/:campaignId', component: CampaignDetail, layout: LayoutWithFooter },
 
     //Payment
     { path: '/payment', component: Payment },

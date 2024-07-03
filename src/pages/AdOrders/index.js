@@ -75,7 +75,7 @@ function AdOrder() {
                 <Autocomplete
                     disablePortal
                     id="combo-box-demo"
-                    options={['Success', 'Failed']}
+                    options={['SUCCESS', 'FAILED']}
                     sx={{ width: 200 }}
                     value={status}
                     onChange={(event, newValue) => setStatus(newValue)}

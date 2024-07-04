@@ -1,4 +1,4 @@
-const getMenteesToApprove = async (mentorId, page = 1, limit = 10) => {
+const getMenteesToApprove = async (mentorId, page = 10, limit = 10) => {
     try {
         const response = await fetch(
             `https://tortee-463vt.ondigitalocean.app/api/v1/application/mentor/${mentorId}?page=${page}&limit=${limit}`
@@ -13,21 +13,36 @@ const getMenteesToApprove = async (mentorId, page = 1, limit = 10) => {
             id: mentee.id,
             createdDate: new Date(mentee.createdDate).toLocaleDateString(),
             modifiedDate: new Date(mentee.modifiedDate).toLocaleDateString(),
-            mentorId: mentee.mentor.id,
-            mentorCompany: mentee.mentor.company.name,
-            mentorCompanyDescription: mentee.mentor.company.description,
-            mentorCompanyAvatarUrl: mentee.mentor.company.avatarUrl,
-            mentorCompanyWebsiteUrl: mentee.mentor.company.companyWebsiteUrl,
-            status: mentee.status,
-            firstName: mentee.firstName,
-            lastName: mentee.lastName,
+            fullName: mentee.fullName,
             email: mentee.email,
-            phone: mentee.phone,
-            applicationDate: new Date(mentee.applicationDate).toLocaleDateString(),
+            phoneNumber: mentee.phoneNumber,
+            facebookUrl: mentee.facebookUrl,
+            zaloAccount: mentee.zaloAccount,
+            reasonApply: mentee.reasonApply,
+            introduce: mentee.introduce,
+            cvFile: mentee.cvFile,
+            student: {
+                id: mentee.student.id,
+                name: mentee.student.name,
+                dob: new Date(mentee.student.dob).toLocaleDateString(),
+                studentCode: mentee.student.studentCode,
+                university: {
+                    name: mentee.student.university.name,
+                    address: mentee.student.university.address,
+                },
+                account: {
+                    username: mentee.student.account.username,
+                    avatarUrl: mentee.student.account.avatarUrl,
+                    email: mentee.student.account.email,
+                    role: mentee.student.account.role.name,
+                    point: mentee.student.account.point,
+                },
+            },
+            status: mentee.statuas,
         }));
 
         return {
-            mentees: mentees,
+            mentees,
             totalPages: data.totalPage,
             currentPage: page,
         };

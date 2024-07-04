@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import getCampaignData from '~/API/Campain/getCampainData';
 
-const useCampaignData = (initialPage = 1, initialLimit = 10) => {
+const useCampaignData = (initialPage = 1, initialLimit = 5) => {
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

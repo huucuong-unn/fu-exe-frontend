@@ -1,110 +1,88 @@
-
+import { useState, useEffect } from 'react';
 import {
+    Grid,
+    Box,
+    Typography,
+    Avatar,
+    Card,
+    CardContent,
+    Stepper,
+    Step,
+    StepLabel,
+    Pagination,
+    Button,
     FormControl,
     InputLabel,
     Select,
-    Paper,
     MenuItem,
-    IconButton,
     Tooltip,
-    Grid,
-    Container,
-    Typography,
-    Card,
-    Box,
-    Avatar,
-    CardContent,
-    Step,
-    Stepper,
-    StepLabel,
-    Stack,
-    Button,
-    Chip,
+    IconButton,
     Modal,
+    Paper,
+    Container
 } from '@mui/material';
-
-import Pagination from '@mui/material/Pagination';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import StarIcon from '@mui/icons-material/Star';
-import MenteeSection from '~/components/Campain/CampainDetailMenteeList'; // Importing MenteeSection component
-import { useEffect, useState } from 'react';
+import MenteeSection from '~/components/Campain/CampainDetailMenteeList'; // Adjust the import path as necessary
 import { useNavigate, useParams } from 'react-router-dom';
-import CampaignAPI from '~/API/CampaignAPI';
+import getCampaignDetail from '~/API/Campain/getCampaignDetail'; // Adjust the import path as necessary
+import getMenteesToApprove from '~/API/Campain/getMenteesToApprove';
+import StorageService from '~/components/StorageService/storageService'; // Adjust the import path as necessary
 
 const CampaignDetail = () => {
+    const { campaignId } = useParams();
+    const [campaign, setCampaign] = useState({});
     const [filterStatus, setFilterStatus] = useState('All');
+    const [mentees, setMentees] = useState([]); // State for mentees
+
+
     const [page, setPage] = useState(1);
     const [menteesPerPage] = useState(5); // Number of mentees per page
     const [topMenteeIds, setTopMenteeIds] = useState([]);
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [showApprovalList, setShowApprovalList] = useState(false);
-    const campaign = {
-        id: 1,
-        name: 'Sample Campaign',
-        description: 'Campaign Description',
-        startDate: '2024-01-01',
-        endDate: '2024-12-31',
-        status: 'ACTIVE',
-        mentees: [
-            { id: 1, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            {
-                id: 2,
-                name: 'Jane Smith',
-                status: 'Inactive',
-                face: '/path/to/jane.png',
-                cvLink: '/path/to/jane-cv.pdf',
-            },
-            {
-                id: 2,
-                name: 'Jane Smith',
-                status: 'Needs Approval',
-                face: '/path/to/jane.png',
-                cvLink: '/path/to/jane-cv.pdf',
-            },
-            {
-                id: 3,
-                name: 'Jane Smith',
-                status: 'Needs Approval',
-                face: '/path/to/jane.png',
-                cvLink: '/path/to/jane-cv.pdf',
-            },
-            { id: 4, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 5, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 6, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 7, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 8, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 9, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            // Add face and cvLink for other mentees as well
-            // ...
-        ],
-    };
 
-    // NEW
     const steps = ['Company Application', 'Mentee Application', 'Training', 'Completion'];
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
-    const { campaignId } = useParams();
-    const [campaigns, setCampaign] = useState({}); // Initialize campaign as an empty object
+
 
     useEffect(() => {
-        const getById = async () => {
+        const fetchCampaign = async () => {
             try {
-                const campaignData = await CampaignAPI.getById(campaignId);
-                setCampaign(campaignData); // Set campaign data once fetched
+                const campaignData = await getCampaignDetail(campaignId);
+                setCampaign(campaignData);
             } catch (error) {
                 console.log(error);
             }
         };
 
-        getById(); // Call the async function to fetch campaign data
-    }, [campaignId]); // useEffect dependency on campaignId to fetch data when it changes
+        fetchCampaign();
+    }, [campaignId]);
 
     useEffect(() => {
-        console.log(campaign); // Log campaign object when it changes
-    }, [campaign]);
+        const fetchMentees = async () => {
+            try {
+                // Assuming mentorId is stored in session storage
+                const mentorId = StorageService.getItem('userInfo').mentorId;
+
+                if (!mentorId) {
+                    throw new Error('MentorId not found in storage hihi.');
+                }
+
+                const menteesData = await getMenteesToApprove(mentorId, page, menteesPerPage);
+                setMentees(menteesData.mentees);
+            } catch (error) {
+                console.log('Error fetching mentees needing approval:', error);
+            }
+        };
+
+        fetchMentees();
+    }, [page, menteesPerPage]);
+
 
     // Handler for selecting a mentee
     const handleSelectMentee = (mentee) => {
@@ -146,13 +124,13 @@ const CampaignDetail = () => {
         setTopMenteeIds(updatedTopMenteeIds);
     };
 
-    // If campaign hasn't been fetched yet, return loading state or null
-    if (!campaign.id) {
+    // If campaign or mentees haven't been fetched yet, return null or a loading state
+    if (!campaign.id || !mentees.length) {
         return null; // or loading state component
     }
 
     // Filter and sort mentees based on current filter status and top mentees
-    const filteredMentees = campaign.mentees.filter((mentee) => {
+    const filteredMentees = mentees.filter((mentee) => {
         if (filterStatus === 'All') {
             return true;
         }
@@ -186,6 +164,10 @@ const CampaignDetail = () => {
         window.scrollTo(0, 0);
     };
 
+
+
+
+
     const handleRowClick = (mentor) => {
         setSelectedMentee(mentor);
     };
@@ -193,7 +175,6 @@ const CampaignDetail = () => {
     const handleCloseModal = () => {
         setSelectedMentee(null);
     };
-
     return (
         <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
             <Grid container spacing={6}>
@@ -507,12 +488,13 @@ const CampaignDetail = () => {
                     color={showApprovalList ? 'secondary' : 'primary'}
                     onClick={() => setShowApprovalList((prev) => !prev)}
                 >
-                    {showApprovalList ? 'Hide Mentees Needing Approval' : 'Show Mentees Needing Approval'}
+                    {showApprovalList ? 'Hide Student Needing Approval' : 'Show Student Needing Approval'}
                 </Button>
             </Box>
             {showApprovalList && (
                 <MenteesNeedingApproval
-                    mentees={campaign.mentees.filter((mentee) => mentee.status === 'Needs Approval')}
+
+
                 />
             )}
             <Box mb={2}>
@@ -528,7 +510,7 @@ const CampaignDetail = () => {
                         <MenuItem value="All">All</MenuItem>
                         <MenuItem value="Active">Active</MenuItem>
                         <MenuItem value="Inactive">Inactive</MenuItem>
-                        <MenuItem value="Needs Approval">Needs Approval</MenuItem>
+
                     </Select>
                 </FormControl>
             </Box>
@@ -563,7 +545,7 @@ const CampaignDetail = () => {
                             {startIndex + index + 1}
                         </Box>
                         <Box sx={{ flexGrow: 1 }}>
-                            <Typography variant="body1">{mentee.name}</Typography>
+                            <Typography variant="body1">{mentee.email}</Typography>
                             <Typography variant="body2">Status: {mentee.status}</Typography>
                         </Box>
                         {/* Star Icon for moving mentee to top */}
@@ -651,7 +633,7 @@ const CampaignDetail = () => {
                             </Grid>
                             <Grid item>
                                 {/* Display mentee's name and status */}
-                                <Typography variant="body1">{selectedMentee.name}</Typography>
+                                <Typography variant="body1">{selectedMentee.email}</Typography>
                                 <Typography variant="body2">Status: {selectedMentee.status}</Typography>
                             </Grid>
                             <Grid item xs={12}>
@@ -671,11 +653,6 @@ const CampaignDetail = () => {
 };
 
 
-const CampaignDetails = ({ campaign }) => (
-    <Box sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
-
-    </Box>
-);
 
 
 const MenteesNeedingApproval = ({ mentees }) => (
@@ -683,17 +660,16 @@ const MenteesNeedingApproval = ({ mentees }) => (
         <Typography variant="h5" gutterBottom>
             Mentees Needing Approval
         </Typography>
-        {mentees.length > 0 ? (
+       (
             <MenteeSection
                 mentees={mentees}
-                filterStatus="Needs Approval" // Hardcode the filter status here
                 onSelectMentee={() => {}}
                 handleAction={() => {}}
                 hideFilter
             />
         ) : (
             <Typography variant="body2">No mentees need approval at the moment.</Typography>
-        )}
+        )
     </Paper>
 );
 

@@ -19,7 +19,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import getMentorProfileData from '~/API/Campain/getMentorProfile';
 import StorageService from '~/components/StorageService/storageService'; // Import the API function
-
+import createMentorProfile from '~/API/Campain/createMentorProfile';
+import getSkillsData from '~/API/Campain/getSkill';
 const skills = ['Java', 'C#', 'Python']; // List of skills for autocomplete
 
 const ProfileBox = () => {
@@ -55,6 +56,7 @@ const ProfileBox = () => {
     const [isReasonApplyValid, setIsReasonApplyValid] = useState(true);
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [currentSkill, setCurrentSkill] = useState('');
+    const [skillsList, setSkillsList] = useState([]); // State to hold skills fetched from API
 
     const profilesPerPage = 3;
     const totalPages = Math.ceil(profiles.length / profilesPerPage);
@@ -71,11 +73,24 @@ const ProfileBox = () => {
             }
         };
 
+        // Fetch skills list from API
+        const fetchSkills = async () => {
+            try {
+                const skillsList = await getSkillsData;
+            } catch (error) {
+                console.error('Error fetching skills:', error);
+            }
+        };
+
         fetchProfiles();
+        fetchSkills();
     }, []);
+
+
 
     const handleOpenModal = (index = null) => {
         if (index !== null) {
+
             const profileToEdit = profiles[index];
             setNewProfileInfo({
                 id: profileToEdit.id,
@@ -124,38 +139,41 @@ const ProfileBox = () => {
         setOpenModal(false);
     };
 
-    const handleCreateProfile = () => {
-        if (editIndex !== null) {
-            const updatedProfiles = profiles.map((profile, index) =>
-                index === editIndex ? newProfileInfo : profile
-            );
-            setProfiles(updatedProfiles);
-        } else {
-            const newProfile = { ...newProfileInfo, status: 'Active' }; // Ensure new profiles start as 'Active'
-            setProfiles([...profiles, newProfile]);
+    const handleCreateProfile = async () => {
+        try {
+            if (editIndex !== null) {
+                const updatedProfiles = profiles.map((profile, index) =>
+                    index === editIndex ? newProfileInfo : profile
+                );
+                setProfiles(updatedProfiles);
+            } else {
+                const newProfile = { ...newProfileInfo, status: 'Active' }; // Ensure new profiles start as 'Active'
+                const createdProfile = await createMentorProfile(newProfile); // API call to create new profile
+                setProfiles([...profiles, createdProfile]);
+            }
+            setOpenModal(false);
+            setNewProfileInfo({
+                id: '',
+                createdDate: '',
+                modifiedDate: '',
+                createdBy: '',
+                modifiedBy: '',
+                linkedinUrl: '',
+                facebookUrl: '',
+                googleMeetUrl: '',
+                requirement: '',
+                description: '',
+                shortDescription: '',
+                profilePicture: '',
+                status: '',
+                fullName: '',
+                skills: [],
+                skillLevel: '',
+            });
+        } catch (error) {
+            console.error('Error creating/updating profile:', error);
         }
-
-        setOpenModal(false);
-        setNewProfileInfo({
-            id: '',
-            createdDate: '',
-            modifiedDate: '',
-            createdBy: '',
-            modifiedBy: '',
-            linkedinUrl: '',
-            facebookUrl: '',
-            googleMeetUrl: '',
-            requirement: '',
-            description: '',
-            shortDescription: '',
-            profilePicture: '',
-            status: '',
-            fullName: '',
-            skills: [],
-            skillLevel: '',
-        });
     };
-
     const handleNextPage = () => {
         if (currentPage < totalPages - 1) {
             setCurrentPage(currentPage + 1);
@@ -170,42 +188,42 @@ const ProfileBox = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        const email = event.target.email.value;
-        const username = event.target.fullName.value;
-        const phoneNumber = event.target.phoneNumber.value;
-        const introduce = event.target.description.value;
-        const reasonApply = event.target.reasonApply?.value;
-
-        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
-            setIsEmailValid(false);
-        } else {
-            setIsEmailValid(true);
-        }
-
-        if (username.length < 5) {
-            setIsUsernameValid(false);
-        } else {
-            setIsUsernameValid(true);
-        }
-
-        if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
-            setIsPhoneNumberValid(false);
-        } else {
-            setIsPhoneNumberValid(true);
-        }
-
-        if (introduce.length < 50) {
-            setIsIntroduceValid(false);
-        } else {
-            setIsIntroduceValid(true);
-        }
-
-        if (reasonApply && reasonApply.length < 50) {
-            setIsReasonApplyValid(false);
-        } else {
-            setIsReasonApplyValid(true);
-        }
+        //
+        // const email = event.target.email.value;
+        // const username = event.target.fullName.value;
+        // const phoneNumber = event.target.phoneNumber.value;
+        // const introduce = event.target.description.value;
+        // const reasonApply = event.target.reasonApply?.value;
+        //
+        // if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
+        //     setIsEmailValid(false);
+        // } else {
+        //     setIsEmailValid(true);
+        // }
+        //
+        // if (username.length < 5) {
+        //     setIsUsernameValid(false);
+        // } else {
+        //     setIsUsernameValid(true);
+        // }
+        //
+        // if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
+        //     setIsPhoneNumberValid(false);
+        // } else {
+        //     setIsPhoneNumberValid(true);
+        // }
+        //
+        // if (introduce.length < 50) {
+        //     setIsIntroduceValid(false);
+        // } else {
+        //     setIsIntroduceValid(true);
+        // }
+        //
+        // if (reasonApply && reasonApply.length < 50) {
+        //     setIsReasonApplyValid(false);
+        // } else {
+        //     setIsReasonApplyValid(true);
+        // }
 
         const data = new FormData(event.currentTarget);
         console.log(data);
@@ -440,13 +458,13 @@ const ProfileBox = () => {
                     <Autocomplete
                         multiple
                         id="skills"
-                        options={skills}
+                        options={skillsList}
                         freeSolo
-
+                        value={newProfileInfo.skills}
                         onChange={(event, newValue) => setNewProfileInfo({ ...newProfileInfo, skills: newValue })}
                         renderTags={(value, getTagProps) =>
                             value.map((option, index) => (
-                                <Chip key={index} variant="outlined" label={option} {...getTagProps({ index })} />
+                                <Chip key={index} variant="outlined" label={option.name} {...getTagProps({ index })} />
                             ))
                         }
                         renderInput={(params) => (

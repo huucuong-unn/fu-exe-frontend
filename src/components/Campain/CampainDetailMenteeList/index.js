@@ -21,7 +21,6 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
     const [page, setPage] = useState(1); // Current page state
     const [totalPages, setTotalPages] = useState(1); // Total pages state
 
-
     useEffect(() => {
         const fetchMentees = async () => {
             setLoading(true);
@@ -53,8 +52,34 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
         setModalOpen(true);
     };
 
+    const approveMentee = async (applicationId) => {
+        try {
+            const response = await fetch(`https://tortee-463vt.ondigitalocean.app/api/v1/application/approve/${applicationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message,
+                }),
+            });
+            if (response.ok) {
+                console.log('Mentee approved successfully');
+                // Optionally, update the mentees list or show a success message
+            } else {
+                console.error('Error approving mentee');
+            }
+        } catch (error) {
+            console.error('Error approving mentee:', error);
+        }
+    };
+
     const handleConfirm = () => {
-        handleAction(selectedMentee.id, actionType, message); // Assuming handleAction accepts an additional message argument
+        if (actionType === 'approve') {
+            approveMentee(selectedMentee.id);
+        } else {
+            // Handle reject logic here
+        }
         handleClose();
     };
 
@@ -123,7 +148,6 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                     Show Details
                                 </Button>
 
-
                                 <>
                                     <Tooltip title="Approve">
                                         <IconButton
@@ -142,13 +166,8 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                             <ClearIcon />
                                         </IconButton>
                                     </Tooltip>
-
-
                                 </>
-
                             </Box>
-
-
                         ))}
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                             <Pagination
@@ -206,7 +225,6 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                         <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
                                             {selectedMentee.fullName}
                                         </Typography>
-
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography variant="body1">Mentee Email: {selectedMentee.student.account.email}</Typography>

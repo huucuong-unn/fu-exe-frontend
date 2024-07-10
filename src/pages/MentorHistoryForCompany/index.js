@@ -1,4 +1,5 @@
 import { Container, Button, Box, Typography, Chip, Grid, Card, Avatar, CardContent } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
 
 function MentorHistoryForCompany() {
     return (
@@ -6,7 +7,7 @@ function MentorHistoryForCompany() {
             <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
                 Our mentors
             </Typography>
-            <Grid container spacing={6}>
+            <Grid container spacing={3}>
                 <Grid item xs={12} md={12}>
                     <Card
                         variant="outlined"
@@ -50,7 +51,23 @@ function MentorHistoryForCompany() {
                                     >
                                         Riccardo Parenti
                                     </Typography>
-                                    <Chip label="Top Mentor" color="success" />
+                                    <Chip
+                                        avatar={
+                                            <Avatar sx={{ bgcolor: 'transparent' }}>
+                                                <StarIcon sx={{ color: '#4CAF50' }} />
+                                            </Avatar>
+                                        }
+                                        label="Top Mentor"
+                                        sx={{
+                                            backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
+                                            color: '#004D40', // Màu chữ xanh đậm
+                                            fontWeight: 'bold',
+                                            padding: '8px',
+                                            borderRadius: '16px',
+                                            fontSize: '14px',
+                                        }}
+                                        size="medium"
+                                    />
                                 </Box>
                                 <Typography color="text.secondary" variant="body2" sx={{ my: 1 }} fontSize={'16px'}>
                                     Software Engineer at Immutable
@@ -125,7 +142,23 @@ function MentorHistoryForCompany() {
                                     >
                                         Riccardo Parenti
                                     </Typography>
-                                    <Chip label="Top Mentor" color="success" />
+                                    <Chip
+                                        avatar={
+                                            <Avatar sx={{ bgcolor: 'transparent' }}>
+                                                <StarIcon sx={{ color: '#4CAF50' }} />
+                                            </Avatar>
+                                        }
+                                        label="Top Mentor"
+                                        sx={{
+                                            backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
+                                            color: '#004D40', // Màu chữ xanh đậm
+                                            fontWeight: 'bold',
+                                            padding: '8px',
+                                            borderRadius: '16px',
+                                            fontSize: '14px',
+                                        }}
+                                        size="medium"
+                                    />
                                 </Box>
                                 <Typography color="text.secondary" variant="body2" sx={{ my: 1 }} fontSize={'16px'}>
                                     Software Engineer at Immutable

@@ -30,7 +30,6 @@ export const UserProfile = () => {
                     <TabPanel value="2">
                         <ChangePassword />
                     </TabPanel>
-                    <TabPanel value="3">Item Three</TabPanel>
                 </TabContext>
             </Box>
         </Container>

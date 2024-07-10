@@ -196,6 +196,9 @@ function Companies() {
                             flexGrow: { xs: 1, sm: 0 },
                             height: '100%',
                             backgroundColor: '#365E32',
+                            '&:hover': {
+                                backgroundColor: '#508D4E',
+                            },
                         }}
                         onClick={handleFindCompany}
                     >
@@ -295,16 +298,8 @@ function Companies() {
                                                           {company.name}
                                                       </Link>
                                                   </Typography>
-                                                  <Typography level="body-sm">F-Town 1, Ho Chi Minh</Typography>
+                                                  <Typography level="body-sm">{company.address}</Typography>
                                               </div>
-                                              <IconButton
-                                                  size="sm"
-                                                  variant="plain"
-                                                  color="neutral"
-                                                  sx={{ ml: 'auto', alignSelf: 'flex-start' }}
-                                              >
-                                                  <FavoriteBorderRoundedIcon color="danger" />
-                                              </IconButton>
                                           </Box>
                                           <AspectRatio
                                               variant="soft"

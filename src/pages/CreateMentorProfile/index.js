@@ -317,9 +317,20 @@ function CreateMentorProfile() {
                         width: '100%',
                     }}
                 >
-                    <Button type="submit" variant="contained" sx={{ backgroundColor: '#365E32' }}>
-                        Create
-                    </Button>
+                    <Link to="/company/create-mentor-profile">
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#365E32',
+                                '&:hover': {
+                                    backgroundColor: '#508D4E',
+                                },
+                            }}
+                        >
+                            Create
+                        </Button>
+                    </Link>
                 </Box>
             </Box>
         </Container>

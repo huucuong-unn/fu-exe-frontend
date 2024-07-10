@@ -165,7 +165,7 @@ function AdOrder() {
                                     <TableCell align="left">
                                         <Chip
                                             label={order.status}
-                                            color={order.status === 'Success' ? 'success' : 'error'}
+                                            color={order.status === 'SUCCESS' ? 'success' : 'error'}
                                         />
                                     </TableCell>
                                 </TableRow>

@@ -59,7 +59,7 @@ function CompaniesCampaignDetail() {
     };
 
     const handleCreateMentor = () => {
-        navigate('/company/create-mentor-account');
+        navigate('/company/create-mentor-profile');
         window.scrollTo(0, 0);
     };
 
@@ -172,78 +172,6 @@ function CompaniesCampaignDetail() {
                                 paddingBottom: 2,
                             }}
                         >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of online session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of offline session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Min duration of session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    1 hour
-                                </Typography>
-                            </Box>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -588,6 +516,9 @@ function CompaniesCampaignDetail() {
                                                         sx={{
                                                             height: '100%',
                                                             backgroundColor: '#365E32',
+                                                            '&:hover': {
+                                                                backgroundColor: '#508D4E',
+                                                            },
                                                         }}
                                                     >
                                                         View Profile

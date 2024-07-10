@@ -187,13 +187,13 @@ function CompaniesCampaignHistory() {
                                                 sx={{ mr: 2, mb: 1 }}
                                                 onClick={() => {}}
                                                 color={
-                                                    campaign.status === 'Company-apply'
+                                                    campaign.status === 'COMPANY_APPLY'
                                                         ? 'primary'
-                                                        : campaign.status === 'Mentee-apply'
+                                                        : campaign.status === 'STUDENT_APPLY'
                                                         ? 'secondary'
-                                                        : campaign.status === 'Tranning'
+                                                        : campaign.status === 'TRAINING'
                                                         ? 'success'
-                                                        : campaign.status === 'Close'
+                                                        : campaign.status === 'CLOSE'
                                                         ? 'error'
                                                         : 'default'
                                                 }
@@ -203,8 +203,14 @@ function CompaniesCampaignHistory() {
                                         <Link to={'/company/campaign-details'}>
                                             <Button
                                                 variant="contained"
-                                                color="primary"
-                                                sx={{ width: { lg: '40%', md: '70%', xs: '80%' }, mr: '10%' }}
+                                                sx={{
+                                                    width: { lg: '40%', md: '70%', xs: '80%' },
+                                                    mr: '10%',
+                                                    backgroundColor: '#365E32',
+                                                    '&:hover': {
+                                                        backgroundColor: '#508D4E',
+                                                    },
+                                                }}
                                             >
                                                 View Campaign Detail
                                             </Button>

@@ -219,6 +219,9 @@ export const ShortMentorInfo = ({
                                 textTransform: 'none',
                                 fontSize: '16px',
                                 backgroundColor: '#365E32',
+                                '&:hover': {
+                                    backgroundColor: '#508D4E',
+                                },
                             }}
                         >
                             Apply now

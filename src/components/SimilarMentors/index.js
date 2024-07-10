@@ -161,7 +161,7 @@ function SimilarMentor({ similarMentor }) {
                                                             marginRight: '4px',
                                                         }}
                                                     >
-                                                        $90
+                                                        150 point
                                                     </Typography>
                                                     <Typography
                                                         variant="body1"
@@ -170,22 +170,25 @@ function SimilarMentor({ similarMentor }) {
                                                             fontSize: '16px',
                                                         }}
                                                     >
-                                                        / month
+                                                        / acceptance
                                                     </Typography>
                                                 </Box>
-
-                                                <Button
-                                                    variant="contained"
-                                                    size="large"
-                                                    sx={{
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        backgroundColor: '#365E32',
-                                                        flex: 1,
-                                                    }}
-                                                >
-                                                    View Profile
-                                                </Button>
+                                                <Link to={'/mentor/id'} style={{ textDecoration: 'none' }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        size="large"
+                                                        sx={{
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            backgroundColor: '#365E32',
+                                                            '&:hover': {
+                                                                backgroundColor: '#508D4E',
+                                                            },
+                                                        }}
+                                                    >
+                                                        View Profile
+                                                    </Button>
+                                                </Link>
                                             </Box>
                                         </Box>
                                     </Box>

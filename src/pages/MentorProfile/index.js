@@ -19,6 +19,7 @@ export const MentorProfile = () => {
             try {
                 const mentorData = await MentorAPI.getMentorByMentorProfileId(mentorId);
                 setMentor(mentorData);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } catch (error) {
                 console.log(error);
             }

@@ -73,6 +73,19 @@ function CompanyDetails() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const scrollToSection = (sectionId) => {
+        const sectionElement = document.getElementById(sectionId);
+        const offset = 128;
+        if (sectionElement) {
+            const targetScroll = sectionElement.offsetTop - offset;
+            sectionElement.scrollIntoView({ behavior: 'smooth' });
+            window.scrollTo({
+                top: targetScroll,
+                behavior: 'smooth',
+            });
+        }
+    };
+
     useEffect(() => {
         const getCompanyById = async () => {
             try {
@@ -101,8 +114,8 @@ function CompanyDetails() {
     }, [company, companyId]);
 
     useEffect(() => {
-        console.log(skills);
-    }, [skills]);
+        console.log(similarMentor);
+    }, [similarMentor]);
 
     return (
         <Container id="company" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
@@ -146,9 +159,17 @@ function CompanyDetails() {
                                 <CardContent>
                                     <Button
                                         variant="contained"
-                                        sx={{ width: '100%', mr: '10%', backgroundColor: '#365E32' }}
+                                        onClick={() => scrollToSection('mentors')}
+                                        sx={{
+                                            width: '100%',
+                                            mr: '10%',
+                                            backgroundColor: '#365E32',
+                                            '&:hover': {
+                                                backgroundColor: '#508D4E',
+                                            },
+                                        }}
                                     >
-                                        Follow
+                                        To Ours Mentor
                                     </Button>
                                 </CardContent>
                             </Box>
@@ -160,7 +181,6 @@ function CompanyDetails() {
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                         <Tab label="Overview" {...a11yProps(0)} />
-                        <Tab label="Reviews" {...a11yProps(1)} />
                     </Tabs>
                 </Box>
                 <CustomTabPanel
@@ -255,14 +275,6 @@ function CompanyDetails() {
                                     </Typography>
                                     <Typography color="black" variant="h6" fontWeight="bold">
                                         {company.workingTime}
-                                    </Typography>
-                                </Box>
-                                <Box xs={12} sm={6} md={4}>
-                                    <Typography color="gray" variant="h7">
-                                        Overtime policy
-                                    </Typography>
-                                    <Typography color="black" variant="h6" fontWeight="bold">
-                                        {company?.overtimePolicy}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -459,7 +471,7 @@ function CompanyDetails() {
                                     Mentor Available
                                 </Typography>
                             </Box>
-                            <Grid container spacing={6}>
+                            <Grid container spacing={2} id="mentors">
                                 {similarMentor.length > 0 &&
                                     similarMentor?.map((mentor, index) => (
                                         <Grid item xs={12} md={12} key={index}>
@@ -636,9 +648,6 @@ function CompanyDetails() {
                             </Grid>
                         </Box>
                     </Card>
-                </CustomTabPanel>
-                <CustomTabPanel value={value} index={1}>
-                    Item Two
                 </CustomTabPanel>
             </Box>
         </Container>

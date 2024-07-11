@@ -174,7 +174,7 @@ const Payment = () => {
                                     </ListItem>
                                     <Divider />
                                     <ListItem>
-                                        <ListItemText primary="Account" secondary="Bigzombie123vn" />
+                                        <ListItemText primary="Account" secondary={userInfo.username} />
                                     </ListItem>
                                 </List>
                                 <Box mt={2}>

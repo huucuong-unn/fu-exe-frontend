@@ -14,10 +14,12 @@ import { useState, useEffect } from 'react';
 import SkillAPI from '~/API/SkillAPI';
 import AccountAPI from '~/API/AccountAPI';
 import storageService from '~/components/StorageService/storageService';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function CreateMentorProfile() {
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [currentSkill, setCurrentSkill] = useState('');
+    const navigate = useNavigate();
 
     const [skills, setSkills] = useState([]);
 
@@ -107,6 +109,7 @@ function CreateMentorProfile() {
 
         try {
             const result = await AccountAPI.createAccountForMentor(data);
+            navigate('/company/create-mentor-History');
             console.log(data);
         } catch (error) {
             console.log(error);

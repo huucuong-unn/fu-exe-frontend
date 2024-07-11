@@ -16,6 +16,7 @@ function CompaniesCampaignHistory() {
         page: 1,
         limit: 10,
     });
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     const handlePageChange = (event, value) => {
         setSort((prev) => ({
@@ -141,7 +142,7 @@ function CompaniesCampaignHistory() {
                                     >
                                         <Avatar
                                             alt="avatar image"
-                                            src={campaign?.img}
+                                            src={IMGAGE_HOST + campaign?.img}
                                             sx={{ width: 150, height: 150 }}
                                         />
                                     </Box>

@@ -85,7 +85,14 @@ function SearchFilter({ searchKeyword, setSearchKeyword }) {
             />
             <Button
                 variant="contained"
-                sx={{ width: 105, borderRadius: 5, backgroundColor: '#365E32' }}
+                sx={{
+                    width: 105,
+                    borderRadius: 1,
+                    backgroundColor: '#365E32',
+                    '&:hover': {
+                        backgroundColor: '#508D4E',
+                    },
+                }}
                 onClick={handleOpen}
             >
                 Filter
@@ -124,7 +131,15 @@ function SearchFilter({ searchKeyword, setSearchKeyword }) {
                     <Button
                         variant="contained"
                         color="primary"
-                        sx={{ width: 150, borderRadius: 3, display: 'flex' }}
+                        sx={{
+                            width: 150,
+                            borderRadius: 3,
+                            display: 'flex',
+                            backgroundColor: '#365E32',
+                            '&:hover': {
+                                backgroundColor: '#508D4E',
+                            },
+                        }}
                         onClick={() => handleClose()}
                     >
                         Show Results
@@ -392,6 +407,9 @@ export default function Mentors() {
                                                                 width: '100%',
                                                                 height: '100%',
                                                                 backgroundColor: '#365E32',
+                                                                '&:hover': {
+                                                                    backgroundColor: '#508D4E',
+                                                                },
                                                             }}
                                                         >
                                                             View Profile

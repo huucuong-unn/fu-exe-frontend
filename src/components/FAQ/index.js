@@ -47,12 +47,17 @@ export default function FAQ() {
                         aria-controls="panel1d-content"
                         id="panel1d-header"
                     >
-                        <Typography component="h3" variant="subtitle2">
+                        <Typography component="h3" variant="subtitle2" fontSize="16px">
                             How do I contact customer support if I have a question or issue?
                         </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <Typography variant="body2" gutterBottom sx={{ maxWidth: { sm: '100%', md: '70%' } }}>
+                        <Typography
+                            variant="body2"
+                            gutterBottom
+                            sx={{ maxWidth: { sm: '100%', md: '70%' } }}
+                            fontSize="16px"
+                        >
                             You can reach our customer support team by emailing
                             <Link> support@email.com </Link>
                             or calling our toll-free number. We&apos;re here to assist you promptly.
@@ -65,7 +70,7 @@ export default function FAQ() {
                         aria-controls="panel2d-content"
                         id="panel2d-header"
                     >
-                        <Typography component="h3" variant="subtitle2">
+                        <Typography component="h3" variant="subtitle2" fontSize="16px">
                             Can I return the product if it doesn&apos;t meet my expectations?
                         </Typography>
                     </AccordionSummary>
@@ -82,7 +87,7 @@ export default function FAQ() {
                         aria-controls="panel3d-content"
                         id="panel3d-header"
                     >
-                        <Typography component="h3" variant="subtitle2">
+                        <Typography component="h3" variant="subtitle2" fontSize="16px">
                             What makes your product stand out from others in the market?
                         </Typography>
                     </AccordionSummary>
@@ -100,7 +105,7 @@ export default function FAQ() {
                         aria-controls="panel4d-content"
                         id="panel4d-header"
                     >
-                        <Typography component="h3" variant="subtitle2">
+                        <Typography component="h3" variant="subtitle2" fontSize="16px">
                             Is there a warranty on the product, and what does it cover?
                         </Typography>
                     </AccordionSummary>

@@ -20,6 +20,7 @@ import getLPTheme from '~/components/getLPTheme';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { Container } from '@mui/material';
 
 function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
     const [showAlert, setShowAlert] = useState(false);
@@ -91,14 +92,11 @@ export default function LandingPage() {
     };
 
     return (
-        <ThemeProvider
-            theme={showCustomTheme ? LPtheme : defaultTheme}
-            sx={{
-                fontFamily: 'Montserrat, sans-serif',
-            }}
+        <Box
+        // theme={showCustomTheme ? LPtheme : defaultTheme}
         >
             <CssBaseline />
-            <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
+            {/* <AppAppBar mode={mode} toggleColorMode={toggleColorMode} /> */}
             <Hero />
             <Box sx={{ bgcolor: 'background.default' }}>
                 <LogoCollection />
@@ -108,12 +106,11 @@ export default function LandingPage() {
                 <Divider />
                 {/* <Highlights />
                 <Divider /> */}
-                <Pricing />
-                <Divider />
+                {/* <Pricing /> */}
                 <FAQ />
                 <Divider />
             </Box>
             {/* <ToggleCustomTheme showCustomTheme={showCustomTheme} toggleCustomTheme={toggleCustomTheme} /> */}
-        </ThemeProvider>
+        </Box>
     );
 }

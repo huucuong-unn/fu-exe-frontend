@@ -1,110 +1,94 @@
-
+import React, { useState, useEffect } from 'react';
 import {
+    Grid,
+    Box,
+    Typography,
+    Avatar,
+    Card,
+    CardContent,
+    Stepper,
+    Step,
+    StepLabel,
+    Pagination,
+    Button,
     FormControl,
     InputLabel,
     Select,
-    Paper,
     MenuItem,
-    IconButton,
     Tooltip,
-    Grid,
-    Container,
-    Typography,
-    Card,
-    Box,
-    Avatar,
-    CardContent,
-    Step,
-    Stepper,
-    StepLabel,
-    Stack,
-    Button,
-    Chip,
+    IconButton,
     Modal,
+    Paper,
+    Container,
+    Chip
 } from '@mui/material';
-
-import Pagination from '@mui/material/Pagination';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import CloseIcon from '@mui/icons-material/Close'; // Import CloseIcon from @material-ui/icons
+
 import StarIcon from '@mui/icons-material/Star';
-import MenteeSection from '~/components/Campain/CampainDetailMenteeList'; // Importing MenteeSection component
-import { useEffect, useState } from 'react';
+import MenteeSection from '~/components/Campain/CampainDetailMenteeList'; // Adjust the import path as necessary
 import { useNavigate, useParams } from 'react-router-dom';
-import CampaignAPI from '~/API/CampaignAPI';
+import getCampaignDetail from '~/API/Campain/getCampaignDetail'; // Adjust the import path as necessary
+import getMenteesToApprove from '~/API/Campain/getMenteesToApprove';
+import StorageService from '~/components/StorageService/storageService'; // Adjust the import path as necessary
+import getMenteesFromMentorAndCampaign from '~/API/Campain/getMenteeFromMentorAndCampaign'; // Adjust the import path as necessary
+
 
 const CampaignDetail = () => {
+    const { campaignId } = useParams();
+    const [campaign, setCampaign] = useState({});
     const [filterStatus, setFilterStatus] = useState('All');
+    const [mentees, setMentees] = useState([]); // State for mentees
+
+
     const [page, setPage] = useState(1);
     const [menteesPerPage] = useState(5); // Number of mentees per page
     const [topMenteeIds, setTopMenteeIds] = useState([]);
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [showApprovalList, setShowApprovalList] = useState(false);
-    const campaign = {
-        id: 1,
-        name: 'Sample Campaign',
-        description: 'Campaign Description',
-        startDate: '2024-01-01',
-        endDate: '2024-12-31',
-        status: 'ACTIVE',
-        mentees: [
-            { id: 1, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            {
-                id: 2,
-                name: 'Jane Smith',
-                status: 'Inactive',
-                face: '/path/to/jane.png',
-                cvLink: '/path/to/jane-cv.pdf',
-            },
-            {
-                id: 2,
-                name: 'Jane Smith',
-                status: 'Needs Approval',
-                face: '/path/to/jane.png',
-                cvLink: '/path/to/jane-cv.pdf',
-            },
-            {
-                id: 3,
-                name: 'Jane Smith',
-                status: 'Needs Approval',
-                face: '/path/to/jane.png',
-                cvLink: '/path/to/jane-cv.pdf',
-            },
-            { id: 4, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 5, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 6, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 7, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 8, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            { id: 9, name: 'John Doe', status: 'Active', face: '/path/to/john.png', cvLink: '/path/to/john-cv.pdf' },
-            // Add face and cvLink for other mentees as well
-            // ...
-        ],
-    };
 
-    // NEW
     const steps = ['Company Application', 'Mentee Application', 'Training', 'Completion'];
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
-    const { campaignId } = useParams();
-    const [campaigns, setCampaign] = useState({}); // Initialize campaign as an empty object
+
 
     useEffect(() => {
-        const getById = async () => {
+        const fetchCampaign = async () => {
             try {
-                const campaignData = await CampaignAPI.getById(campaignId);
-                setCampaign(campaignData); // Set campaign data once fetched
+                const campaignData = await getCampaignDetail(campaignId);
+                setCampaign(campaignData);
             } catch (error) {
                 console.log(error);
             }
         };
 
-        getById(); // Call the async function to fetch campaign data
-    }, [campaignId]); // useEffect dependency on campaignId to fetch data when it changes
+        fetchCampaign();
+    }, [campaignId]);
 
     useEffect(() => {
-        console.log(campaign); // Log campaign object when it changes
-    }, [campaign]);
+        const fetchMentees = async () => {
+            try {
+                // Assuming mentorId is stored in session storage
+                const mentorId = StorageService.getItem('userInfo').mentorId;
+
+
+                if (!mentorId) {
+                    throw new Error('MentorId not found in storage.');
+                }
+
+                const menteesData = await getMenteesFromMentorAndCampaign(mentorId, campaignId, page, menteesPerPage);
+                setMentees(menteesData.mentees);
+            } catch (error) {
+                console.error('Error fetching mentees from mentor and campaign:', error);
+            }
+        };
+
+        fetchMentees();
+    }, [campaignId, page, menteesPerPage]);
+
 
     // Handler for selecting a mentee
     const handleSelectMentee = (mentee) => {
@@ -146,13 +130,13 @@ const CampaignDetail = () => {
         setTopMenteeIds(updatedTopMenteeIds);
     };
 
-    // If campaign hasn't been fetched yet, return loading state or null
-    if (!campaign.id) {
+    // If campaign or mentees haven't been fetched yet, return null or a loading state
+    if (!campaign.id || !mentees.length) {
         return null; // or loading state component
     }
 
     // Filter and sort mentees based on current filter status and top mentees
-    const filteredMentees = campaign.mentees.filter((mentee) => {
+    const filteredMentees = mentees.filter((mentee) => {
         if (filterStatus === 'All') {
             return true;
         }
@@ -186,6 +170,10 @@ const CampaignDetail = () => {
         window.scrollTo(0, 0);
     };
 
+
+
+
+
     const handleRowClick = (mentor) => {
         setSelectedMentee(mentor);
     };
@@ -193,7 +181,6 @@ const CampaignDetail = () => {
     const handleCloseModal = () => {
         setSelectedMentee(null);
     };
-
     return (
         <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
             <Grid container spacing={6}>
@@ -425,7 +412,7 @@ const CampaignDetail = () => {
                             >
                                 <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
                                     <Typography color="gray" variant="h7">
-                                        Tranning
+                                        Training
                                     </Typography>
                                 </Box>
                                 <Typography color="black" variant="h6" fontWeight="bold">
@@ -502,6 +489,9 @@ const CampaignDetail = () => {
                      marginTop: 1
 
                  }}>
+                <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
+                    Application list:
+                </Typography>
                 <Button
                     variant="contained"
                     color={showApprovalList ? 'secondary' : 'primary'}
@@ -510,13 +500,17 @@ const CampaignDetail = () => {
                     {showApprovalList ? 'Hide Mentees Needing Approval' : 'Show Mentees Needing Approval'}
                 </Button>
             </Box>
-            {showApprovalList && (
-                <MenteesNeedingApproval
-                    mentees={campaign.mentees.filter((mentee) => mentee.status === 'Needs Approval')}
-                />
-            )}
+
+                {showApprovalList && (
+                    <MenteesNeedingApproval
+                        mentees={mentees}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
+                )}
+
             <Box mb={2}>
-                <FormControl fullWidth sx={{ mb: 2 }}>
+                <FormControl fullWidth sx={{ mb: 2, mt:2 }}>
                     <InputLabel id="filter-status-label">Filter by Status</InputLabel>
                     <Select
                         labelId="filter-status-label"
@@ -526,98 +520,104 @@ const CampaignDetail = () => {
                         label="Filter by Status"
                     >
                         <MenuItem value="All">All</MenuItem>
-                        <MenuItem value="Active">Active</MenuItem>
-                        <MenuItem value="Inactive">Inactive</MenuItem>
-                        <MenuItem value="Needs Approval">Needs Approval</MenuItem>
+                        <MenuItem value="ACTIVE">Active</MenuItem>
+                        <MenuItem value="INACTIVE">Inactive</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
-            <Box sx={{ border: '1px solid #ccc', borderRadius: 1, overflow: 'hidden' }}>
-                {paginatedMentees.map((mentee, index) => (
-                    <Box
-                        key={mentee.id}
-                        sx={{
-                            p: 2,
-                            display: 'flex',
-                            alignItems: 'center',
-                            backgroundColor: index % 2 === 0 ? '#ffffff' : '#f0f0f0',
-                            borderBottom: '1px solid #ccc',
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                minWidth: 40,
-                                height: 40,
-                                backgroundColor: '#333',
-                                borderRadius: '50%',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginRight: 2,
-                                fontSize: 20,
-                                fontWeight: 'bold',
-                                color: '#fff',
-
-                            }}
-                        >
-                            {startIndex + index + 1}
-                        </Box>
-                        <Box sx={{ flexGrow: 1 }}>
-                            <Typography variant="body1">{mentee.name}</Typography>
-                            <Typography variant="body2">Status: {mentee.status}</Typography>
-                        </Box>
-                        {/* Star Icon for moving mentee to top */}
-                        <Tooltip title="Move to Top">
-                            <IconButton
-                                color={topMenteeIds.includes(mentee.id) ? 'primary' : 'default'}
-                                onClick={() => handleMoveToTop(startIndex + index, mentee.id)}
-                                sx={{ mr: 1 }}
-                            >
-                                <StarIcon />
-                            </IconButton>
-                        </Tooltip>
-                        {mentee.status === 'Needs Approval' && (
-                            <Tooltip title="Approve">
-                                <IconButton
-                                    color="primary"
-                                    onClick={() => handleAction(mentee.id, 'approve')}
-                                    sx={{ mr: 1 }}
-                                >
-                                    <CheckIcon />
-                                </IconButton>
-                            </Tooltip>
-                        )}
-                        {mentee.status === 'Needs Approval' && (
-                            <Tooltip title="Reject">
-                                <IconButton color="secondary" onClick={() => handleAction(mentee.id, 'reject')}>
-                                    <ClearIcon />
-                                </IconButton>
-                            </Tooltip>
-                        )}
-                        {/* Show Details Button */}
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={() => handleSelectMentee(mentee)}
-                            sx={{ textTransform: 'none', ml: 1 }}
-                        >
-                            Show Details
-                        </Button>
-                    </Box>
-                ))}
-            </Box>
-            {totalPages > 1 && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                    <Pagination count={totalPages} page={page} onChange={handlePageChange} color="primary" />
-                </Box>
-            )}
+            <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
+               Your Mentees:
+            </Typography>
             {paginatedMentees.length === 0 && (
                 <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 2 }}>
                     No mentees found matching the selected filter criteria.
                 </Typography>
             )}
 
-            {/* Modal to display mentee details */}
+            {paginatedMentees.length > 0 && (
+                <Box sx={{ border: '1px solid #ccc', borderRadius: 1, overflow: 'hidden' }}>
+                    {paginatedMentees.map((mentee, index) => (
+
+                        <Box
+                            key={mentee.id}
+                            sx={{
+                                p: 2,
+                                display: 'flex',
+                                alignItems: 'center',
+                                backgroundColor: index % 2 === 0 ? '#ffffff' : '#f0f0f0',
+                                borderBottom: '1px solid #ccc',
+                            }}
+                        >
+
+                            <Box
+                                sx={{
+                                    minWidth: 40,
+                                    height: 40,
+                                    backgroundColor: '#333',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginRight: 2,
+                                    fontSize: 20,
+                                    fontWeight: 'bold',
+                                    color: '#fff',
+
+                                }}
+                            >
+                                {startIndex + index + 1}
+                            </Box>
+
+                            <Box sx={{ flexGrow: 1 }}>
+                                <Grid container spacing={2} alignItems="center">
+                                    <Grid item>
+                                        <Avatar src={mentee.menteeAvatarUrl} alt={mentee.studentName} sx={{ width: 100, height: 100, borderBottom: '3px solid #007bff' }}/>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography variant="h4">{mentee.menteeName}</Typography>
+                                        <Chip
+                                            label={`Status: ${mentee.status}`}
+                                            color={mentee.status === 'active' || 'ACTIVE'  ? 'success' : 'error'}
+                                            sx={{ fontSize: '1rem' }}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                            {/* Star Icon for moving mentee to top */}
+                            <Tooltip title="Move to Top">
+                                <IconButton
+                                    color={topMenteeIds.includes(mentee.id) ? 'primary' : 'default'}
+                                    onClick={() => handleMoveToTop(startIndex + index, mentee.id)}
+                                    sx={{ mr: 1 }}
+                                >
+                                    <StarIcon />
+                                </IconButton>
+                            </Tooltip>
+
+                            {/* Show Details Button */}
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={() => handleSelectMentee(mentee)}
+                                sx={{ textTransform: 'none', ml: 1 }}
+                            >
+                                Show Details
+                            </Button>
+                        </Box>
+                    ))}
+                </Box>
+            )}
+
+
+
+
+            {totalPages > 1 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                    <Pagination count={totalPages} page={page} onChange={handlePageChange} color="primary" />
+                </Box>
+            )}
+
+
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
@@ -630,52 +630,89 @@ const CampaignDetail = () => {
                         top: '50%',
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
-                        width: 400,
+                        width: '80%', // Adjust width as needed
+                        maxWidth: 600, // Maximum width for larger screens
                         bgcolor: 'background.paper',
                         boxShadow: 24,
                         p: 4,
+                        borderRadius: 8, // Rounded corners
                     }}
                 >
+                    {/* Close button */}
+                    <IconButton
+                        aria-label="close"
+                        onClick={() => setModalOpen(false)}
+                        sx={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 10,
+                            color: 'text.secondary',
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+
                     <Typography variant="h6" id="modal-modal-title" sx={{ mb: 2 }}>
                         Mentee Details
                     </Typography>
                     {selectedMentee && (
-                        <Grid container spacing={2}>
+                        <Grid container spacing={2} alignItems="center">
                             <Grid item>
-                                {/* Display mentee's face */}
-                                <img
-                                    src={selectedMentee.face}
-                                    alt="Mentee Face"
-                                    style={{ width: 100, borderRadius: '50%' }}
+                                {/* Display mentee's avatar with underline */}
+                                <Avatar src={selectedMentee.menteeAvatarUrl} alt={selectedMentee.menteeName} sx={{ width: 120, height: 120, borderBottom: '3px solid #007bff' }} />
+                            </Grid>
+                            <Grid item xs>
+                                {/* Display mentee's name and status */}
+                                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    {selectedMentee.menteeName}
+                                </Typography>
+                                <Chip
+                                    label={`Status: ${selectedMentee.status.charAt(0).toUpperCase() + selectedMentee.status.slice(1)}`}
+                                    color={selectedMentee.status === 'active' || 'ACTIVE'  ? 'success' : 'error'}
+                                    sx={{ fontSize: '1rem' }}
                                 />
                             </Grid>
-                            <Grid item>
-                                {/* Display mentee's name and status */}
-                                <Typography variant="body1">{selectedMentee.name}</Typography>
-                                <Typography variant="body2">Status: {selectedMentee.status}</Typography>
-                            </Grid>
                             <Grid item xs={12}>
-                                {/* Add a link to mentee's CV */}
-                                <Typography variant="body2">
-                                    <a href={selectedMentee.cvLink} target="_blank" rel="noopener noreferrer">
-                                        View CV
-                                    </a>
-                                </Typography>
+                                {/* Display mentee's email and university */}
+                                <Typography variant="body1">Mentee Email: {selectedMentee.menteeEmail}</Typography>
+                                <Typography variant="body1">Mentee University: {selectedMentee.menteeUniversity}</Typography>
                             </Grid>
+                            {/* View CV button */}
+                            <Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    component="a"
+                                    href={selectedMentee.cvLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    sx={{ textDecoration: 'none', color: 'white', textTransform: 'none', py: 2, px: 4, fontSize: '1.2rem' }}
+                                >
+                                    View CV
+                                </Button>
+                            </Grid>
+                            {/* Additional mentee details */}
+                            <Grid item xs={12}>
+                                {/* Add more details here if needed */}
+                            </Grid>
+                            {/* Add more sections as necessary */}
                         </Grid>
                     )}
                 </Box>
             </Modal>
+
+
+
+
+
+
+
+
         </Container>
     );
 };
 
 
-const CampaignDetails = ({ campaign }) => (
-    <Box sx={{ p: 2, borderRadius: 1, boxShadow: 1, mb: 3 }}>
-
-    </Box>
-);
 
 
 const MenteesNeedingApproval = ({ mentees }) => (
@@ -683,17 +720,12 @@ const MenteesNeedingApproval = ({ mentees }) => (
         <Typography variant="h5" gutterBottom>
             Mentees Needing Approval
         </Typography>
-        {mentees.length > 0 ? (
             <MenteeSection
                 mentees={mentees}
-                filterStatus="Needs Approval" // Hardcode the filter status here
                 onSelectMentee={() => {}}
                 handleAction={() => {}}
                 hideFilter
             />
-        ) : (
-            <Typography variant="body2">No mentees need approval at the moment.</Typography>
-        )}
     </Paper>
 );
 

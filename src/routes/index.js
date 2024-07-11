@@ -32,7 +32,7 @@ import NotAuthorized from '~/pages/NotAuthorized';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
-    { path: '/', component: LandingPage, layout: LayoutWithFooter },
+    { path: '/', component: LandingPage },
     { path: '/following', component: Following },
     { path: '/mentors', component: Mentors },
     { path: '/mentor/:mentorId', component: MentorProfile },

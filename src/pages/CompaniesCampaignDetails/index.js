@@ -78,6 +78,7 @@ function CompaniesCampaignDetail() {
 
     const handleCreateMentor = () => {
         navigate('/company/create-mentor-profile');
+        navigate('/company/create-mentor-profile');
         window.scrollTo(0, 0);
     };
 

@@ -33,6 +33,7 @@ const ProfileBox = () => {
         createdDate: '',
         modifiedDate: '',
         createdBy: '',
+
         modifiedBy: '',
         linkedinUrl: '',
         facebookUrl: '',
@@ -55,7 +56,7 @@ const ProfileBox = () => {
     const [isIntroduceValid, setIsIntroduceValid] = useState(true);
     const [isReasonApplyValid, setIsReasonApplyValid] = useState(true);
     const [selectedSkills, setSelectedSkills] = useState([]);
-    const [currentSkill, setCurrentSkill] = useState('');
+    const [currentSkill] = useState('');
     const [skillsList, setSkillsList] = useState([]); // State to hold skills fetched from API
 
     const profilesPerPage = 3;
@@ -76,16 +77,26 @@ const ProfileBox = () => {
         // Fetch skills list from API
         const fetchSkills = async () => {
             try {
-                const skillsList = await getSkillsData;
+                const skills = await getSkillsData();
+                setSkillsList(skills);
             } catch (error) {
                 console.error('Error fetching skills:', error);
             }
         };
 
+
+
+
         fetchProfiles();
         fetchSkills();
     }, []);
 
+    const setCurrentSkill = (newValue) => {
+        setNewProfileInfo((prevState) => ({
+            ...prevState,
+            skills: newValue,
+        }));
+    };
 
 
     const handleOpenModal = (index = null) => {
@@ -339,6 +350,21 @@ const ProfileBox = () => {
                         {editIndex !== null ? 'Edit Profile' : 'Add Profile'}
                     </Typography>
 
+                    <TextField
+                        margin="normal"
+                        fullWidth
+                        multiline
+                        minRows={4}
+                        maxRows={6}
+                        id="description"
+                        label="Description"
+                        name="description"
+                        value={newProfileInfo.description}
+                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, description: e.target.value })}
+                    />
+
+
+
                     <Box
                         sx={{
                             display: 'flex',
@@ -347,19 +373,7 @@ const ProfileBox = () => {
                             gap: 2,
                         }}
                     >
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="fullName"
-                            label="Full Name"
-                            name="fullName"
-                            autoComplete="name"
-                            value={newProfileInfo.fullName}
-                            onChange={(e) => setNewProfileInfo({ ...newProfileInfo, fullName: e.target.value })}
-                            error={!isUsernameValid}
-                            helperText={!isUsernameValid && 'Username must be at least 5 characters long'}
-                        />
+
                         <TextField
                             margin="normal"
                             fullWidth
@@ -379,16 +393,7 @@ const ProfileBox = () => {
                             gap: 2,
                         }}
                     >
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            id="googleMeetUrl"
-                            label="Google Meet URL"
-                            name="googleMeetUrl"
-                            autoComplete="url"
-                            value={newProfileInfo.googleMeetUrl}
-                            onChange={(e) => setNewProfileInfo({ ...newProfileInfo, googleMeetUrl: e.target.value })}
-                        />
+
 
                         <TextField
                             margin="normal"
@@ -409,7 +414,75 @@ const ProfileBox = () => {
                             onChange={(e) => setNewProfileInfo({ ...newProfileInfo, facebookUrl: e.target.value })}
                         />
 
+                        <TextField
+                            margin="normal"
+                            fullWidth
+                            id="googleMeetUrl"
+                            label="Google Meet URL"
+                            name="googleMeetUrl"
+                            autoComplete="url"
+                            value={newProfileInfo.googleMeetUrl}
+                            onChange={(e) => setNewProfileInfo({ ...newProfileInfo, googleMeetUrl: e.target.value })}
+                        />
+
                     </Box>
+
+
+
+
+
+                    {/*<Autocomplete*/}
+                    {/*    multiple*/}
+                    {/*    id="skills"*/}
+                    {/*    options={skillsList}*/}
+                    {/*    freeSolo*/}
+                    {/*    value={newProfileInfo.skills}*/}
+                    {/*    onChange={(event, newValue) => setNewProfileInfo({ ...newProfileInfo, skills: newValue })}*/}
+                    {/*    renderTags={(value, getTagProps) =>*/}
+                    {/*        value.map((option, index) => (*/}
+                    {/*            <Chip key={index} variant="outlined" label={option.name} {...getTagProps({ index })} />*/}
+                    {/*        ))*/}
+                    {/*    }*/}
+                    {/*    renderInput={(params) => (*/}
+                    {/*        <TextField*/}
+                    {/*            {...params}*/}
+                    {/*            variant="standard"*/}
+                    {/*            label="Skills"*/}
+                    {/*            placeholder="Select or type skills"*/}
+                    {/*        />*/}
+                    {/*    )}*/}
+                    {/*/>*/}
+
+                    <Box
+                        sx={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'left',
+                            gap: 2,
+                        }}
+                    >
+                        <Autocomplete
+                            disablePortal
+                            id="combo-box-demo"
+                            options={skillsList}
+                            freeSolo
+                            value={newProfileInfo.skills}
+                            onChange={(event, newValue) => setCurrentSkill(newValue)}
+                            sx={{ width: '80%' }}
+                            renderInput={(params) => <TextField {...params} label="Skill" />}
+                        />
+                    <Button variant="contained" size="small" onClick={handleAddSkill}>
+                        Add Skill
+                    </Button>
+                    </Box>
+                {selectedSkills.length > 0 && (
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        {selectedSkills.map((skill, index) => (
+                            <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
+                        ))}
+                    </Box>
+                )}
 
                     <Box
                         sx={{
@@ -429,71 +502,13 @@ const ProfileBox = () => {
                             onChange={(e) => setNewProfileInfo({ ...newProfileInfo, requirement: e.target.value })}
                         />
 
-                        <TextField
-                            margin="normal"
-                            fullWidth
-                            id="skillLevel"
-                            label="Skill Level"
-                            name="skillLevel"
-                            value={newProfileInfo.skillLevel}
-                            onChange={(e) => setNewProfileInfo({ ...newProfileInfo, skillLevel: e.target.value })}
-                        />
+
 
 
                     </Box>
 
 
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        multiline
-                        minRows={4}
-                        maxRows={6}
-                        id="description"
-                        label="Description"
-                        name="description"
-                        value={newProfileInfo.description}
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, description: e.target.value })}
-                    />
-                    <Autocomplete
-                        multiple
-                        id="skills"
-                        options={skillsList}
-                        freeSolo
-                        value={newProfileInfo.skills}
-                        onChange={(event, newValue) => setNewProfileInfo({ ...newProfileInfo, skills: newValue })}
-                        renderTags={(value, getTagProps) =>
-                            value.map((option, index) => (
-                                <Chip key={index} variant="outlined" label={option.name} {...getTagProps({ index })} />
-                            ))
-                        }
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                variant="standard"
-                                label="Skills"
-                                placeholder="Select or type skills"
-                            />
-                        )}
-                    />
 
-
-                    <TextField
-                        margin="normal"
-                        fullWidth
-                        id="profilePicture"
-                        label="Profile Picture URL"
-                        name="profilePicture"
-                        value={newProfileInfo.profilePicture}
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, profilePicture: e.target.value })}
-                    />
-                    <input
-                        type="file"
-                        accept="image/*"
-                        id="profilePicture"
-                        name="profilePicture"
-                        onChange={(e) => setNewProfileInfo({ ...newProfileInfo, profilePicture: e.target.files[0] })}
-                    />
 
 
                     <Box mt={2} display="flex" justifyContent="flex-end">

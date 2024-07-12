@@ -168,7 +168,7 @@ function CreateMentorProfile() {
                         display: 'flex',
                         justifyContent: 'right',
                         gap: 3,
-                        width: '100%',
+
                     }}
                 >
                     <Link to="/company/create-mentor-profile">

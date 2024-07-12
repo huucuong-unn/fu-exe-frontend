@@ -29,6 +29,7 @@ import AdOrder from '~/pages/AdOrders';
 import AdDashboard from '~/pages/AdDashboard';
 import SignUpForCompany from '~/pages/SignUpForCompany';
 import NotAuthorized from '~/pages/NotAuthorized';
+import MentorManageProfile from '~/pages/MentorManageProfile';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -55,9 +56,12 @@ const publicRoutes = [
 
     //Mentor
     { path: '/campaigns', component: MentorLandingPage, layout: LayoutWithFooter },
-
     // Campaign detail route
     { path: '/campaigns/:campaignId', component: CampaignDetail, layout: LayoutWithFooter },
+    //Mentor
+    { path: '/mentor-manage-profile', component: MentorManageProfile, layout: LayoutWithFooter },
+
+
 
     //Payment
     { path: '/payment', component: Payment },

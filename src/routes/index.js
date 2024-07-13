@@ -54,7 +54,6 @@ const publicRoutes = [
     { path: '/checkout', component: Checkout, layout: null },
 
     //Mentor
-    { path: '/campaigns', component: MentorLandingPage, layout: LayoutWithFooter },
 
     // Campaign detail route
     { path: '/campaigns/:campaignId', component: CampaignDetail, layout: LayoutWithFooter },
@@ -63,16 +62,20 @@ const publicRoutes = [
     { path: '/payment', component: Payment },
 
     { path: '/NotAuthoried', component: NotAuthorized, layout: null },
-    { path: '/admin/dashboard', component: AdDashboard, layout: AdminLayout },
     { path: '/test', component: UserProfilesTest, layout: null },
+];
 
+const adminRoutes = [
     //admin
     { path: '/admin/mentee', component: AdMentee, layout: AdminLayout },
     { path: '/admin/mentor', component: AdMentor, layout: AdminLayout },
     { path: '/admin/campaign', component: AdCampaign, layout: AdminLayout },
     { path: '/admin/account', component: AdAccount, layout: AdminLayout },
     { path: '/admin/orders', component: AdOrder, layout: AdminLayout },
+    { path: '/admin/dashboard', component: AdDashboard, layout: AdminLayout },
+];
 
+const companyRoutes = [
     //company
     { path: '/company/campaign-history', component: CompaniesCampaignHistory },
     { path: '/company/campaign-details/:campaignId', component: CompaniesCampaignDetail },
@@ -80,11 +83,7 @@ const publicRoutes = [
     { path: '/company/create-mentor-History', component: MentorHistoryForCompany },
 ];
 
-const adminRoutes = [
-    //Admin
-];
-
-const companyRoutes = [];
+const mentorRoutes = [{ path: '/campaigns', component: MentorLandingPage, layout: LayoutWithFooter }];
 
 const privateRoutes = [];
 

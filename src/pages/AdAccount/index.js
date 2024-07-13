@@ -179,6 +179,12 @@ function AdAccount() {
     const [isApprove, setIsApprove] = useState(false);
     const status = ['PENDING', 'ACTIVE', 'INACTIVE'];
     const roles = ['Admin', 'Company', 'Student', 'Mentor', 'Mentee'];
+    const [imageError, setImageError] = useState(false);
+    const [imageHelperText, setImageHelperText] = useState('');
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [universities, setUniversities] = useState([]);
+    const [imageSelected, setImageSelected] = useState(false);
 
     const IMAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
@@ -219,6 +225,65 @@ function AdAccount() {
         setSelectedAccountPending(null);
     };
 
+    const handleImageUpload = (event, setImagePreview, setImageFile, setImageError, setImageHelperText) => {
+        const file = event.target.files[0];
+        if (file) {
+            const fileType = file.type;
+            const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (validImageTypes.includes(fileType)) {
+                setImageError(false);
+                setImageHelperText('');
+                const reader = new FileReader();
+                reader.onload = () => {
+                    setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+                setImageFile(file);
+            } else {
+                setImageError(true);
+                setImageHelperText('Only JPEG, JPG, and PNG files are allowed.');
+                setImagePreview(null);
+                setImageFile(null);
+            }
+        }
+    };
+
+    const handleRemoveImage = (setImagePreview, setImageFile, setImageError, setImageHelperText) => {
+        setImagePreview(null);
+        setImageFile(null);
+        setImageError(false);
+        setImageHelperText('');
+    };
+
+    const handleSubmit = async (event) => {
+        const data = new FormData(event.currentTarget);
+        data.append('roleName', 'admin');
+
+        const createAccountRequest = {
+            username: data.get('username'),
+            password: data.get('password'),
+            email: data.get('email'),
+            avatarUrl: data.get('avatarUrl'),
+            roleName: data.get('roleName'),
+        };
+
+        // Append `createAccountRequest` fields to FormData
+        data.append('studentRequest.name', createAccountRequest.username);
+        data.append('createAccountRequest.username', createAccountRequest.username);
+        data.append('createAccountRequest.password', createAccountRequest.password);
+        data.append('createAccountRequest.email', createAccountRequest.email);
+        data.append('createAccountRequest.avatarUrl', createAccountRequest.avatarUrl);
+        data.append('createAccountRequest.roleName', createAccountRequest.roleName);
+
+        try {
+            const result = await AccountAPI.createAccount(data);
+            handleCloseCreateModal();
+            await fetchData();
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const fetchData = async () => {
         try {
             const params = {
@@ -1041,12 +1106,21 @@ function AdAccount() {
                             Create account for admin
                         </Typography>
 
-                        <Box component="form" sx={{ mt: 5 }}>
+                        <Box onSubmit={handleSubmit} component="form" sx={{ mt: 5 }}>
                             <TextField
                                 type="file"
                                 id="avatarUrl"
                                 name="avatarUrl"
                                 style={{ display: 'none' }}
+                                onChange={(e) =>
+                                    handleImageUpload(
+                                        e,
+                                        setImagePreview,
+                                        setImageFile,
+                                        setImageError,
+                                        setImageHelperText,
+                                    )
+                                }
                                 accept="image/jpeg, image/jpg, image/png"
                             />
 
@@ -1056,19 +1130,32 @@ function AdAccount() {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'center',
-                                    justifyContent: 'center',
                                 }}
                             >
                                 <Avatar
-                                    alt="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.svgrepo.com%2Fsvg%2F452030%2Favatar-default&psig=AOvVaw2Eepet3Jt6CuwNIc10izZr&ust=1718112366877000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOi0-r2R0YYDFQAAAAAdAAAAABAE"
+                                    alt="Avatar"
+                                    src={imagePreview}
                                     sx={{ width: 90, height: 90, border: 'solid 2px black' }}
                                     helperText="Avatar"
                                 />
-                                <Button variant="contained" sx={{ mt: 2 }}>
-                                    Please Choose Avatar
-                                </Button>
                             </Box>
-
+                            <Button
+                                variant="contained"
+                                sx={{ mt: 2 }}
+                                onClick={
+                                    imageSelected
+                                        ? () =>
+                                              handleRemoveImage(
+                                                  setImagePreview,
+                                                  setImageFile,
+                                                  setImageError,
+                                                  setImageHelperText,
+                                              )
+                                        : () => document.getElementById('avatarUrl').click()
+                                }
+                            >
+                                {imageSelected ? 'Remove Avatar' : 'Please Choose Avatar'}
+                            </Button>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -1086,16 +1173,6 @@ function AdAccount() {
                                     name="username"
                                     autoComplete="username"
                                     autoFocus
-                                    sx={{ flex: 1 }}
-                                />
-                                <TextField
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="name"
-                                    label="FullName"
-                                    name="name"
-                                    autoComplete="name"
                                     sx={{ flex: 1 }}
                                 />
                             </Box>
@@ -1140,16 +1217,8 @@ function AdAccount() {
                                 autoComplete="current-password"
                             />
                             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                                Sign Up
+                                Create{' '}
                             </Button>
-
-                            <Grid container>
-                                <Grid item xs>
-                                    <Link to="/sign-in" variant="body2">
-                                        Sign In
-                                    </Link>
-                                </Grid>
-                            </Grid>
                         </Box>
                     </Box>
                 </Box>

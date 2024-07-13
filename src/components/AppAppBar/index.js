@@ -62,6 +62,11 @@ function AppAppBar({ mode, toggleColorMode }) {
         navigate('/sign-in');
     };
 
+    const handleCloseProfile = () => {
+        setAnchorEl(null);
+        navigate('/user/profile');
+    };
+
     const handleCloseHistory = () => {
         setAnchorEl(null);
         navigate('/user/history');
@@ -148,9 +153,9 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 <img src={logo} style={logoStyle} alt="logo of tortee" />
                             </Link>
                             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                                <MenuItem sx={{ py: '6px', px: '12px' }}>
+                                <MenuItem sx={{ py: '6px', px: '12px', borderRadius: '999px' }}>
                                     <Link to="/mentors" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.primary">
+                                        <Typography variant="body2" color="text.primary" fontSize="16px">
                                             Mentors
                                         </Typography>
                                     </Link>
@@ -164,39 +169,35 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         </Typography>
                                     </a>
                                 </MenuItem> */}
-                                <MenuItem onClick={() => scrollToSection('companies')} sx={{ py: '6px', px: '12px' }}>
-                                    <Link to="/company" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.primary">
-                                            Companies
-                                        </Typography>
-                                    </Link>
+                                <MenuItem
+                                    onClick={() => scrollToSection('companies')}
+                                    sx={{ py: '6px', px: '12px', borderRadius: '999px' }}
+                                >
+                                    {userInfo.role !== 'mentor' && userInfo.role !== 'company' ? (
+                                        <Link to="/company" style={{ textDecoration: 'none' }}>
+                                            <Typography variant="body2" color="text.primary" fontSize="16px">
+                                                Companies
+                                            </Typography>
+                                        </Link>
+                                    ) : (
+                                        ''
+                                    )}
                                 </MenuItem>
-                                <MenuItem onClick={() => scrollToSection('companies')} sx={{ py: '6px', px: '12px' }}>
-                                    <Link to="/payment" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.primary">
-                                            Point
-                                        </Typography>
-                                    </Link>
-                                </MenuItem>
-                                {/* <MenuItem onClick={() => scrollToSection('highlights')} sx={{ py: '6px', px: '12px' }}>
-                                    <a href="/#highlights" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.primary">
-                                            Highlights
-                                        </Typography>
-                                    </a>
-                                </MenuItem> */}
-                                {/* <MenuItem onClick={() => scrollToSection('pricing')} sx={{ py: '6px', px: '12px' }}>
-                                    <Typography variant="body2" color="text.primary">
-                                        Pricing
-                                    </Typography>
-                                </MenuItem> */}
-                                <MenuItem onClick={() => scrollToSection('faq')} sx={{ py: '6px', px: '12px' }}>
-                                    <a href="/#faq" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.primary">
-                                            FAQs
-                                        </Typography>
-                                    </a>
-                                </MenuItem>
+                                {/* handle for show/hide points */}
+                                {userInfo.role !== 'mentor' ? (
+                                    <MenuItem
+                                        onClick={() => scrollToSection('companies')}
+                                        sx={{ py: '6px', px: '12px', borderRadius: '999px' }}
+                                    >
+                                        <Link to="/payment" style={{ textDecoration: 'none' }}>
+                                            <Typography variant="body2" color="text.primary" fontSize="16px">
+                                                Point
+                                            </Typography>
+                                        </Link>
+                                    </MenuItem>
+                                ) : (
+                                    ''
+                                )}
                             </Box>
                         </Box>
                         {userInfo !== null ? (
@@ -251,17 +252,26 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                                 >
-                                    <MenuItem onClick={handleClose}>
-                                        <Avatar /> Profile
+                                    <MenuItem onClick={handleCloseProfile}>
+                                        <Avatar src="https://cdn-icons-png.flaticon.com/128/12340/12340380.png" />
+                                        Profile
                                     </MenuItem>
-                                    <MenuItem onClick={handleCloseHistory}>
-                                        <Avatar src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToN7bD4l-dNiWcyNW1QKGyIWwmkmFME_xKbg&s" />
-                                        History
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseForPoint}>
-                                        <Avatar src="https://static-00.iconduck.com/assets.00/gold-coin-icon-2048x2048-loznlayl.png" />
-                                        {userInfo.point} Points
-                                    </MenuItem>
+                                    {userInfo.role !== 'mentor' && userInfo.role !== 'company' ? (
+                                        <MenuItem onClick={handleCloseHistory}>
+                                            <Avatar src="https://cdn-icons-png.flaticon.com/128/10357/10357920.png" />
+                                            History
+                                        </MenuItem>
+                                    ) : (
+                                        ''
+                                    )}
+                                    {userInfo.role !== 'mentor' ? (
+                                        <MenuItem onClick={handleCloseForPoint}>
+                                            <Avatar src="https://cdn-icons-png.flaticon.com/128/4671/4671969.png" />
+                                            {userInfo.point} Points
+                                        </MenuItem>
+                                    ) : (
+                                        ''
+                                    )}
                                     <Divider />
                                     <MenuItem onClick={handleLogout}>
                                         <ListItemIcon>
@@ -291,7 +301,12 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         size="small"
                                         component="a"
                                         target="_blank"
-                                        sx={{ backgroundColor: '#365E32' }}
+                                        sx={{
+                                            backgroundColor: '#1e373b',
+                                            '&:hover': {
+                                                backgroundColor: '#758694',
+                                            },
+                                        }}
                                     >
                                         Sign up
                                     </Button>

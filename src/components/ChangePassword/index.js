@@ -36,7 +36,14 @@ export const ChangePassword = () => {
                     <Button
                         variant="contained"
                         color="primary"
-                        sx={{ width: { lg: '15%', md: '20%', xs: '80%' }, my: 4, backgroundColor: '#365E32' }}
+                        sx={{
+                            width: { lg: '15%', md: '20%', xs: '80%' },
+                            my: 4,
+                            backgroundColor: '#365E32',
+                            '&:hover': {
+                                backgroundColor: '#508D4E',
+                            },
+                        }}
                     >
                         Save Changes
                     </Button>

@@ -16,6 +16,12 @@ const SkillAPI = {
         const authorizedConfig = this.addAuthorizationHeader({}, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
+
+    getAll(includeAuthorization = false) {
+        const url = 'v1/skill/all';
+        const authorizedConfig = this.addAuthorizationHeader({}, includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
 };
 
 export default SkillAPI;

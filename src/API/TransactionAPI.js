@@ -24,5 +24,10 @@ const TransactionAPI = {
         const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
+    getAllTransactionForAdmin(params, includeAuthorization = false) {
+        const url = '/v1/transaction/admin';
+        const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
 };
 export default TransactionAPI;

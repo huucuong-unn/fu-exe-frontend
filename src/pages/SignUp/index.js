@@ -49,6 +49,10 @@ export default function SignUp() {
     const [imageFile, setImageFile] = useState(null);
     const [universities, setUniversities] = useState([]);
     const [imageSelected, setImageSelected] = useState(false);
+    const [frontImagePreview, setFrontImagePreview] = useState(null);
+    const [frontImageFile, setFrontImageFile] = useState(null);
+    const [backImagePreview, setBackImagePreview] = useState(null);
+    const [backImageFile, setBackImageFile] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -88,7 +92,7 @@ export default function SignUp() {
         return username.length >= 5;
     };
 
-    const handleImageUpload = (event) => {
+    const handleImageUpload = (event, setImagePreview, setImageFile, setImageError, setImageHelperText) => {
         const file = event.target.files[0];
         if (file) {
             const fileType = file.type;
@@ -102,7 +106,6 @@ export default function SignUp() {
                 };
                 reader.readAsDataURL(file);
                 setImageFile(file);
-                setImageSelected(true);
             } else {
                 setImageError(true);
                 setImageHelperText('Only JPEG, JPG, and PNG files are allowed.');
@@ -112,13 +115,11 @@ export default function SignUp() {
         }
     };
 
-    const handleRemoveImage = () => {
+    const handleRemoveImage = (setImagePreview, setImageFile, setImageError, setImageHelperText) => {
         setImagePreview(null);
         setImageFile(null);
         setImageError(false);
         setImageHelperText('');
-        setImageSelected(false);
-        document.getElementById('avatarUrl').value = null;
     };
 
     const validateAllField = (data) => {
@@ -163,46 +164,10 @@ export default function SignUp() {
             setUsernameError(false);
             setUsernameHelperText('');
         }
-
+        console.log(result);
         return result;
     };
 
-    // const handleSubmit = async (event) => {
-    //     event.preventDefault();
-    //     const data = new FormData(event.currentTarget);
-    //     data.append('roleName', 'student');
-
-    //     const createAccountRequest = {
-    //         username: data.get('username'),
-    //         password: data.get('password'),
-    //         email: data.get('email'),
-    //         avatarUrl: data.get('avatarUrl'),
-    //         roleName: data.get('roleName'),
-    //     };
-
-    //     const requestObject = {
-    //         name: data.get('name'),
-    //         dob: data.get('dob'),
-    //         studentCode: data.get('studentCode'),
-    //         universityId: 'hello',
-    //     };
-
-    //     const dataRequest = {
-    //         createAccountRequest: createAccountRequest,
-    //         requestObject: requestObject,
-    //     };
-
-    //     console.log(dataRequest);
-
-    //     if (validateAllField(data)) {
-    //         try {
-    //             const result = await AccountAPI.createAccount(dataRequest);
-    //             navigate('/sign-in', { state: { signupSuccess: true } });
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     }
-    // };
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -235,10 +200,14 @@ export default function SignUp() {
         data.append('studentRequest.dob', requestObject.dob);
         data.append('studentRequest.studentCode', requestObject.studentCode);
         data.append('studentRequest.universityId', requestObject.universityId);
+        data.append('studentRequest.frontStudentCard', data.get('front'));
+        data.append('studentRequest.backStudentCard', data.get('back'));
 
         if (validateAllField(data)) {
             try {
                 const result = await AccountAPI.createAccount(data);
+                console.log(data);
+
                 navigate('/sign-in', { state: { signupSuccess: true } });
             } catch (error) {
                 console.log(error);
@@ -285,7 +254,15 @@ export default function SignUp() {
                                 id="avatarUrl"
                                 name="avatarUrl"
                                 style={{ display: 'none' }}
-                                onChange={handleImageUpload}
+                                onChange={(e) =>
+                                    handleImageUpload(
+                                        e,
+                                        setImagePreview,
+                                        setImageFile,
+                                        setImageError,
+                                        setImageHelperText,
+                                    )
+                                }
                                 accept="image/jpeg, image/jpg, image/png"
                             />
 
@@ -298,7 +275,7 @@ export default function SignUp() {
                                 }}
                             >
                                 <Avatar
-                                    alt="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.svgrepo.com%2Fsvg%2F452030%2Favatar-default&psig=AOvVaw2Eepet3Jt6CuwNIc10izZr&ust=1718112366877000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOi0-r2R0YYDFQAAAAAdAAAAABAE"
+                                    alt="Avatar"
                                     src={imagePreview}
                                     sx={{ width: 90, height: 90, border: 'solid 2px black' }}
                                     helperText="Avatar"
@@ -309,7 +286,13 @@ export default function SignUp() {
                                 sx={{ mt: 2, ml: '50%', transform: 'translate(-50%)' }}
                                 onClick={
                                     imageSelected
-                                        ? handleRemoveImage
+                                        ? () =>
+                                              handleRemoveImage(
+                                                  setImagePreview,
+                                                  setImageFile,
+                                                  setImageError,
+                                                  setImageHelperText,
+                                              )
                                         : () => document.getElementById('avatarUrl').click()
                                 }
                             >
@@ -334,18 +317,39 @@ export default function SignUp() {
                                         flex: 1,
                                     }}
                                 >
-                                    <InputLabel htmlFor="upload-cv" sx={{ fontWeight: 'bold' }}>
+                                    <InputLabel htmlFor="front" sx={{ fontWeight: 'bold' }}>
                                         Front Of Student Card
                                     </InputLabel>
                                     <TextField
-                                        margin="normal"
-                                        required
-                                        fullWidth
+                                        type="file"
                                         id="front"
                                         name="front"
-                                        type="file"
-                                        sx={{ mt: 0 }}
+                                        style={{ display: 'none' }}
+                                        onChange={(e) =>
+                                            handleImageUpload(
+                                                e,
+                                                setFrontImagePreview,
+                                                setFrontImageFile,
+                                                setImageError,
+                                                setImageHelperText,
+                                            )
+                                        }
+                                        accept="image/jpeg, image/jpg, image/png"
                                     />
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => document.getElementById('front').click()}
+                                        sx={{ mt: 1 }}
+                                    >
+                                        Upload Front Image
+                                    </Button>
+                                    {frontImagePreview && (
+                                        <img
+                                            src={frontImagePreview}
+                                            alt="Front of Student Card"
+                                            style={{ marginTop: '10px', width: '100%', height: 'auto' }}
+                                        />
+                                    )}
                                 </Box>
                                 <Box
                                     sx={{
@@ -358,18 +362,39 @@ export default function SignUp() {
                                         flex: 1,
                                     }}
                                 >
-                                    <InputLabel htmlFor="upload-cv" sx={{ fontWeight: 'bold' }}>
-                                        front Of Student Card
+                                    <InputLabel htmlFor="back" sx={{ fontWeight: 'bold' }}>
+                                        Back Of Student Card
                                     </InputLabel>
                                     <TextField
-                                        margin="normal"
-                                        required
-                                        fullWidth
+                                        type="file"
                                         id="back"
                                         name="back"
-                                        type="file"
-                                        sx={{ mt: 0 }}
+                                        style={{ display: 'none' }}
+                                        onChange={(e) =>
+                                            handleImageUpload(
+                                                e,
+                                                setBackImagePreview,
+                                                setBackImageFile,
+                                                setImageError,
+                                                setImageHelperText,
+                                            )
+                                        }
+                                        accept="image/jpeg, image/jpg, image/png"
                                     />
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => document.getElementById('back').click()}
+                                        sx={{ mt: 1 }}
+                                    >
+                                        Upload Back Image
+                                    </Button>
+                                    {backImagePreview && (
+                                        <img
+                                            src={backImagePreview}
+                                            alt="Back of Student Card"
+                                            style={{ marginTop: '10px', width: '100%', height: 'auto' }}
+                                        />
+                                    )}
                                 </Box>
                             </Box>
 

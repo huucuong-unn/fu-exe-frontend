@@ -174,7 +174,7 @@ const Payment = () => {
                                     </ListItem>
                                     <Divider />
                                     <ListItem>
-                                        <ListItemText primary="Account" secondary="Bigzombie123vn" />
+                                        <ListItemText primary="Account" secondary={userInfo.username} />
                                     </ListItem>
                                 </List>
                                 <Box mt={2}>
@@ -182,7 +182,12 @@ const Payment = () => {
                                         variant="contained"
                                         fullWidth
                                         onClick={handlePayment}
-                                        sx={{ backgroundColor: '#365E32' }}
+                                        sx={{
+                                            backgroundColor: '#365E32',
+                                            '&:hover': {
+                                                backgroundColor: '#508D4E',
+                                            },
+                                        }}
                                     >
                                         Process Payment
                                     </Button>

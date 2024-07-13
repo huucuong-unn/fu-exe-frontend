@@ -26,6 +26,15 @@ const AccountAPI = {
             },
         });
     },
+
+    createAccountForMentor(data, includeAuthorization = false) {
+        return axiosClient.post('/v1/account/create-mentor', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+
     uploadImage(userProfile, form, includeAuthorization = false) {
         return axiosClient.post(`/v1/account/upload-image/${userProfile}`, form, {
             headers: {
@@ -53,6 +62,18 @@ const AccountAPI = {
         const url = `/v1/account/change-status/${id}`;
         const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
         return axiosClient.put(url, authorizedConfig);
+    },
+
+    changeStatus(id, includeAuthorization = false) {
+        const url = `/v1/account/change-status/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
+        return axiosClient.put(url, authorizedConfig);
+    },
+
+    approveAccount(id, includeAuthorization = false) {
+        const url = `/v1/account/approve/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
+        return axiosClient.post(url, authorizedConfig);
     },
 };
 

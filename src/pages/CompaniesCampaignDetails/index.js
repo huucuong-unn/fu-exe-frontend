@@ -21,9 +21,22 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import CampaignAPI from '~/API/CampaignAPI';
+import { green } from '@mui/material/colors';
+import MentorAPI from '~/API/MentorAPI';
+import CampaignMentorProfileAPI from '~/API/CampaignMentorProfileAPI';
+import storageService from '~/components/StorageService/storageService';
+import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
+import {
+    Apartment as ApartmentIcon,
+    AccountCircle as AccountCircleIcon,
+    School as SchoolIcon,
+    DoDisturbOn as DoDisturbOnIcon,
+    CloudUpload as CloudUploadIcon,
+} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
 
 function CompaniesCampaignDetail() {
-    const steps = ['Company Application', 'Mentee Application', 'Training', 'Completion'];
+    const steps = ['COMPANY_APPLY', 'MENTEE_APPLY', 'TRAINING', 'CLOSED'];
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
@@ -31,10 +44,15 @@ function CompaniesCampaignDetail() {
     const [campaign, setCampaign] = useState({});
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [isChooseModal, setIsChooseModal] = useState(false);
+    const [mentorsChooseList, setMentorsChooseList] = useState([]);
+    const [mentors, setMentors] = useState([]);
+    const [userInfo, setUserInfo] = useState(storageService.getItem('userInfo'));
 
     const handleRowClick = (mentor) => {
         setSelectedMentee(mentor);
     };
+
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     const handleCloseModal = () => {
         setSelectedMentee(null);
@@ -59,8 +77,21 @@ function CompaniesCampaignDetail() {
     };
 
     const handleCreateMentor = () => {
-        navigate('/company/create-mentor-account');
+        navigate('/company/create-mentor-profile');
+        navigate('/company/create-mentor-profile');
         window.scrollTo(0, 0);
+    };
+
+    const handleChooseMentor = async (mentorProfileId) => {
+        const params = {
+            campaignId: campaignId,
+            mentorProfileId: mentorProfileId,
+        };
+
+        await CampaignMentorProfileAPI.chooseMentor(params);
+        handleCloseChooseModal();
+        await fetchMentorList();
+        await fetchMentorListChoose();
     };
 
     useEffect(() => {
@@ -72,13 +103,111 @@ function CompaniesCampaignDetail() {
                 console.log(error);
             }
         };
-
         getById();
+    }, [campaignId]);
+
+    const fetchMentorListChoose = async () => {
+        try {
+            const mentorListChooseData = await MentorAPI.getMentorsSearch(userInfo.companyId);
+            console.log(mentorListChooseData);
+            setMentorsChooseList(mentorListChooseData);
+            console.log(mentorListChooseData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    const fetchMentorList = async () => {
+        try {
+            const params = {
+                companyId: userInfo.companyId,
+                campaignId: campaignId,
+                page: 1,
+                limit: 100,
+            };
+            console.log(params);
+            const mentorListChooseData = await MentorAPI.getMentorsForAdminSearch(params);
+            console.log(mentorListChooseData);
+            setMentors(mentorListChooseData.listResult);
+            console.log(mentors);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchMentorListChoose();
+        fetchMentorList();
     }, [campaignId]);
 
     useEffect(() => {
         console.log(campaign);
     }, [campaign]);
+
+    const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+        [`&.${stepConnectorClasses.alternativeLabel}`]: {
+            top: 22,
+        },
+        [`&.${stepConnectorClasses.active}`]: {
+            [`& .${stepConnectorClasses.line}`]: {
+                backgroundImage: 'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+            },
+        },
+        [`&.${stepConnectorClasses.completed}`]: {
+            [`& .${stepConnectorClasses.line}`]: {
+                backgroundImage: 'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+            },
+        },
+        [`& .${stepConnectorClasses.line}`]: {
+            height: 3,
+            border: 0,
+            backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : '#eaeaf0',
+            borderRadius: 1,
+        },
+    }));
+
+    const ColorlibStepIconRoot = styled('div')(({ theme, ownerState }) => ({
+        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[700] : '#ccc',
+        zIndex: 1,
+        color: '#fff',
+        width: 50,
+        height: 50,
+        display: 'flex',
+        borderRadius: '50%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...(ownerState.active && {
+            backgroundImage: 'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+            boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+        }),
+        ...(ownerState.completed && {
+            backgroundImage: 'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+        }),
+    }));
+
+    function ColorlibStepIcon(props) {
+        const { active, completed, className } = props;
+
+        const icons = {
+            1: <ApartmentIcon />,
+            2: <AccountCircleIcon />,
+            3: <SchoolIcon />,
+            4: <DoDisturbOnIcon />,
+        };
+
+        return (
+            <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
+                {icons[String(props.icon)]}
+            </ColorlibStepIconRoot>
+        );
+    }
+
+    ColorlibStepIcon.propTypes = {
+        active: PropTypes.bool,
+        className: PropTypes.string,
+        completed: PropTypes.bool,
+        icon: PropTypes.node,
+    };
 
     return (
         <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
@@ -104,23 +233,41 @@ function CompaniesCampaignDetail() {
                             }}
                         >
                             <Box>
-                                <Avatar alt="avatar image" src={campaign?.img} sx={{ width: 150, height: 150 }} />
+                                <Avatar
+                                    alt="avatar image"
+                                    src={IMGAGE_HOST + campaign?.img}
+                                    sx={{ width: 150, height: 150 }}
+                                />
                             </Box>
                             <Box sx={{ textTransform: 'none' }}>
                                 <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
-                                    Spring Campaign 2024
+                                    {campaign.name}
                                 </Typography>
                                 <Typography color="text.secondary" variant="body2" sx={{ my: 1 }} fontSize={'16px'}>
-                                    1/1/2024 - 1/7/2024
+                                    {new Date(campaign?.startDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}{' '}
+                                    -{' '}
+                                    {new Date(campaign?.endDate).toLocaleDateString('en-GB', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                    })}{' '}
                                 </Typography>
                                 <CardContent></CardContent>
                             </Box>
                         </Box>
                         <Box sx={{ width: '100%', marginTop: 2 }}>
-                            <Stepper activeStep={2} alternativeLabel sx={{ transform: 'scale(1.1)' }}>
+                            <Stepper
+                                alternativeLabel
+                                activeStep={steps.indexOf(campaign?.status)}
+                                connector={<ColorlibConnector />}
+                            >
                                 {steps.map((label) => (
                                     <Step key={label}>
-                                        <StepLabel>{label}</StepLabel>
+                                        <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
                                     </Step>
                                 ))}
                             </Stepper>
@@ -172,78 +319,6 @@ function CompaniesCampaignDetail() {
                                 paddingBottom: 2,
                             }}
                         >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of online session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of offline session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Min duration of session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    1 hour
-                                </Typography>
-                            </Box>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -425,179 +500,155 @@ function CompaniesCampaignDetail() {
                             </Box>
                         </Box>
                         <Grid container spacing={6}>
-                            <Grid item xs={12} md={12}>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="center"
-                                    alignItems="flex-start"
-                                    spacing={2}
-                                    useFlexGap
-                                    sx={{
-                                        width: '100%',
-                                        display: { xs: 8, sm: 'flex' },
-                                        paddingLeft: 2,
-                                        paddingRight: 2,
-                                    }}
-                                >
-                                    <Card
-                                        variant="outlined"
-                                        component={Button}
+                            {mentors.map((mentor, index) => (
+                                <Grid item xs={12} md={12} key={index}>
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="center"
+                                        alignItems="flex-start"
+                                        spacing={2}
+                                        useFlexGap
                                         sx={{
-                                            p: 3,
-                                            height: 'fit-content',
-                                            background: 'none',
                                             width: '100%',
-                                            position: 'relative',
+                                            display: { xs: 'block', sm: 'flex' },
+                                            paddingLeft: 2,
+                                            paddingRight: 2,
                                         }}
-                                        onClick={() => handleItemClick()}
                                     >
-                                        <Box
+                                        <Card
+                                            variant="outlined"
+                                            component={Button}
                                             sx={{
+                                                p: 3,
+                                                height: 'fit-content',
+                                                background: 'none',
                                                 width: '100%',
-                                                display: 'flex',
-                                                textAlign: 'left',
-                                                flexDirection: { xs: 'column', md: 'row' },
-                                                alignItems: { md: 'center' },
-                                                gap: 2.5,
+                                                position: 'relative',
                                             }}
+                                            onClick={() => handleItemClick()}
                                         >
-                                            <Box>
-                                                <Avatar alt="avatar image" src="" sx={{ width: 150, height: 150 }} />
-                                            </Box>
-                                            <Box sx={{ textTransform: 'none', width: '100%' }}>
-                                                <Box
-                                                    sx={{
-                                                        color: (theme) => {
-                                                            return theme.palette.mode === 'light'
-                                                                ? 'primary.main'
-                                                                : 'primary.main';
-                                                        },
-                                                        display: 'flex',
-                                                        justifyContent: {
-                                                            xs: 'center',
-                                                            md: 'flex-start',
-                                                            lg: 'flex-start',
-                                                        },
-                                                        alignItems: 'center',
-                                                        gap: 5,
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        color="text.primary"
-                                                        variant="body1"
-                                                        fontWeight="bold"
-                                                        fontSize={'24px'}
-                                                    >
-                                                        Ahihi
-                                                    </Typography>
-                                                    <Chip
-                                                        avatar={
-                                                            <Avatar sx={{ bgcolor: 'transparent' }}>
-                                                                <StarIcon sx={{ color: '#4CAF50' }} />
-                                                            </Avatar>
+                                            <Box
+                                                sx={{
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    textAlign: 'left',
+                                                    flexDirection: { xs: 'column', md: 'row' },
+                                                    alignItems: { md: 'center' },
+                                                    gap: 2.5,
+                                                }}
+                                            >
+                                                <Box>
+                                                    <Avatar
+                                                        alt="avatar image"
+                                                        src={
+                                                            IMGAGE_HOST +
+                                                            mentor.mentorProfile.mentorDTO.account.avatarUrl
                                                         }
-                                                        label="Top Mentor"
-                                                        sx={{
-                                                            backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
-                                                            color: '#004D40', // Màu chữ xanh đậm
-                                                            fontWeight: 'bold',
-                                                            padding: '8px',
-                                                            borderRadius: '16px',
-                                                            fontSize: '14px',
-                                                        }}
-                                                        size="medium"
+                                                        sx={{ width: 150, height: 150 }}
                                                     />
-                                                    <Button
-                                                        variant="contained"
-                                                        sx={{
-                                                            position: 'absolute',
-                                                            top: 0,
-                                                            right: 0,
-                                                            mt: 3,
-                                                            mr: 4,
-                                                            backgroundColor: '#4CAF50',
-                                                        }}
-                                                        onClick={(event) => {
-                                                            event.stopPropagation(); // Ngăn chặn sự kiện click lan ra thẻ cha
-                                                            handleRowClick({ mentorID: 1, name: 'Thanh' });
-                                                        }}
-                                                    >
-                                                        Edit
-                                                    </Button>
                                                 </Box>
-                                                <Typography
-                                                    color="text.secondary"
-                                                    variant="body2"
-                                                    sx={{ my: 1 }}
-                                                    fontSize={'16px'}
-                                                >
-                                                    Short Descrition
-                                                </Typography>
-
-                                                <Typography
-                                                    color="text.secondary"
-                                                    variant="body2"
-                                                    sx={{ my: 2 }}
-                                                    fontSize={'14px'}
-                                                >
-                                                    Description
-                                                </Typography>
-
-                                                <CardContent></CardContent>
-                                                <br />
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        justifyContent: 'left',
-                                                        alignItems: 'center',
-                                                        width: '100%',
-                                                        gap: 2,
-                                                    }}
-                                                >
+                                                <Box sx={{ textTransform: 'none', width: '100%' }}>
                                                     <Box
                                                         sx={{
-                                                            // flex: 1,
+                                                            color: (theme) =>
+                                                                theme.palette.mode === 'light'
+                                                                    ? 'primary.main'
+                                                                    : 'primary.main',
                                                             display: 'flex',
-                                                            alignItems: 'baseline',
-                                                            textAlign: 'center',
+                                                            justifyContent: {
+                                                                xs: 'center',
+                                                                md: 'flex-start',
+                                                                lg: 'flex-start',
+                                                            },
+                                                            alignItems: 'center',
+                                                            gap: 5,
                                                         }}
                                                     >
                                                         <Typography
-                                                            variant="h4"
-                                                            sx={{
-                                                                color: '#182F5D',
-                                                                fontWeight: 'bold',
-                                                                marginRight: '4px',
-                                                            }}
-                                                        >
-                                                            150 point
-                                                        </Typography>
-                                                        <Typography
+                                                            color="text.primary"
                                                             variant="body1"
+                                                            fontWeight="bold"
+                                                            fontSize={'24px'}
+                                                        >
+                                                            {mentor.mentorProfile.mentorDTO.fullName}
+                                                        </Typography>
+                                                        <Chip
+                                                            avatar={
+                                                                <Avatar sx={{ bgcolor: 'transparent' }}>
+                                                                    <StarIcon sx={{ color: '#4CAF50' }} />
+                                                                </Avatar>
+                                                            }
+                                                            label="Top Mentor"
                                                             sx={{
-                                                                color: '#182F5D',
-                                                                fontSize: '16px',
+                                                                backgroundColor: '#E0F2F1',
+                                                                color: '#004D40',
+                                                                fontWeight: 'bold',
+                                                                padding: '8px',
+                                                                borderRadius: '16px',
+                                                                fontSize: '14px',
+                                                            }}
+                                                            size="medium"
+                                                        />
+                                                        <Button
+                                                            variant="contained"
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                right: 0,
+                                                                mt: 3,
+                                                                mr: 4,
+                                                                backgroundColor: '#4CAF50',
+                                                            }}
+                                                            onClick={(event) => {
+                                                                event.stopPropagation(); // Prevent click event from propagating to parent elements
+                                                                handleRowClick({
+                                                                    mentorID: mentor.id,
+                                                                    name: mentor.name,
+                                                                });
                                                             }}
                                                         >
-                                                            / acceptance
-                                                        </Typography>
+                                                            Edit
+                                                        </Button>
                                                     </Box>
-                                                    <Button
-                                                        variant="contained"
-                                                        size="large"
-                                                        sx={{
-                                                            height: '100%',
-                                                            backgroundColor: '#365E32',
-                                                        }}
+                                                    <Typography
+                                                        color="text.secondary"
+                                                        variant="body2"
+                                                        sx={{ my: 1 }}
+                                                        fontSize={'16px'}
                                                     >
-                                                        View Profile
-                                                    </Button>
+                                                        {mentor.mentorProfile.shortDescription}
+                                                    </Typography>
+                                                    <Typography
+                                                        color="text.secondary"
+                                                        variant="body2"
+                                                        sx={{ my: 2 }}
+                                                        fontSize={'14px'}
+                                                    >
+                                                        {mentor.mentorProfile.description}
+                                                    </Typography>
+                                                    <CardContent>
+                                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                                            {mentor.skills.map((skill, index) => (
+                                                                <Chip key={index} label={skill.skill.name} />
+                                                            ))}
+                                                        </Box>
+                                                    </CardContent>
+                                                    <br />
+                                                    <Box
+                                                        sx={{
+                                                            display: 'flex',
+                                                            justifyContent: 'left',
+                                                            alignItems: 'center',
+                                                            width: '100%',
+                                                            gap: 2,
+                                                        }}
+                                                    ></Box>
                                                 </Box>
                                             </Box>
-                                        </Box>
-                                    </Card>
-                                </Stack>
-                            </Grid>
+                                        </Card>
+                                    </Stack>
+                                </Grid>
+                            ))}
                         </Grid>
                     </Box>
                 </Card>
@@ -1156,157 +1207,138 @@ function CompaniesCampaignDetail() {
                     >
                         <Typography variant="h4">Choose Mentor</Typography>
                         <Grid container spacing={6} sx={{ minWidth: '900px', overflowY: 'auto', maxHeight: '700px' }}>
-                            <Grid item xs={12} md={12}>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="center"
-                                    alignItems="flex-start"
-                                    spacing={2}
-                                    useFlexGap
-                                    sx={{
-                                        width: '100%',
-                                        display: { xs: 8, sm: 'flex' },
-                                        paddingLeft: 2,
-                                        paddingRight: 2,
-                                    }}
-                                >
-                                    <Card
-                                        variant="outlined"
-                                        component={Button}
+                            {mentorsChooseList.map((mentor) => (
+                                <Grid item xs={12} md={12}>
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="center"
+                                        alignItems="flex-start"
+                                        spacing={2}
+                                        useFlexGap
                                         sx={{
-                                            p: 3,
-                                            height: 'fit-content',
-                                            background: 'none',
                                             width: '100%',
-                                            position: 'relative',
+                                            display: { xs: 8, sm: 'flex' },
+                                            paddingLeft: 2,
+                                            paddingRight: 2,
                                         }}
                                     >
-                                        <Box
+                                        {/* handle choose mentor */}
+                                        <Card
+                                            variant="outlined"
+                                            component={Button}
                                             sx={{
+                                                p: 3,
+                                                height: 'fit-content',
+                                                background: 'none',
                                                 width: '100%',
-                                                display: 'flex',
-                                                textAlign: 'left',
-                                                flexDirection: { xs: 'column', md: 'row' },
-                                                alignItems: { md: 'center' },
-                                                gap: 2.5,
+                                                position: 'relative',
                                             }}
+                                            onClick={() => handleChooseMentor(mentor.mentorProfile.id)}
                                         >
-                                            <Box>
-                                                <Avatar alt="avatar image" src="" sx={{ width: 150, height: 150 }} />
-                                            </Box>
-                                            <Box sx={{ textTransform: 'none', width: '100%' }}>
-                                                <Box
-                                                    sx={{
-                                                        color: (theme) => {
-                                                            return theme.palette.mode === 'light'
-                                                                ? 'primary.main'
-                                                                : 'primary.main';
-                                                        },
-                                                        display: 'flex',
-                                                        justifyContent: {
-                                                            xs: 'center',
-                                                            md: 'flex-start',
-                                                            lg: 'flex-start',
-                                                        },
-                                                        alignItems: 'center',
-                                                        gap: 5,
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        color="text.primary"
-                                                        variant="body1"
-                                                        fontWeight="bold"
-                                                        fontSize={'24px'}
-                                                    >
-                                                        Ahihi
-                                                    </Typography>
-                                                    <Chip
-                                                        avatar={
-                                                            <Avatar sx={{ bgcolor: 'transparent' }}>
-                                                                <StarIcon sx={{ color: '#4CAF50' }} />
-                                                            </Avatar>
-                                                        }
-                                                        label="Top Mentor"
-                                                        sx={{
-                                                            backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
-                                                            color: '#004D40', // Màu chữ xanh đậm
-                                                            fontWeight: 'bold',
-                                                            padding: '8px',
-                                                            borderRadius: '16px',
-                                                            fontSize: '14px',
-                                                        }}
-                                                        size="medium"
+                                            <Box
+                                                sx={{
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    textAlign: 'left',
+                                                    flexDirection: { xs: 'column', md: 'row' },
+                                                    alignItems: { md: 'center' },
+                                                    gap: 2.5,
+                                                }}
+                                            >
+                                                <Box>
+                                                    <Avatar
+                                                        alt="avatar image"
+                                                        src=""
+                                                        sx={{ width: 150, height: 150 }}
                                                     />
                                                 </Box>
-                                                <Typography
-                                                    color="text.secondary"
-                                                    variant="body2"
-                                                    sx={{ my: 1 }}
-                                                    fontSize={'16px'}
-                                                >
-                                                    Short Descrition
-                                                </Typography>
+                                                <Box sx={{ textTransform: 'none', width: '100%' }}>
+                                                    <Box
+                                                        sx={{
+                                                            color: (theme) => {
+                                                                return theme.palette.mode === 'light'
+                                                                    ? 'primary.main'
+                                                                    : 'primary.main';
+                                                            },
+                                                            display: 'flex',
+                                                            justifyContent: {
+                                                                xs: 'center',
+                                                                md: 'flex-start',
+                                                                lg: 'flex-start',
+                                                            },
+                                                            alignItems: 'center',
+                                                            gap: 5,
+                                                        }}
+                                                    >
+                                                        <Typography
+                                                            color="text.primary"
+                                                            variant="body1"
+                                                            fontWeight="bold"
+                                                            fontSize={'24px'}
+                                                        >
+                                                            {mentor.mentorProfile.mentorDTO.fullName}
+                                                        </Typography>
+                                                        <Chip
+                                                            avatar={
+                                                                <Avatar sx={{ bgcolor: 'transparent' }}>
+                                                                    <StarIcon sx={{ color: '#4CAF50' }} />
+                                                                </Avatar>
+                                                            }
+                                                            label="Top Mentor"
+                                                            sx={{
+                                                                backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
+                                                                color: '#004D40', // Màu chữ xanh đậm
+                                                                fontWeight: 'bold',
+                                                                padding: '8px',
+                                                                borderRadius: '16px',
+                                                                fontSize: '14px',
+                                                            }}
+                                                            size="medium"
+                                                        />
+                                                    </Box>
+                                                    <Typography
+                                                        color="text.secondary"
+                                                        variant="body2"
+                                                        sx={{ my: 1 }}
+                                                        fontSize={'16px'}
+                                                    >
+                                                        {mentor.mentorProfile.shortDescription}
+                                                    </Typography>
 
-                                                <Typography
-                                                    color="text.secondary"
-                                                    variant="body2"
-                                                    sx={{ my: 2 }}
-                                                    fontSize={'14px'}
-                                                >
-                                                    Description
-                                                </Typography>
+                                                    <Typography
+                                                        color="text.secondary"
+                                                        variant="body2"
+                                                        sx={{ my: 2 }}
+                                                        fontSize={'14px'}
+                                                    >
+                                                        {mentor.mentorProfile.description}
+                                                    </Typography>
 
-                                                <CardContent>
+                                                    <CardContent>
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                justifyContent: 'left',
+                                                                alignItems: 'center',
+                                                                gap: 2,
+                                                            }}
+                                                        >
+                                                            {mentor.skills.map((skill, index) => (
+                                                                <Chip key={index} label={skill.skill.name} />
+                                                            ))}{' '}
+                                                        </Box>
+                                                    </CardContent>
+                                                    <br />
                                                     <Box
                                                         sx={{
                                                             display: 'flex',
                                                             justifyContent: 'left',
                                                             alignItems: 'center',
+                                                            width: '100%',
                                                             gap: 2,
                                                         }}
                                                     >
-                                                        <Chip label="Java" />
-                                                    </Box>
-                                                </CardContent>
-                                                <br />
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        justifyContent: 'left',
-                                                        alignItems: 'center',
-                                                        width: '100%',
-                                                        gap: 2,
-                                                    }}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            // flex: 1,
-                                                            display: 'flex',
-                                                            alignItems: 'baseline',
-                                                            textAlign: 'center',
-                                                        }}
-                                                    >
-                                                        <Typography
-                                                            variant="h4"
-                                                            sx={{
-                                                                color: '#182F5D',
-                                                                fontWeight: 'bold',
-                                                                marginRight: '4px',
-                                                            }}
-                                                        >
-                                                            150 point
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body1"
-                                                            sx={{
-                                                                color: '#182F5D',
-                                                                fontSize: '16px',
-                                                            }}
-                                                        >
-                                                            / acceptance
-                                                        </Typography>
-                                                    </Box>
-                                                    {/* <Button
+                                                        {/* <Button
                                                         variant="contained"
                                                         size="large"
                                                         sx={{
@@ -1316,344 +1348,13 @@ function CompaniesCampaignDetail() {
                                                     >
                                                         View Profile
                                                     </Button> */}
-                                                </Box>
-                                            </Box>
-                                        </Box>
-                                    </Card>
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="center"
-                                    alignItems="flex-start"
-                                    spacing={2}
-                                    useFlexGap
-                                    sx={{
-                                        width: '100%',
-                                        display: { xs: 8, sm: 'flex' },
-                                        paddingLeft: 2,
-                                        paddingRight: 2,
-                                    }}
-                                >
-                                    <Card
-                                        variant="outlined"
-                                        component={Button}
-                                        sx={{
-                                            p: 3,
-                                            height: 'fit-content',
-                                            background: 'none',
-                                            width: '100%',
-                                            position: 'relative',
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: '100%',
-                                                display: 'flex',
-                                                textAlign: 'left',
-                                                flexDirection: { xs: 'column', md: 'row' },
-                                                alignItems: { md: 'center' },
-                                                gap: 2.5,
-                                            }}
-                                        >
-                                            <Box>
-                                                <Avatar alt="avatar image" src="" sx={{ width: 150, height: 150 }} />
-                                            </Box>
-                                            <Box sx={{ textTransform: 'none', width: '100%' }}>
-                                                <Box
-                                                    sx={{
-                                                        color: (theme) => {
-                                                            return theme.palette.mode === 'light'
-                                                                ? 'primary.main'
-                                                                : 'primary.main';
-                                                        },
-                                                        display: 'flex',
-                                                        justifyContent: {
-                                                            xs: 'center',
-                                                            md: 'flex-start',
-                                                            lg: 'flex-start',
-                                                        },
-                                                        alignItems: 'center',
-                                                        gap: 5,
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        color="text.primary"
-                                                        variant="body1"
-                                                        fontWeight="bold"
-                                                        fontSize={'24px'}
-                                                    >
-                                                        Ahihi
-                                                    </Typography>
-                                                    <Chip
-                                                        avatar={
-                                                            <Avatar sx={{ bgcolor: 'transparent' }}>
-                                                                <StarIcon sx={{ color: '#4CAF50' }} />
-                                                            </Avatar>
-                                                        }
-                                                        label="Top Mentor"
-                                                        sx={{
-                                                            backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
-                                                            color: '#004D40', // Màu chữ xanh đậm
-                                                            fontWeight: 'bold',
-                                                            padding: '8px',
-                                                            borderRadius: '16px',
-                                                            fontSize: '14px',
-                                                        }}
-                                                        size="medium"
-                                                    />
-                                                </Box>
-                                                <Typography
-                                                    color="text.secondary"
-                                                    variant="body2"
-                                                    sx={{ my: 1 }}
-                                                    fontSize={'16px'}
-                                                >
-                                                    Short Descrition
-                                                </Typography>
-
-                                                <Typography
-                                                    color="text.secondary"
-                                                    variant="body2"
-                                                    sx={{ my: 2 }}
-                                                    fontSize={'14px'}
-                                                >
-                                                    Description
-                                                </Typography>
-
-                                                <CardContent>
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            justifyContent: 'left',
-                                                            alignItems: 'center',
-                                                            gap: 2,
-                                                        }}
-                                                    >
-                                                        <Chip label="Java" />
                                                     </Box>
-                                                </CardContent>
-                                                <br />
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        justifyContent: 'left',
-                                                        alignItems: 'center',
-                                                        width: '100%',
-                                                        gap: 2,
-                                                    }}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            // flex: 1,
-                                                            display: 'flex',
-                                                            alignItems: 'baseline',
-                                                            textAlign: 'center',
-                                                        }}
-                                                    >
-                                                        <Typography
-                                                            variant="h4"
-                                                            sx={{
-                                                                color: '#182F5D',
-                                                                fontWeight: 'bold',
-                                                                marginRight: '4px',
-                                                            }}
-                                                        >
-                                                            150 point
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body1"
-                                                            sx={{
-                                                                color: '#182F5D',
-                                                                fontSize: '16px',
-                                                            }}
-                                                        >
-                                                            / acceptance
-                                                        </Typography>
-                                                    </Box>
-                                                    {/* <Button
-                                                        variant="contained"
-                                                        size="large"
-                                                        sx={{
-                                                            height: '100%',
-                                                            backgroundColor: '#365E32',
-                                                        }}
-                                                    >
-                                                        View Profile
-                                                    </Button> */}
                                                 </Box>
                                             </Box>
-                                        </Box>
-                                    </Card>
-                                </Stack>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="center"
-                                    alignItems="flex-start"
-                                    spacing={2}
-                                    useFlexGap
-                                    sx={{
-                                        width: '100%',
-                                        display: { xs: 8, sm: 'flex' },
-                                        paddingLeft: 2,
-                                        paddingRight: 2,
-                                    }}
-                                >
-                                    <Card
-                                        variant="outlined"
-                                        component={Button}
-                                        sx={{
-                                            p: 3,
-                                            height: 'fit-content',
-                                            background: 'none',
-                                            width: '100%',
-                                            position: 'relative',
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: '100%',
-                                                display: 'flex',
-                                                textAlign: 'left',
-                                                flexDirection: { xs: 'column', md: 'row' },
-                                                alignItems: { md: 'center' },
-                                                gap: 2.5,
-                                            }}
-                                        >
-                                            <Box>
-                                                <Avatar alt="avatar image" src="" sx={{ width: 150, height: 150 }} />
-                                            </Box>
-                                            <Box sx={{ textTransform: 'none', width: '100%' }}>
-                                                <Box
-                                                    sx={{
-                                                        color: (theme) => {
-                                                            return theme.palette.mode === 'light'
-                                                                ? 'primary.main'
-                                                                : 'primary.main';
-                                                        },
-                                                        display: 'flex',
-                                                        justifyContent: {
-                                                            xs: 'center',
-                                                            md: 'flex-start',
-                                                            lg: 'flex-start',
-                                                        },
-                                                        alignItems: 'center',
-                                                        gap: 5,
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        color="text.primary"
-                                                        variant="body1"
-                                                        fontWeight="bold"
-                                                        fontSize={'24px'}
-                                                    >
-                                                        Ahihi
-                                                    </Typography>
-                                                    <Chip
-                                                        avatar={
-                                                            <Avatar sx={{ bgcolor: 'transparent' }}>
-                                                                <StarIcon sx={{ color: '#4CAF50' }} />
-                                                            </Avatar>
-                                                        }
-                                                        label="Top Mentor"
-                                                        sx={{
-                                                            backgroundColor: '#E0F2F1', // Màu nền xanh nhạt
-                                                            color: '#004D40', // Màu chữ xanh đậm
-                                                            fontWeight: 'bold',
-                                                            padding: '8px',
-                                                            borderRadius: '16px',
-                                                            fontSize: '14px',
-                                                        }}
-                                                        size="medium"
-                                                    />
-                                                </Box>
-                                                <Typography
-                                                    color="text.secondary"
-                                                    variant="body2"
-                                                    sx={{ my: 1 }}
-                                                    fontSize={'16px'}
-                                                >
-                                                    Short Descrition
-                                                </Typography>
-
-                                                <Typography
-                                                    color="text.secondary"
-                                                    variant="body2"
-                                                    sx={{ my: 2 }}
-                                                    fontSize={'14px'}
-                                                >
-                                                    Description
-                                                </Typography>
-
-                                                <CardContent>
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            justifyContent: 'left',
-                                                            alignItems: 'center',
-                                                            gap: 2,
-                                                        }}
-                                                    >
-                                                        <Chip label="Java" />
-                                                    </Box>
-                                                </CardContent>
-                                                <br />
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        justifyContent: 'left',
-                                                        alignItems: 'center',
-                                                        width: '100%',
-                                                        gap: 2,
-                                                    }}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            // flex: 1,
-                                                            display: 'flex',
-                                                            alignItems: 'baseline',
-                                                            textAlign: 'center',
-                                                        }}
-                                                    >
-                                                        <Typography
-                                                            variant="h4"
-                                                            sx={{
-                                                                color: '#182F5D',
-                                                                fontWeight: 'bold',
-                                                                marginRight: '4px',
-                                                            }}
-                                                        >
-                                                            150 point
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body1"
-                                                            sx={{
-                                                                color: '#182F5D',
-                                                                fontSize: '16px',
-                                                            }}
-                                                        >
-                                                            / acceptance
-                                                        </Typography>
-                                                    </Box>
-                                                    {/* <Button
-                                                        variant="contained"
-                                                        size="large"
-                                                        sx={{
-                                                            height: '100%',
-                                                            backgroundColor: '#365E32',
-                                                        }}
-                                                    >
-                                                        View Profile
-                                                    </Button> */}
-                                                </Box>
-                                            </Box>
-                                        </Box>
-                                    </Card>
-                                </Stack>
-                            </Grid>
+                                        </Card>
+                                    </Stack>
+                                </Grid>
+                            ))}
                         </Grid>
                     </Box>
                 </Box>

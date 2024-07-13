@@ -4,9 +4,6 @@ import React from 'react';
 export const Profile = () => {
     return (
         <Container sx={{ py: 6 }}>
-            <Typography variant="h5" component="h3" sx={{ mb: 3 }}>
-                Your Profile
-            </Typography>
             <Box sx={{ border: '1px solid #ccc', borderRadius: 5 }}>
                 <Box sx={{ p: 3 }}>
                     <Typography variant="h6" component="h3">
@@ -91,7 +88,17 @@ export const Profile = () => {
                             />
                         </Grid>
                     </Grid>
-                    <Button variant="contained" size="medium" sx={{ my: 4, backgroundColor: '#365E32' }}>
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        sx={{
+                            my: 4,
+                            backgroundColor: '#365E32',
+                            '&:hover': {
+                                backgroundColor: '#508D4E',
+                            },
+                        }}
+                    >
                         Save Changes
                     </Button>
                 </Box>

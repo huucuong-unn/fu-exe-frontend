@@ -35,10 +35,14 @@ const MentorAPI = {
         const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
-
     getMentorsForAdminSearch(params, includeAuthorization = false) {
         const url = `/v1/mentor/mentor-for-admin-search`;
         const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
+    getMentorsSearch(id, includeAuthorization = false) {
+        const url = `/v1/mentor/mentor-for-list-choose/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader({ id }, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
 };

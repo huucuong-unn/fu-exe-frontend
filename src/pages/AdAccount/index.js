@@ -170,344 +170,23 @@ const AccountModal = ({ open, handleClose, account, handleChangeStatus }) => {
     );
 };
 
-const PendingAccountModal = ({ open, handleClose, account }) => {
-    const [isMessageModal, setIsMessageModal] = useState(false);
-    if (!account) return null;
-
-    const handleOpenMessageModal = () => {
-        setIsMessageModal(true);
-    };
-
-    const handleCloseMessageModal = () => {
-        setIsMessageModal(false);
-    };
-
-    return (
-        <Box>
-            <Modal open={open} onClose={handleClose}>
-                <Box
-                    sx={{
-                        position: 'relative',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 700,
-                        bgcolor: '#f5f5f5',
-                        boxShadow: 24,
-                        p: 4,
-                        borderRadius: 2,
-                        textAlign: 'center',
-                    }}
-                >
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: 10,
-                            right: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                        }}
-                    >
-                        <Button variant="contained" color="success" onClick={handleOpenMessageModal}>
-                            Approve
-                        </Button>
-                        <Button variant="contained" color="error">
-                            Reject
-                        </Button>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: 1,
-                        }}
-                    >
-                        <Avatar sx={{ width: 80, height: 80, bgcolor: '#f48fb1' }} />
-                    </Box>
-                    <Card
-                        variant="outlined"
-                        sx={{
-                            p: 3,
-                            height: 'fit-content',
-                            width: '100%',
-                            background: 'none',
-                            mt: 2,
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                width: '100%',
-                                display: 'flex',
-                                textAlign: 'left',
-                                flexDirection: 'column',
-                                alignItems: { md: 'left' },
-                                gap: 2.5,
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    marginLeft: 2,
-                                    marginRight: 2,
-                                    paddingBottom: 2,
-                                    borderBottom: '1px dashed #e0e0e0',
-                                    textAlign: 'center',
-                                }}
-                            >
-                                <Typography color="text.primary" variant="h5" fontWeight="bold">
-                                    General information
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'grid',
-                                    gridTemplateColumns: 'repeat(3, 1fr)', // Tạo 3 cột với kích thước bằng nhau
-                                    gap: 5,
-                                    marginLeft: 2,
-                                    marginRight: 2,
-                                }}
-                            >
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: { md: 'center' },
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Typography color="gray" variant="h7">
-                                        Username
-                                    </Typography>
-                                    <Typography color="black" variant="h7" fontWeight="bold">
-                                        {account.username}
-                                    </Typography>
-                                </Box>
-                                <Box
-                                    xs={12}
-                                    sm={6}
-                                    md={4}
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: { md: 'center' },
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Typography color="gray" variant="h7">
-                                        Email
-                                    </Typography>
-                                    <Typography color="black" variant="h7" fontWeight="bold">
-                                        {account.email}
-                                    </Typography>
-                                </Box>
-                                <Box
-                                    xs={12}
-                                    sm={6}
-                                    md={4}
-                                    sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: { md: 'center' },
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Typography color="gray" variant="h7">
-                                        Company
-                                    </Typography>
-                                    <Typography color="black" variant="h7" fontWeight="bold">
-                                        FPT Software
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        </Box>
-                    </Card>
-                    <Card
-                        variant="outlined"
-                        sx={{
-                            p: 3,
-                            height: 'fit-content',
-                            width: '100%',
-                            background: 'none',
-                            mt: 2,
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                width: '100%',
-                                display: 'flex',
-                                textAlign: 'left',
-                                flexDirection: 'column',
-                                alignItems: { md: 'left' },
-                                gap: 2.5,
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    marginLeft: 2,
-                                    marginRight: 2,
-                                    paddingBottom: 2,
-                                    borderBottom: '1px dashed #e0e0e0',
-                                    textAlign: 'center',
-                                }}
-                            >
-                                <Typography color="text.primary" variant="h5" fontWeight="bold">
-                                    About
-                                </Typography>
-                            </Box>
-                            <Box sx={{ textAlign: 'center' }}>
-                                <Typography sx={{ width: '100%' }}>
-                                    Passionate about technology and its social impact. Over 10 years experience
-                                    delivering successful products in healthcare, eCommerce, digital media and
-                                    international fundraising. Strong focus on product, user-centricity, UX and lean
-                                    processes. Interested in Zen and Stoic philosophy. Enjoy deep thinking and deep
-                                    work.
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Card>
-                    <Card
-                        variant="outlined"
-                        sx={{
-                            p: 3,
-                            height: 'fit-content',
-                            width: '100%',
-                            background: 'none',
-                            mt: 2,
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                width: '100%',
-                                display: 'flex',
-                                textAlign: 'left',
-                                flexDirection: 'column',
-                                alignItems: { md: 'left' },
-                                gap: 2.5,
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    marginLeft: 2,
-                                    marginRight: 2,
-                                    paddingBottom: 2,
-                                    borderBottom: '1px dashed #e0e0e0',
-                                    textAlign: 'center',
-                                }}
-                            >
-                                <Typography color="text.primary" variant="h5" fontWeight="bold">
-                                    Side information
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    alignItems: 'start',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                        Require date:
-                                    </Typography>
-                                    <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                        Monday, Saturday, Sunday
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                        Linkedin:
-                                    </Typography>
-                                    <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                        https://www.linkedin.com/in/example
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                        Facebook:
-                                    </Typography>
-                                    <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                        https://www.facebook.com/profile.php?id=100012330215584
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                        Google meet:
-                                    </Typography>
-                                    <Typography variant="subtitle1" sx={{ color: '#795548' }}>
-                                        https://meet.google.com/example
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        </Box>
-                    </Card>
-                </Box>
-            </Modal>
-            <Modal open={isMessageModal} onClose={handleCloseMessageModal}>
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 'fit-content',
-                        bgcolor: '#f5f5f5',
-                        boxShadow: 24,
-                        p: 4,
-                        borderRadius: 2,
-                        textAlign: 'center',
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 2,
-                        }}
-                    >
-                        <Typography variant="h4">Message</Typography>
-                        <TextField
-                            id="feedback"
-                            name="feedback"
-                            label="Message..."
-                            multiline
-                            rows={3}
-                            sx={{ minWidth: '600px', flex: 1 }}
-                        />
-                        <Box sx={{ display: 'flex', justifyContent: 'right', alignItems: 'center', width: '100%' }}>
-                            <Button
-                                variant="contained"
-                                size="large"
-                                sx={{
-                                    width: '100%',
-                                    height: '100%',
-                                    backgroundColor: '#365E32',
-                                }}
-                                type="submit"
-                            >
-                                Submit
-                            </Button>
-                        </Box>
-                    </Box>
-                </Box>
-            </Modal>
-        </Box>
-    );
-};
-
 function AdAccount() {
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [selectedAccountPending, setSelectedAccountPending] = useState(null);
     const [accounts, setAccounts] = useState([]);
     const [error, setError] = useState(null);
     const [isCreateModal, setIsCreateModal] = useState(false);
-
+    const [isApprove, setIsApprove] = useState(false);
     const status = ['PENDING', 'ACTIVE', 'INACTIVE'];
     const roles = ['Admin', 'Company', 'Student', 'Mentor', 'Mentee'];
+    const [imageError, setImageError] = useState(false);
+    const [imageHelperText, setImageHelperText] = useState('');
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [universities, setUniversities] = useState([]);
+    const [imageSelected, setImageSelected] = useState(false);
+
+    const IMAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     const [searchParams, setSearchParams] = useState({
         userName: '',
@@ -538,11 +217,7 @@ function AdAccount() {
     };
 
     const handleRowClick = (account) => {
-        if (account.status === 'PENDING') {
-            setSelectedAccountPending(account);
-            return;
-        }
-        setSelectedMentee(account);
+        setSelectedAccountPending(account);
     };
 
     const handleCloseModal = () => {
@@ -550,15 +225,65 @@ function AdAccount() {
         setSelectedAccountPending(null);
     };
 
-    const handleChangeStatus = async (accountId) => {
-        try {
-            await AccountAPI.changeStatus(accountId);
-            fetchData();
-        } catch (error) {
-            setError('Error changing status');
+    const handleImageUpload = (event, setImagePreview, setImageFile, setImageError, setImageHelperText) => {
+        const file = event.target.files[0];
+        if (file) {
+            const fileType = file.type;
+            const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (validImageTypes.includes(fileType)) {
+                setImageError(false);
+                setImageHelperText('');
+                const reader = new FileReader();
+                reader.onload = () => {
+                    setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+                setImageFile(file);
+            } else {
+                setImageError(true);
+                setImageHelperText('Only JPEG, JPG, and PNG files are allowed.');
+                setImagePreview(null);
+                setImageFile(null);
+            }
         }
     };
 
+    const handleRemoveImage = (setImagePreview, setImageFile, setImageError, setImageHelperText) => {
+        setImagePreview(null);
+        setImageFile(null);
+        setImageError(false);
+        setImageHelperText('');
+    };
+
+    const handleSubmit = async (event) => {
+        const data = new FormData(event.currentTarget);
+        data.append('roleName', 'admin');
+
+        const createAccountRequest = {
+            username: data.get('username'),
+            password: data.get('password'),
+            email: data.get('email'),
+            avatarUrl: data.get('avatarUrl'),
+            roleName: data.get('roleName'),
+        };
+
+        // Append `createAccountRequest` fields to FormData
+        data.append('studentRequest.name', createAccountRequest.username);
+        data.append('createAccountRequest.username', createAccountRequest.username);
+        data.append('createAccountRequest.password', createAccountRequest.password);
+        data.append('createAccountRequest.email', createAccountRequest.email);
+        data.append('createAccountRequest.avatarUrl', createAccountRequest.avatarUrl);
+        data.append('createAccountRequest.roleName', createAccountRequest.roleName);
+
+        try {
+            const result = await AccountAPI.createAccount(data);
+            handleCloseCreateModal();
+            await fetchData();
+            console.log(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const fetchData = async () => {
         try {
             const params = {
@@ -579,6 +304,656 @@ function AdAccount() {
     useEffect(() => {
         fetchData();
     }, []);
+
+    const handleChangeStatus = async (accountId) => {
+        try {
+            await AccountAPI.changeStatus(accountId);
+            fetchData();
+        } catch (error) {
+            setError('Error changing status');
+        }
+    };
+
+    const PendingAccountModal = ({ open, handleClose, account }) => {
+        const [isMessageModal, setIsMessageModal] = useState(false);
+        if (!account) return null;
+
+        const handleOpenMessageModal = () => {
+            setIsMessageModal(true);
+        };
+
+        const handleCloseMessageModal = () => {
+            setIsMessageModal(false);
+        };
+        const handleAccept = async () => {
+            try {
+                await AccountAPI.approveAccount(selectedAccountPending.id);
+                setIsMessageModal(false);
+                setSelectedMentee(null);
+                setSelectedAccountPending(null);
+                fetchData();
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        return (
+            <Box>
+                <Modal open={open} onClose={handleClose}>
+                    <Box
+                        sx={{
+                            position: 'relative',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 700,
+                            bgcolor: '#f5f5f5',
+                            boxShadow: 24,
+                            p: 4,
+                            borderRadius: 2,
+                            textAlign: 'center',
+                            overflowY: 'auto',
+                            maxHeight: '700px',
+                        }}
+                    >
+                        {account.status == 'PENDING' ? (
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 10,
+                                    right: 10,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                }}
+                            >
+                                <Button variant="contained" color="success" onClick={handleAccept}>
+                                    Approve
+                                </Button>
+                                <Button variant="contained" color="error">
+                                    Reject
+                                </Button>
+                            </Box>
+                        ) : (
+                            <div></div>
+                        )}
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: 1,
+                            }}
+                        >
+                            <Avatar src={IMAGE_HOST + account.avatarUrl} sx={{ width: 80, height: 80 }} />
+                        </Box>
+                        {account.role.name === 'student' ? (
+                            <>
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        p: 3,
+                                        height: 'fit-content',
+                                        width: '100%',
+                                        background: 'none',
+                                        mt: 2,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            textAlign: 'left',
+                                            flexDirection: 'column',
+                                            alignItems: 'left',
+                                            gap: 2.5,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                                paddingBottom: 2,
+                                                borderBottom: '1px dashed #e0e0e0',
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            <Typography color="text.primary" variant="h5" fontWeight="bold">
+                                                General Information
+                                            </Typography>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                                gap: 5,
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                            }}
+                                        >
+                                            {[
+                                                { label: 'Username', value: account.username },
+                                                { label: 'Email', value: account.email },
+                                                { label: 'Full Name', value: account.student.name },
+                                                { label: 'University', value: account.student.university.name },
+                                                { label: 'Day Of Birth', value: account.student.dob },
+                                                { label: 'Student Code', value: account.student.studentCode },
+                                            ].map((item, index) => (
+                                                <Box
+                                                    key={index}
+                                                    sx={{
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                    }}
+                                                >
+                                                    <Typography color="gray" variant="h7">
+                                                        {item.label}
+                                                    </Typography>
+                                                    <Typography color="black" variant="h7" fontWeight="bold">
+                                                        {item.value}
+                                                    </Typography>
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                </Card>
+
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        p: 3,
+                                        height: 'fit-content',
+                                        width: '100%',
+                                        background: 'none',
+                                        mt: 2,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            textAlign: 'left',
+                                            flexDirection: 'column',
+                                            alignItems: 'left',
+                                            gap: 2.5,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                                paddingBottom: 2,
+                                                borderBottom: '1px dashed #e0e0e0',
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            <Typography color="text.primary" variant="h5" fontWeight="bold">
+                                                Student Card
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                                            <img
+                                                height={150}
+                                                width={300}
+                                                src={`${IMAGE_HOST}${account.student.frontStudentCard}`}
+                                                alt="Student Card"
+                                            />
+                                            <img
+                                                height={150}
+                                                width={300}
+                                                src={`${IMAGE_HOST}${account.student.backStudentCard}`}
+                                                alt="Student Card"
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Card>
+                            </>
+                        ) : (
+                            <div></div>
+                        )}
+                        {account.role.name === 'company' ? (
+                            <>
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        p: 3,
+                                        height: 'fit-content',
+                                        width: '100%',
+                                        background: 'none',
+                                        mt: 2,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            textAlign: 'left',
+                                            flexDirection: 'column',
+                                            alignItems: { md: 'left' },
+                                            gap: 2.5,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                                paddingBottom: 2,
+                                                borderBottom: '1px dashed #e0e0e0',
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            <Typography color="text.primary" variant="h5" fontWeight="bold">
+                                                General information
+                                            </Typography>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(3, 1fr)', // Tạo 3 cột với kích thước bằng nhau
+                                                gap: 5,
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Compnay Name
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.company.name}
+                                                </Typography>
+                                            </Box>
+                                            <Box
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Email
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.email}
+                                                </Typography>
+                                            </Box>
+                                            <Box
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Company Type
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.company.companyType}
+                                                </Typography>
+                                            </Box>
+                                            <Box
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Company Size
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.company.companySize}
+                                                </Typography>
+                                            </Box>
+                                            <Box
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Country
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.company.country}
+                                                </Typography>
+                                            </Box>
+                                            <Box
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Working Time
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.company.workingTime}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                </Card>
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        p: 3,
+                                        height: 'fit-content',
+                                        width: '100%',
+                                        background: 'none',
+                                        mt: 2,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            textAlign: 'left',
+                                            flexDirection: 'column',
+                                            alignItems: { md: 'left' },
+                                            gap: 2.5,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                                paddingBottom: 2,
+                                                borderBottom: '1px dashed #e0e0e0',
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            <Typography color="text.primary" variant="h5" fontWeight="bold">
+                                                About
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ textAlign: 'center' }}>
+                                            <Typography sx={{ width: '100%' }}>
+                                                {account.company.description}
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                </Card>
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        p: 3,
+                                        height: 'fit-content',
+                                        width: '100%',
+                                        background: 'none',
+                                        mt: 2,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            textAlign: 'left',
+                                            flexDirection: 'column',
+                                            alignItems: { md: 'left' },
+                                            gap: 2.5,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                                paddingBottom: 2,
+                                                borderBottom: '1px dashed #e0e0e0',
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            <Typography color="text.primary" variant="h5" fontWeight="bold">
+                                                Side information
+                                            </Typography>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                justifyContent: 'center',
+                                                alignItems: 'start',
+                                            }}
+                                        >
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                                    Address:
+                                                </Typography>
+                                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                                    {account.company.address}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                                    Facebook Url:
+                                                </Typography>
+                                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                                    {account.company.facebookUrl}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                                                    Company Web Url:
+                                                </Typography>
+                                                <Typography variant="subtitle1" sx={{ color: '#795548' }}>
+                                                    {account.company.companyWebsiteUrl}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                </Card>
+                            </>
+                        ) : (
+                            <div></div>
+                        )}
+                        {account.role.name === 'mentor' ? (
+                            <>
+                                <Card
+                                    variant="outlined"
+                                    sx={{
+                                        p: 3,
+                                        height: 'fit-content',
+                                        width: '100%',
+                                        background: 'none',
+                                        mt: 2,
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            textAlign: 'left',
+                                            flexDirection: 'column',
+                                            alignItems: { md: 'left' },
+                                            gap: 2.5,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                                paddingBottom: 2,
+                                                borderBottom: '1px dashed #e0e0e0',
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            <Typography color="text.primary" variant="h5" fontWeight="bold">
+                                                General information
+                                            </Typography>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(2, 1fr)', // Tạo 3 cột với kích thước bằng nhau
+                                                gap: 5,
+                                                marginLeft: 2,
+                                                marginRight: 2,
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Username
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.username}
+                                                </Typography>
+                                            </Box>
+                                            <Box
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Email
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.email}
+                                                </Typography>
+                                            </Box>
+                                            <Box
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Company
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.mentor.company.name}
+                                                </Typography>
+                                            </Box>
+                                            <Box
+                                                xs={12}
+                                                sm={6}
+                                                md={4}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: { md: 'center' },
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <Typography color="gray" variant="h7">
+                                                    Full Name
+                                                </Typography>
+                                                <Typography color="black" variant="h7" fontWeight="bold">
+                                                    {account.mentor.fullName}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </Box>
+                                </Card>
+                            </>
+                        ) : (
+                            <div></div>
+                        )}
+                    </Box>
+                </Modal>
+                <Modal open={isMessageModal} onClose={handleCloseMessageModal}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 'fit-content',
+                            bgcolor: '#f5f5f5',
+                            boxShadow: 24,
+                            p: 4,
+                            borderRadius: 2,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 2,
+                            }}
+                        >
+                            <Typography variant="h4">Message</Typography>
+                            <TextField
+                                id="feedback"
+                                name="feedback"
+                                label="Message..."
+                                multiline
+                                rows={3}
+                                sx={{ minWidth: '600px', flex: 1 }}
+                            />
+                            <Box sx={{ display: 'flex', justifyContent: 'right', alignItems: 'center', width: '100%' }}>
+                                <Button
+                                    variant="contained"
+                                    size="large"
+                                    sx={{
+                                        width: '100%',
+                                        height: '100%',
+                                        backgroundColor: '#365E32',
+                                    }}
+                                    type="submit"
+                                >
+                                    Submit
+                                </Button>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Modal>
+            </Box>
+        );
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'end', gap: 4 }}>
@@ -731,12 +1106,21 @@ function AdAccount() {
                             Create account for admin
                         </Typography>
 
-                        <Box component="form" sx={{ mt: 5 }}>
+                        <Box onSubmit={handleSubmit} component="form" sx={{ mt: 5 }}>
                             <TextField
                                 type="file"
                                 id="avatarUrl"
                                 name="avatarUrl"
                                 style={{ display: 'none' }}
+                                onChange={(e) =>
+                                    handleImageUpload(
+                                        e,
+                                        setImagePreview,
+                                        setImageFile,
+                                        setImageError,
+                                        setImageHelperText,
+                                    )
+                                }
                                 accept="image/jpeg, image/jpg, image/png"
                             />
 
@@ -746,19 +1130,32 @@ function AdAccount() {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'center',
-                                    justifyContent: 'center',
                                 }}
                             >
                                 <Avatar
-                                    alt="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.svgrepo.com%2Fsvg%2F452030%2Favatar-default&psig=AOvVaw2Eepet3Jt6CuwNIc10izZr&ust=1718112366877000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOi0-r2R0YYDFQAAAAAdAAAAABAE"
+                                    alt="Avatar"
+                                    src={imagePreview}
                                     sx={{ width: 90, height: 90, border: 'solid 2px black' }}
                                     helperText="Avatar"
                                 />
-                                <Button variant="contained" sx={{ mt: 2 }}>
-                                    Please Choose Avatar
-                                </Button>
                             </Box>
-
+                            <Button
+                                variant="contained"
+                                sx={{ mt: 2 }}
+                                onClick={
+                                    imageSelected
+                                        ? () =>
+                                              handleRemoveImage(
+                                                  setImagePreview,
+                                                  setImageFile,
+                                                  setImageError,
+                                                  setImageHelperText,
+                                              )
+                                        : () => document.getElementById('avatarUrl').click()
+                                }
+                            >
+                                {imageSelected ? 'Remove Avatar' : 'Please Choose Avatar'}
+                            </Button>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -776,16 +1173,6 @@ function AdAccount() {
                                     name="username"
                                     autoComplete="username"
                                     autoFocus
-                                    sx={{ flex: 1 }}
-                                />
-                                <TextField
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="name"
-                                    label="FullName"
-                                    name="name"
-                                    autoComplete="name"
                                     sx={{ flex: 1 }}
                                 />
                             </Box>
@@ -830,16 +1217,8 @@ function AdAccount() {
                                 autoComplete="current-password"
                             />
                             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                                Sign Up
+                                Create{' '}
                             </Button>
-
-                            <Grid container>
-                                <Grid item xs>
-                                    <Link to="/sign-in" variant="body2">
-                                        Sign In
-                                    </Link>
-                                </Grid>
-                            </Grid>
                         </Box>
                     </Box>
                 </Box>

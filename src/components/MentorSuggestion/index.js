@@ -181,7 +181,17 @@ export default function MentorSuggestion() {
             </Grid>
             <Box>
                 <Link style={{ color: 'white', textDecoration: 'none' }} to={'/mentors'}>
-                    <Button variant="contained">Explore more</Button>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#1e373b',
+                            '&:hover': {
+                                backgroundColor: '#758694',
+                            },
+                        }}
+                    >
+                        Explore more
+                    </Button>
                 </Link>
             </Box>
         </Container>

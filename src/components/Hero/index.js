@@ -39,6 +39,7 @@ export default function Hero() {
                             alignSelf: 'center',
                             textAlign: 'center',
                             fontSize: 'clamp(3.5rem, 10vw, 4rem)',
+                            fontWeight: 'bold',
                         }}
                     >
                         Mentor
@@ -47,7 +48,9 @@ export default function Hero() {
                             variant="h1"
                             sx={{
                                 fontSize: 'clamp(3rem, 10vw, 4rem)',
-                                color: (theme) => (theme.palette.mode === 'light' ? 'primary.main' : 'primary.light'),
+                                // color: (theme) => (theme.palette.mode === 'light' ? 'primary.main' : 'primary.light'),
+                                color: '#365E32',
+                                fontWeight: 'bold',
                             }}
                         >
                             ship
@@ -60,7 +63,7 @@ export default function Hero() {
                     >
                         Learn a new skill, launch a project, land your dream career.
                     </Typography>
-                    <Stack
+                    {/* <Stack
                         direction={{ xs: 'column', sm: 'row' }}
                         alignSelf="center"
                         spacing={1}
@@ -81,7 +84,7 @@ export default function Hero() {
                         <Button variant="contained" color="primary">
                             Find mentors
                         </Button>
-                    </Stack>
+                    </Stack> */}
                 </Stack>
                 <Box
                     id="image"
@@ -92,7 +95,7 @@ export default function Hero() {
                         width: '100%',
                         backgroundImage:
                             theme.palette.mode === 'light'
-                                ? 'url("/static/images/templates/templates-images/hero-light.png")'
+                                ? 'url("https://www.hdwallpapers.in/download/hello_summer_4k-HD.jpg")'
                                 : 'url("/static/images/templates/templates-images/hero-dark.png")',
                         backgroundSize: 'cover',
                         borderRadius: '10px',

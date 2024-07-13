@@ -85,11 +85,21 @@ export default function SignInSide() {
             if (userInfo) {
                 // Store user information in local storage
                 storageService.setItem('userInfo', userInfo);
-                navigate('/');
-                if (loginWithRole === 'mentor') {
-                    navigate('/campaigns');  // Navigate to the campaigns page
-                } else {
-                    navigate('/');  // Navigate to the home page for other roles
+                switch (loginWithRole) {
+                    case 'mentor':
+                        navigate('/campaigns');
+                        break;
+                    case 'student':
+                        navigate('/');
+                        break;
+                    case 'admin':
+                        navigate('/admin/dashboard');
+                        break;
+                    case 'company':
+                        navigate('/company/campaign-history');
+                        break;
+                    default:
+                        navigate('/');
                 }
             }
         } catch (error) {

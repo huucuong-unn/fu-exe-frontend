@@ -173,22 +173,31 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     onClick={() => scrollToSection('companies')}
                                     sx={{ py: '6px', px: '12px', borderRadius: '999px' }}
                                 >
-                                    <Link to="/company" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.primary" fontSize="16px">
-                                            Companies
-                                        </Typography>
-                                    </Link>
+                                    {userInfo.role !== 'mentor' && userInfo.role !== 'company' ? (
+                                        <Link to="/company" style={{ textDecoration: 'none' }}>
+                                            <Typography variant="body2" color="text.primary" fontSize="16px">
+                                                Companies
+                                            </Typography>
+                                        </Link>
+                                    ) : (
+                                        ''
+                                    )}
                                 </MenuItem>
-                                <MenuItem
-                                    onClick={() => scrollToSection('companies')}
-                                    sx={{ py: '6px', px: '12px', borderRadius: '999px' }}
-                                >
-                                    <Link to="/payment" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.primary" fontSize="16px">
-                                            Point
-                                        </Typography>
-                                    </Link>
-                                </MenuItem>
+                                {/* handle for show/hide points */}
+                                {userInfo.role !== 'mentor' ? (
+                                    <MenuItem
+                                        onClick={() => scrollToSection('companies')}
+                                        sx={{ py: '6px', px: '12px', borderRadius: '999px' }}
+                                    >
+                                        <Link to="/payment" style={{ textDecoration: 'none' }}>
+                                            <Typography variant="body2" color="text.primary" fontSize="16px">
+                                                Point
+                                            </Typography>
+                                        </Link>
+                                    </MenuItem>
+                                ) : (
+                                    ''
+                                )}
                             </Box>
                         </Box>
                         {userInfo !== null ? (
@@ -247,14 +256,22 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         <Avatar src="https://cdn-icons-png.flaticon.com/128/12340/12340380.png" />
                                         Profile
                                     </MenuItem>
-                                    <MenuItem onClick={handleCloseHistory}>
-                                        <Avatar src="https://cdn-icons-png.flaticon.com/128/10357/10357920.png" />
-                                        History
-                                    </MenuItem>
-                                    <MenuItem onClick={handleCloseForPoint}>
-                                        <Avatar src="https://cdn-icons-png.flaticon.com/128/4671/4671969.png" />
-                                        {userInfo.point} Points
-                                    </MenuItem>
+                                    {userInfo.role !== 'mentor' && userInfo.role !== 'company' ? (
+                                        <MenuItem onClick={handleCloseHistory}>
+                                            <Avatar src="https://cdn-icons-png.flaticon.com/128/10357/10357920.png" />
+                                            History
+                                        </MenuItem>
+                                    ) : (
+                                        ''
+                                    )}
+                                    {userInfo.role !== 'mentor' ? (
+                                        <MenuItem onClick={handleCloseForPoint}>
+                                            <Avatar src="https://cdn-icons-png.flaticon.com/128/4671/4671969.png" />
+                                            {userInfo.point} Points
+                                        </MenuItem>
+                                    ) : (
+                                        ''
+                                    )}
                                     <Divider />
                                     <MenuItem onClick={handleLogout}>
                                         <ListItemIcon>

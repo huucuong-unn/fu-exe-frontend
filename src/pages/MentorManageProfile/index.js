@@ -61,7 +61,7 @@ ToggleCustomTheme.propTypes = {
     toggleCustomTheme: PropTypes.func.isRequired,
 };
 
-export default function MentorLandingPage() {
+export default function MentorManageProfile() {
     const [mode, setMode] = React.useState('light');
     const [showCustomTheme, setShowCustomTheme] = React.useState(true);
     const LPtheme = createTheme(getLPTheme(mode));
@@ -90,9 +90,8 @@ export default function MentorLandingPage() {
 
 
             <Box sx={{ bgcolor: 'background.default' }}>
-
+                <ProfileBox />
                 <Divider />
-                <CampaignList />
 
 
 

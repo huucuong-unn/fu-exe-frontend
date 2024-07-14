@@ -131,8 +131,12 @@ const CampaignDetail = () => {
     };
 
     // If campaign or mentees haven't been fetched yet, return null or a loading state
-    if (!campaign.id || !mentees.length) {
-        return null; // or loading state component
+    if (!campaign.id ) {
+        return (
+            <Box>
+                <Typography variant="h6" align="center">No mentee in mentee list</Typography>
+            </Box>
+        );
     }
 
     // Filter and sort mentees based on current filter status and top mentees
@@ -529,10 +533,22 @@ const CampaignDetail = () => {
                Your Mentees:
             </Typography>
             {paginatedMentees.length === 0 && (
-                <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 2 }}>
-                    No mentees found matching the selected filter criteria.
-                </Typography>
+                <Box
+                    sx={{
+                        mt: 2,
+                        p: 3,
+                        border: '2px solid #1976d2',
+                        borderRadius: '8px',
+                        textAlign: 'center',
+                        backgroundColor: '#f5f5f5',
+                    }}
+                >
+                    <Typography variant="h4" color="primary">
+                        No mentees for now.
+                    </Typography>
+                </Box>
             )}
+
 
             {paginatedMentees.length > 0 && (
                 <Box sx={{ border: '1px solid #ccc', borderRadius: 1, overflow: 'hidden' }}>
@@ -674,8 +690,8 @@ const CampaignDetail = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 {/* Display mentee's email and university */}
-                                <Typography variant="body1">Mentee Email: {selectedMentee.menteeEmail}</Typography>
-                                <Typography variant="body1">Mentee University: {selectedMentee.menteeUniversity}</Typography>
+                                <Typography variant="body1"> Email: {selectedMentee.menteeEmail}</Typography>
+                                <Typography variant="body1"> University: {selectedMentee.menteeUniversity}</Typography>
                             </Grid>
                             {/* View CV button */}
                             <Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
@@ -683,7 +699,7 @@ const CampaignDetail = () => {
                                     variant="contained"
                                     color="primary"
                                     component="a"
-                                    href={selectedMentee.cvLink}
+                                    href={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${selectedMentee.cvFile}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     sx={{ textDecoration: 'none', color: 'white', textTransform: 'none', py: 2, px: 4, fontSize: '1.2rem' }}
@@ -691,6 +707,7 @@ const CampaignDetail = () => {
                                     View CV
                                 </Button>
                             </Grid>
+
                             {/* Additional mentee details */}
                             <Grid item xs={12}>
                                 {/* Add more details here if needed */}

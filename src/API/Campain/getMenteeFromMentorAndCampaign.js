@@ -28,7 +28,8 @@ const getMenteesFromMentorAndCampaign = async (mentorId, campaignId, page = 2, l
             studentAvatarUrl: mentee.student.account.avatarUrl,
             studentEmail: mentee.student.account.email,
             studentRole: mentee.student.account.role.name,
-            studentStatus: mentee.student.status,
+            studentStatus: mentee.student.status
+
         }));
 
         return {

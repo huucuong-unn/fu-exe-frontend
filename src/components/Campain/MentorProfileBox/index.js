@@ -57,22 +57,14 @@ const ProfileBox = () => {
     const [isReasonApplyValid, setIsReasonApplyValid] = useState(true);
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [currentSkill] = useState('');
+    const [mentorSkills, setMentorSkills] = useState([]);
+
     const [skillsList, setSkillsList] = useState([]); // State to hold skills fetched from API
 
     const profilesPerPage = 3;
     const totalPages = Math.ceil(profiles.length / profilesPerPage);
 
     useEffect(() => {
-        // Fetch profiles from the API
-        const fetchProfiles = async () => {
-            try {
-                const mentorId = StorageService.getItem('userInfo').mentorId;
-                const profileData = await getMentorProfileData(mentorId);
-                setProfiles([profileData]); // Assuming API returns a single profile object
-            } catch (error) {
-                console.error('Error fetching profiles:', error);
-            }
-        };
 
         // Fetch skills list from API
         const fetchSkills = async () => {
@@ -84,6 +76,23 @@ const ProfileBox = () => {
             }
         };
 
+        // Fetch profiles from the API
+        const fetchProfiles = async () => {
+            try {
+                const mentorId = StorageService.getItem('userInfo').mentorId;
+                const profileData = await getMentorProfileData(mentorId);
+                setProfiles([profileData]);
+                setMentorSkills(profileData.skills);
+            } catch (error) {
+                console.error('Error fetching profiles:', error);
+            }
+        };
+
+
+
+
+
+
         fetchProfiles();
         fetchSkills();
     }, []);
@@ -94,6 +103,8 @@ const ProfileBox = () => {
             skills: newValue,
         }));
     };
+
+
 
     const handleOpenModal = (index = null) => {
         if (index !== null) {
@@ -194,42 +205,42 @@ const ProfileBox = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        //
-        // const email = event.target.email.value;
-        // const username = event.target.fullName.value;
-        // const phoneNumber = event.target.phoneNumber.value;
-        // const introduce = event.target.description.value;
-        // const reasonApply = event.target.reasonApply?.value;
-        //
-        // if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
-        //     setIsEmailValid(false);
-        // } else {
-        //     setIsEmailValid(true);
-        // }
-        //
-        // if (username.length < 5) {
-        //     setIsUsernameValid(false);
-        // } else {
-        //     setIsUsernameValid(true);
-        // }
-        //
-        // if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
-        //     setIsPhoneNumberValid(false);
-        // } else {
-        //     setIsPhoneNumberValid(true);
-        // }
-        //
-        // if (introduce.length < 50) {
-        //     setIsIntroduceValid(false);
-        // } else {
-        //     setIsIntroduceValid(true);
-        // }
-        //
-        // if (reasonApply && reasonApply.length < 50) {
-        //     setIsReasonApplyValid(false);
-        // } else {
-        //     setIsReasonApplyValid(true);
-        // }
+
+        const email = event.target.email.value;
+        const username = event.target.fullName.value;
+        const phoneNumber = event.target.phoneNumber.value;
+        const introduce = event.target.description.value;
+        const reasonApply = event.target.reasonApply?.value;
+
+        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
+            setIsEmailValid(false);
+        } else {
+            setIsEmailValid(true);
+        }
+
+        if (username.length < 5) {
+            setIsUsernameValid(false);
+        } else {
+            setIsUsernameValid(true);
+        }
+
+        if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
+            setIsPhoneNumberValid(false);
+        } else {
+            setIsPhoneNumberValid(true);
+        }
+
+        if (introduce.length < 50) {
+            setIsIntroduceValid(false);
+        } else {
+            setIsIntroduceValid(true);
+        }
+
+        if (reasonApply && reasonApply.length < 50) {
+            setIsReasonApplyValid(false);
+        } else {
+            setIsReasonApplyValid(true);
+        }
 
         const data = new FormData(event.currentTarget);
         console.log(data);
@@ -414,58 +425,57 @@ const ProfileBox = () => {
                         />
                     </Box>
 
-                    {/*<Autocomplete*/}
-                    {/*    multiple*/}
-                    {/*    id="skills"*/}
-                    {/*    options={skillsList}*/}
-                    {/*    freeSolo*/}
-                    {/*    value={newProfileInfo.skills}*/}
-                    {/*    onChange={(event, newValue) => setNewProfileInfo({ ...newProfileInfo, skills: newValue })}*/}
-                    {/*    renderTags={(value, getTagProps) =>*/}
-                    {/*        value.map((option, index) => (*/}
-                    {/*            <Chip key={index} variant="outlined" label={option.name} {...getTagProps({ index })} />*/}
-                    {/*        ))*/}
-                    {/*    }*/}
-                    {/*    renderInput={(params) => (*/}
-                    {/*        <TextField*/}
-                    {/*            {...params}*/}
-                    {/*            variant="standard"*/}
-                    {/*            label="Skills"*/}
-                    {/*            placeholder="Select or type skills"*/}
-                    {/*        />*/}
-                    {/*    )}*/}
-                    {/*/>*/}
+
+
 
                     <Box
                         sx={{
                             width: '100%',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'left',
+                            justifyContent: 'flex-start', // Adjusted to 'flex-start' to align components to the left
                             gap: 2,
                         }}
                     >
+                        {/*<Autocomplete*/}
+                        {/*    disablePortal*/}
+                        {/*    id="combo-box-demo"*/}
+                        {/*    options={[*/}
+                        {/*        ...(skillsList.map(skill => skill.name)),*/}
+                        {/*        ...(mentorSkills.length > 0 ? mentorSkills.map(skill => skill.name) : [])*/}
+                        {/*    ]}*/}
+                        {/*    freeSolo*/}
+                        {/*    value={currentSkill}*/}
+                        {/*    onChange={(event, newValue) => setCurrentSkill(newValue)}*/}
+                        {/*    sx={{ width: '80%' }}*/}
+                        {/*    renderInput={(params) => <TextField {...params} label="Skill" />}*/}
+                        {/*/>*/}
+
                         <Autocomplete
                             disablePortal
                             id="combo-box-demo"
-                            options={skillsList}
+                            options={[
+                                ...(skillsList.map(skill => skill.name))]}
                             freeSolo
-                            value={newProfileInfo.skills}
+                            value={currentSkill}
                             onChange={(event, newValue) => setCurrentSkill(newValue)}
                             sx={{ width: '80%' }}
                             renderInput={(params) => <TextField {...params} label="Skill" />}
                         />
+
+
                         <Button variant="contained" size="small" onClick={handleAddSkill}>
                             Add Skill
                         </Button>
+                        {selectedSkills.length > 0 && (
+                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                {selectedSkills.map((skill, index) => (
+                                    <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
+                                ))}
+                            </Box>
+                        )}
                     </Box>
-                    {selectedSkills.length > 0 && (
-                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                            {selectedSkills.map((skill, index) => (
-                                <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
-                            ))}
-                        </Box>
-                    )}
+
 
                     <Box
                         sx={{

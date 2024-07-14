@@ -1,4 +1,4 @@
-const getSkillsData = async (page = 1, limit = 10) => {
+const getSkillDatas = async (page=1, limit=5) => {
     try {
         const response = await fetch(
             `https://tortee-463vt.ondigitalocean.app/api/v1/skill?page=${page}&limit=${limit}`
@@ -9,18 +9,14 @@ const getSkillsData = async (page = 1, limit = 10) => {
 
         const data = await response.json();
 
-        // Assuming the response contains an array of skills
-        const skills = data.map(skill => ({
+        // Assuming `data` directly contains skill information as an array
+        const skills = data.listResult.map(skill => ({
             id: skill.id,
-            createdDate: new Date(skill.createdDate).toLocaleString(),
-            modifiedDate: new Date(skill.modifiedDate).toLocaleString(),
             createdBy: skill.createdBy,
             modifiedBy: skill.modifiedBy,
-            label: skill.name, // Use 'label' for Autocomplete
+            name: skill.name,
             major: skill.major ? {
                 id: skill.major.id,
-                createdDate: new Date(skill.major.createdDate).toLocaleString(),
-                modifiedDate: new Date(skill.major.modifiedDate).toLocaleString(),
                 createdBy: skill.major.createdBy,
                 modifiedBy: skill.major.modifiedBy,
                 name: skill.major.name,
@@ -37,4 +33,4 @@ const getSkillsData = async (page = 1, limit = 10) => {
     }
 };
 
-export default getSkillsData;
+export default getSkillDatas;

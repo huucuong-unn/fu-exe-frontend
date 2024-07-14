@@ -227,15 +227,15 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography variant="body1">Mentee Email: {selectedMentee.student.account.email}</Typography>
-                                        <Typography variant="body1">Mentee University: {selectedMentee.student.university.name}</Typography>
+                                        <Typography variant="body1"> Email: {selectedMentee.student.account.email}</Typography>
+                                        <Typography variant="body1"> University: {selectedMentee.student.university.name}</Typography>
                                     </Grid>
                                     <Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
                                         <Button
                                             variant="contained"
                                             color="primary"
                                             component="a"
-                                            href={selectedMentee.cvFile}
+                                            href={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${selectedMentee.cvFile}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             sx={{ textDecoration: 'none', color: 'white', textTransform: 'none', py: 2, px: 4, fontSize: '1.2rem' }}

@@ -30,6 +30,7 @@ import AdDashboard from '~/pages/AdDashboard';
 import SignUpForCompany from '~/pages/SignUpForCompany';
 import NotAuthorized from '~/pages/NotAuthorized';
 import MentorManageProfile from '~/pages/MentorManageProfile';
+import AdminSignIn from '~/pages/AdminSignIn';
 // import DefaultLayout from '~/components/Layouts/DefaultLayout';
 
 const publicRoutes = [
@@ -49,6 +50,7 @@ const publicRoutes = [
 
     //Auth
     { path: '/sign-in', component: SignInSide, layout: null },
+    { path: '/admin/sign-in', component: AdminSignIn, layout: null },
     { path: '/sign-up', component: SignUp, layout: null },
     { path: '/forgot-password', component: ForgotPassword, layout: null },
 
@@ -61,8 +63,6 @@ const publicRoutes = [
     { path: '/campaigns/:campaignId', component: CampaignDetail, layout: LayoutWithFooter },
     //Mentor
     { path: '/mentor-manage-profile', component: MentorManageProfile, layout: LayoutWithFooter },
-
-
 
     //Payment
     { path: '/payment', component: Payment },

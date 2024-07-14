@@ -108,7 +108,6 @@ const ProfileBox = () => {
 
     const handleOpenModal = (index = null) => {
         if (index !== null) {
-
             const profileToEdit = profiles[index];
             setNewProfileInfo({
                 id: profileToEdit.id,
@@ -161,7 +160,7 @@ const ProfileBox = () => {
         try {
             if (editIndex !== null) {
                 const updatedProfiles = profiles.map((profile, index) =>
-                    index === editIndex ? newProfileInfo : profile
+                    index === editIndex ? newProfileInfo : profile,
                 );
                 setProfiles(updatedProfiles);
             } else {
@@ -296,7 +295,6 @@ const ProfileBox = () => {
                                         <Avatar src={profile.profilePicture} alt={profile.fullName} />
                                         <Box ml={2}>
                                             <Typography variant="h6">{profile.fullName}</Typography>
-
                                         </Box>
                                         <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
                                             <EditIcon />
@@ -314,7 +312,6 @@ const ProfileBox = () => {
                                     <Typography variant="body2" color="text.secondary">
                                         {`Status: ${profile.status}` || 'None'}
                                     </Typography>
-
                                 </CardContent>
                             </Card>
                         </Grid>
@@ -370,8 +367,6 @@ const ProfileBox = () => {
                         onChange={(e) => setNewProfileInfo({ ...newProfileInfo, description: e.target.value })}
                     />
 
-
-
                     <Box
                         sx={{
                             display: 'flex',
@@ -380,7 +375,6 @@ const ProfileBox = () => {
                             gap: 2,
                         }}
                     >
-
                         <TextField
                             margin="normal"
                             fullWidth
@@ -400,8 +394,6 @@ const ProfileBox = () => {
                             gap: 2,
                         }}
                     >
-
-
                         <TextField
                             margin="normal"
                             fullWidth
@@ -431,7 +423,6 @@ const ProfileBox = () => {
                             value={newProfileInfo.googleMeetUrl}
                             onChange={(e) => setNewProfileInfo({ ...newProfileInfo, googleMeetUrl: e.target.value })}
                         />
-
                     </Box>
 
 
@@ -503,15 +494,7 @@ const ProfileBox = () => {
                             value={newProfileInfo.requirement}
                             onChange={(e) => setNewProfileInfo({ ...newProfileInfo, requirement: e.target.value })}
                         />
-
-
-
-
                     </Box>
-
-
-
-
 
                     <Box mt={2} display="flex" justifyContent="flex-end">
                         <Button onClick={handleCloseModal} sx={{ mr: 2 }}>
@@ -523,7 +506,6 @@ const ProfileBox = () => {
                     </Box>
                 </Box>
             </Modal>
-
         </Container>
     );
 };

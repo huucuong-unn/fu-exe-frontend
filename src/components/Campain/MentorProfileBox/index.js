@@ -20,12 +20,10 @@ import AddIcon from '@mui/icons-material/Add';
 import getMentorProfileData from '~/API/Campain/getMentorProfile';
 import StorageService from '~/components/StorageService/storageService'; // Import the API function
 import createMentorProfile from '~/API/Campain/createMentorProfile';
-import getSkillsData from '~/API/Campain/getSkill';
-const skills = ['Java', 'C#', 'Python']; // List of skills for autocomplete
+import SkillAPI from '~/API/SkillAPI';
 
 const ProfileBox = () => {
     const theme = useTheme();
-
     const [openModal, setOpenModal] = useState(false);
     const [profiles, setProfiles] = useState([]);
     const [newProfileInfo, setNewProfileInfo] = useState({
@@ -55,24 +53,24 @@ const ProfileBox = () => {
     const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
     const [isIntroduceValid, setIsIntroduceValid] = useState(true);
     const [isReasonApplyValid, setIsReasonApplyValid] = useState(true);
-    const [selectedSkills, setSelectedSkills] = useState([]);
-    const [currentSkill] = useState('');
     const [mentorSkills, setMentorSkills] = useState([]);
 
-    const [skillsList, setSkillsList] = useState([]); // State to hold skills fetched from API
+    const [selectedSkills, setSelectedSkills] = useState([]);
+    const [currentSkill, setCurrentSkill] = useState('');
 
+    const [skills, setSkills] = useState([]);
     const profilesPerPage = 3;
     const totalPages = Math.ceil(profiles.length / profilesPerPage);
 
     useEffect(() => {
-
         // Fetch skills list from API
         const fetchSkills = async () => {
             try {
-                const skills = await getSkillsData();
-                setSkillsList(skills);
+                const skillData = await SkillAPI.getAll();
+                setSkills(skillData);
+                console.log(skillData);
             } catch (error) {
-                console.error('Error fetching skills:', error);
+                console.error('Error fetching data:', error);
             }
         };
 
@@ -88,23 +86,9 @@ const ProfileBox = () => {
             }
         };
 
-
-
-
-
-
         fetchProfiles();
         fetchSkills();
     }, []);
-
-    const setCurrentSkill = (newValue) => {
-        setNewProfileInfo((prevState) => ({
-            ...prevState,
-            skills: newValue,
-        }));
-    };
-
-
 
     const handleOpenModal = (index = null) => {
         if (index !== null) {
@@ -206,43 +190,15 @@ const ProfileBox = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const email = event.target.email.value;
-        const username = event.target.fullName.value;
-        const phoneNumber = event.target.phoneNumber.value;
-        const introduce = event.target.description.value;
-        const reasonApply = event.target.reasonApply?.value;
-
-        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
-            setIsEmailValid(false);
-        } else {
-            setIsEmailValid(true);
-        }
-
-        if (username.length < 5) {
-            setIsUsernameValid(false);
-        } else {
-            setIsUsernameValid(true);
-        }
-
-        if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
-            setIsPhoneNumberValid(false);
-        } else {
-            setIsPhoneNumberValid(true);
-        }
-
-        if (introduce.length < 50) {
-            setIsIntroduceValid(false);
-        } else {
-            setIsIntroduceValid(true);
-        }
-
-        if (reasonApply && reasonApply.length < 50) {
-            setIsReasonApplyValid(false);
-        } else {
-            setIsReasonApplyValid(true);
-        }
-
         const data = new FormData(event.currentTarget);
+
+        data.append('createMentorProfileRequest.linkedinUrl', data.get('linkedinUrl'));
+        data.append('createMentorProfileRequest.requirement', data.get('requirement'));
+        data.append('createMentorProfileRequest.description', data.get('description'));
+        data.append('createMentorProfileRequest.shortDescription', data.get('shortDescription'));
+        data.append('createMentorProfileRequest.facebookUrl', data.get('facebookUrl'));
+        data.append('createMentorProfileRequest.googleMeetUrl', data.get('googleMeetUrl'));
+        data.append('skills', selectedSkills);
         console.log(data);
 
         try {
@@ -251,9 +207,9 @@ const ProfileBox = () => {
             console.error('Error submitting form data:', error);
         }
     };
-
     const handleAddSkill = () => {
         if (currentSkill && !selectedSkills.includes(currentSkill)) {
+            console.log(currentSkill);
             setSelectedSkills([...selectedSkills, currentSkill]);
             setCurrentSkill('');
         }
@@ -425,57 +381,35 @@ const ProfileBox = () => {
                         />
                     </Box>
 
-
-
-
                     <Box
                         sx={{
                             width: '100%',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'flex-start', // Adjusted to 'flex-start' to align components to the left
-                            gap: 2,
+                            justifyContent: 'left',
+                            gap: 3,
                         }}
                     >
-                        {/*<Autocomplete*/}
-                        {/*    disablePortal*/}
-                        {/*    id="combo-box-demo"*/}
-                        {/*    options={[*/}
-                        {/*        ...(skillsList.map(skill => skill.name)),*/}
-                        {/*        ...(mentorSkills.length > 0 ? mentorSkills.map(skill => skill.name) : [])*/}
-                        {/*    ]}*/}
-                        {/*    freeSolo*/}
-                        {/*    value={currentSkill}*/}
-                        {/*    onChange={(event, newValue) => setCurrentSkill(newValue)}*/}
-                        {/*    sx={{ width: '80%' }}*/}
-                        {/*    renderInput={(params) => <TextField {...params} label="Skill" />}*/}
-                        {/*/>*/}
-
                         <Autocomplete
                             disablePortal
                             id="combo-box-demo"
-                            options={[
-                                ...(skillsList.map(skill => skill.name))]}
-                            freeSolo
-                            value={currentSkill}
-                            onChange={(event, newValue) => setCurrentSkill(newValue)}
+                            options={skills}
+                            getOptionLabel={(option) => option.name}
+                            onChange={(event, newValue) => setCurrentSkill(newValue.name)}
                             sx={{ width: '80%' }}
                             renderInput={(params) => <TextField {...params} label="Skill" />}
                         />
-
-
-                        <Button variant="contained" size="small" onClick={handleAddSkill}>
+                        <Button variant="contained" onClick={handleAddSkill}>
                             Add Skill
                         </Button>
-                        {selectedSkills.length > 0 && (
-                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                                {selectedSkills.map((skill, index) => (
-                                    <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
-                                ))}
-                            </Box>
-                        )}
                     </Box>
-
+                    {selectedSkills.length > 0 && (
+                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                            {selectedSkills.map((skill, index) => (
+                                <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
+                            ))}
+                        </Box>
+                    )}
 
                     <Box
                         sx={{

@@ -64,7 +64,17 @@ function AppAppBar({ mode, toggleColorMode }) {
 
     const handleCloseProfile = () => {
         setAnchorEl(null);
-        navigate('/user/profile');
+        switch (userInfo?.role) {
+            case 'mentor':
+                navigate('/mentor-manage-profile');
+                break;
+            case 'company':
+                navigate('/user/profile');
+                break;
+            case 'student':
+                navigate('/user/profile');
+                break;
+        }
     };
 
     const handleCloseHistory = () => {
@@ -173,7 +183,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     onClick={() => scrollToSection('companies')}
                                     sx={{ py: '6px', px: '12px', borderRadius: '999px' }}
                                 >
-                                    {userInfo.role !== 'mentor' && userInfo.role !== 'company' ? (
+                                    {userInfo?.role !== 'mentor' && userInfo?.role !== 'company' ? (
                                         <Link to="/company" style={{ textDecoration: 'none' }}>
                                             <Typography variant="body2" color="text.primary" fontSize="16px">
                                                 Companies
@@ -184,7 +194,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     )}
                                 </MenuItem>
                                 {/* handle for show/hide points */}
-                                {userInfo.role !== 'mentor' ? (
+                                {userInfo?.role !== 'mentor' ? (
                                     <MenuItem
                                         onClick={() => scrollToSection('companies')}
                                         sx={{ py: '6px', px: '12px', borderRadius: '999px' }}
@@ -212,7 +222,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                             aria-haspopup="true"
                                             aria-expanded={openForUserOption ? 'true' : undefined}
                                         >
-                                            <Avatar src={IMGAGE_HOST + userInfo.avatarUrl} />
+                                            <Avatar src={IMGAGE_HOST + userInfo?.avatarUrl} />
                                         </IconButton>
                                     </Tooltip>
                                 </Box>
@@ -256,7 +266,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         <Avatar src="https://cdn-icons-png.flaticon.com/128/12340/12340380.png" />
                                         Profile
                                     </MenuItem>
-                                    {userInfo.role !== 'mentor' && userInfo.role !== 'company' ? (
+                                    {userInfo?.role !== 'mentor' && userInfo?.role !== 'company' ? (
                                         <MenuItem onClick={handleCloseHistory}>
                                             <Avatar src="https://cdn-icons-png.flaticon.com/128/10357/10357920.png" />
                                             History
@@ -264,10 +274,10 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     ) : (
                                         ''
                                     )}
-                                    {userInfo.role !== 'mentor' ? (
+                                    {userInfo?.role !== 'mentor' ? (
                                         <MenuItem onClick={handleCloseForPoint}>
                                             <Avatar src="https://cdn-icons-png.flaticon.com/128/4671/4671969.png" />
-                                            {userInfo.point} Points
+                                            {userInfo?.point} Points
                                         </MenuItem>
                                     ) : (
                                         ''

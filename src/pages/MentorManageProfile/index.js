@@ -93,8 +93,6 @@ export default function MentorManageProfile() {
                 <ProfileBox />
                 <Divider />
 
-
-
                 <LogoCollection />
 
                 <Divider />

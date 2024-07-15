@@ -117,7 +117,7 @@ function StudentHistory() {
             try {
                 const params = {
                     page: 1,
-                    limit: 2,
+                    limit: 10,
                     status: 'ALL',
                     companyId: '',
                     mentorName: '',
@@ -175,8 +175,14 @@ function StudentHistory() {
             </Typography>
             <Tabs value={value} onChange={handleChange} aria-label="icon label tabs example">
                 <Tab icon={<PaymentIcon />} label="PAYMENTS" />
-                <Tab icon={<SchoolIcon />} label="APPLICATIONS" />
-                <Tab icon={<SchoolIcon />} label="APPLYS" />
+                {userInfo.role === 'student' ? (
+                    <>
+                        <Tab icon={<SchoolIcon />} label="APPLICATIONS" />
+                        <Tab icon={<SchoolIcon />} label="APPLYS" />
+                    </>
+                ) : (
+                    ''
+                )}
             </Tabs>
             <CustomTabPanel value={value} index={0}>
                 <TableContainer component={Paper}>

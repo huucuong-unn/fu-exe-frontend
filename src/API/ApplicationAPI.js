@@ -24,5 +24,16 @@ const ApplicationAPI = {
         const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
         return axiosClient.get(url, authorizedConfig);
     },
+
+    applicationApprove(applicationId, params, includeAuthorization = false) {
+        const url = `/v1/application/approve/${applicationId}`;
+        const authorizedConfig = this.addAuthorizationHeader({ params }, includeAuthorization);
+        return axiosClient.post(url, authorizedConfig);
+    },
+    applicationReject(applicationId, data, includeAuthorization = false) {
+        const url = `/v1/application/reject/${applicationId}`;
+        const authorizedConfig = this.addAuthorizationHeader(data, includeAuthorization);
+        return axiosClient.post(url, authorizedConfig);
+    },
 };
 export default ApplicationAPI;

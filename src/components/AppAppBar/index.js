@@ -163,13 +163,44 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 <img src={logo} style={logoStyle} alt="logo of tortee" />
                             </Link>
                             <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                                <MenuItem sx={{ py: '6px', px: '12px', borderRadius: '999px' }}>
-                                    <Link to="/mentors" style={{ textDecoration: 'none' }}>
-                                        <Typography variant="body2" color="text.primary" fontSize="16px">
-                                            Mentors
-                                        </Typography>
-                                    </Link>
-                                </MenuItem>
+                                {userInfo?.role !== 'company' && userInfo?.role !== 'mentor' ? (
+                                    <MenuItem sx={{ py: '6px', px: '12px', borderRadius: '999px' }}>
+                                        <Link to="/mentors" style={{ textDecoration: 'none' }}>
+                                            <Typography variant="body2" color="text.primary" fontSize="16px">
+                                                Mentors
+                                            </Typography>
+                                        </Link>
+                                    </MenuItem>
+                                ) : (
+                                    ''
+                                )}
+                                {userInfo?.role === 'mentor' ? (
+                                    <MenuItem sx={{ py: '6px', px: '12px', borderRadius: '999px' }}>
+                                        <Link to="/mentors" style={{ textDecoration: 'none' }}>
+                                            <Typography variant="body2" color="text.primary" fontSize="16px">
+                                                Campaigns
+                                            </Typography>
+                                        </Link>
+                                    </MenuItem>
+                                ) : (
+                                    ''
+                                )}
+                                <Divider orientation="vertical" variant="middle" flexItem />
+                                <Divider orientation="vertical" variant="middle" flexItem />
+                                {userInfo?.role === 'company' ? (
+                                    <MenuItem
+                                        onClick={() => scrollToSection('companies')}
+                                        sx={{ py: '6px', px: '12px', borderRadius: '999px' }}
+                                    >
+                                        <Link to="/company/campaign-history" style={{ textDecoration: 'none' }}>
+                                            <Typography variant="body2" color="text.primary" fontSize="16px">
+                                                Campaign History
+                                            </Typography>
+                                        </Link>
+                                    </MenuItem>
+                                ) : (
+                                    ''
+                                )}
                                 <Divider orientation="vertical" variant="middle" flexItem />
 
                                 {/* <MenuItem onClick={() => scrollToSection('features')} sx={{ py: '6px', px: '12px' }}>
@@ -266,7 +297,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                         <Avatar src="https://cdn-icons-png.flaticon.com/128/12340/12340380.png" />
                                         Profile
                                     </MenuItem>
-                                    {userInfo?.role !== 'mentor' && userInfo?.role !== 'company' ? (
+                                    {userInfo?.role !== 'mentor' ? (
                                         <MenuItem onClick={handleCloseHistory}>
                                             <Avatar src="https://cdn-icons-png.flaticon.com/128/10357/10357920.png" />
                                             History

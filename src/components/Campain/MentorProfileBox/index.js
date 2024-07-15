@@ -17,10 +17,11 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import getMentorProfileData from '~/API/Campain/getMentorProfile';
+import getMentorProfileData from '~/API/Campain/MentorProfileAPI';
 import StorageService from '~/components/StorageService/storageService'; // Import the API function
 import createMentorProfile from '~/API/Campain/createMentorProfile';
 import SkillAPI from '~/API/SkillAPI';
+import MentorProfileAPI from '~/API/Campain/MentorProfileAPI';
 
 const ProfileBox = () => {
     const theme = useTheme();
@@ -31,7 +32,6 @@ const ProfileBox = () => {
         createdDate: '',
         modifiedDate: '',
         createdBy: '',
-
         modifiedBy: '',
         linkedinUrl: '',
         facebookUrl: '',
@@ -60,7 +60,7 @@ const ProfileBox = () => {
     const [currentSkill, setCurrentSkill] = useState('');
 
     const [skills, setSkills] = useState([]);
-    const profilesPerPage = 3;
+    const profilesPerPage = 6;
     const totalPages = Math.ceil(profiles.length / profilesPerPage);
 
     useEffect(() => {
@@ -71,46 +71,53 @@ const ProfileBox = () => {
                 setSkills(skillData);
                 console.log(skillData);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching skills:', error);
             }
         };
 
         // Fetch profiles from the API
         const fetchProfiles = async () => {
             try {
-                const mentorId = StorageService.getItem('userInfo').mentorId;
-                const profileData = await getMentorProfileData(mentorId);
-                setProfiles([profileData]);
-                setMentorSkills(profileData.skills);
+                const userInfo = StorageService.getItem('userInfo');
+                if (userInfo && userInfo.mentorId) {
+                    const profileResponse = await MentorProfileAPI.getAllMentorProfiles(userInfo.mentorId);
+
+                    setProfiles(profileResponse);
+
+                } else {
+                    console.error('Mentor ID not found in local storage');
+                }
             } catch (error) {
                 console.error('Error fetching profiles:', error);
             }
         };
 
-        fetchProfiles();
         fetchSkills();
+        fetchProfiles();
     }, []);
+
+
 
     const handleOpenModal = (index = null) => {
         if (index !== null) {
             const profileToEdit = profiles[index];
             setNewProfileInfo({
-                id: profileToEdit.id,
-                createdDate: profileToEdit.createdDate,
-                modifiedDate: profileToEdit.modifiedDate,
-                createdBy: profileToEdit.createdBy,
-                modifiedBy: profileToEdit.modifiedBy,
-                linkedinUrl: profileToEdit.linkedinUrl,
-                facebookUrl: profileToEdit.facebookUrl,
-                googleMeetUrl: profileToEdit.googleMeetUrl,
-                requirement: profileToEdit.requirement,
-                description: profileToEdit.description,
-                shortDescription: profileToEdit.shortDescription,
-                profilePicture: profileToEdit.profilePicture,
-                status: profileToEdit.status,
-                fullName: profileToEdit.fullName,
-                skills: profileToEdit.skills,
-                skillLevel: profileToEdit.skillLevel,
+                id: profileToEdit.mentorProfile.id,
+                createdDate: profileToEdit.mentorProfile.createdDate,
+                modifiedDate: profileToEdit.mentorProfile.modifiedDate,
+                createdBy: profileToEdit.mentorProfile.createdBy,
+                modifiedBy: profileToEdit.mentorProfile.modifiedBy,
+                linkedinUrl: profileToEdit.mentorProfile.linkedinUrl,
+                facebookUrl: profileToEdit.mentorProfile.facebookUrl,
+                googleMeetUrl: profileToEdit.mentorProfile.googleMeetUrl,
+                requirement: profileToEdit.mentorProfile.requirement,
+                description: profileToEdit.mentorProfile.description,
+                shortDescription: profileToEdit.mentorProfile.shortDescription,
+                profilePicture: profileToEdit.mentorProfile.profilePicture,
+                status: profileToEdit.mentorProfile.status,
+                fullName: profileToEdit.mentorProfile.fullName,
+                skills: profileToEdit.mentorProfile.skills,
+                skillLevel: profileToEdit.mentorProfile.skillLevel,
             });
             setEditIndex(index);
         } else {
@@ -197,6 +204,7 @@ const ProfileBox = () => {
         const profileData = {
             createMentorProfileRequest: {
                 mentorId: StorageService.getItem('userInfo').mentorId,
+                profilePicture: "example.jpg",
 
                 linkedinUrl: data.get('linkedinUrl'),
                 requirement: data.get('requirement'),
@@ -205,13 +213,14 @@ const ProfileBox = () => {
                 facebookUrl: data.get('facebookUrl'),
                 googleMeetUrl: data.get('googleMeetUrl'),
 
-                profilePicture: StorageService.getItem('userInfo').profilePicture,
-                availablestatus: "ACTIVE",
+
+                status: "ACTIVE"
 
 
 
             },
             skills: selectedSkills,
+
         };
 
         const url = editIndex !== null
@@ -239,6 +248,7 @@ const ProfileBox = () => {
         } catch (error) {
             console.error('Error submitting form data:', error);
         }
+        setOpenModal(false);
     };
 
     const handleAddSkill = () => {
@@ -313,9 +323,9 @@ const ProfileBox = () => {
                             >
                                 <CardContent>
                                     <Box display="flex" alignItems="center" mb={2}>
-                                        <Avatar src={profile.profilePicture} alt={profile.fullName} />
+                                        <Avatar src={profile.profilePicture} alt={profile.mentorProfile.fullName} />
                                         <Box ml={2}>
-                                            <Typography variant="h6">{profile.fullName}</Typography>
+                                            <Typography variant="h6">{profile.mentorProfile.fullName}</Typography>
                                         </Box>
                                         <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
                                             <EditIcon />
@@ -323,15 +333,15 @@ const ProfileBox = () => {
                                     </Box>
 
                                     <Typography variant="body1" gutterBottom>
-                                        {`Description: ${profile.shortDescription}` || 'No Description'}
+                                        {`Description: ${profile.mentorProfile.shortDescription}` || 'No Description'}
                                     </Typography>
 
                                     <Typography variant="body2" color="text.secondary">
-                                        {`Created Date: ${profile.createdDate}` || 'None'}
+                                        {`Created Date: ${profile.mentorProfile.createdDate}` || 'None'}
                                     </Typography>
 
                                     <Typography variant="body2" color="text.secondary">
-                                        {`Status: ${profile.status}` || 'None'}
+                                        {`Status: ${profile.mentorProfile.status}` || 'None'}
                                     </Typography>
                                 </CardContent>
                             </Card>

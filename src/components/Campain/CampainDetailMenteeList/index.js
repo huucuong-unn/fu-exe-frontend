@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Grid, Box, Typography, IconButton, Tooltip, Button, Modal, TextField, Avatar, Chip, Pagination, PaginationItem,
+    Grid,
+    Box,
+    Typography,
+    IconButton,
+    Tooltip,
+    Button,
+    Modal,
+    TextField,
+    Avatar,
+    Chip,
+    Pagination,
+    PaginationItem,
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -9,8 +20,9 @@ import getMenteesToApprove from '~/API/Campain/getMenteesToApprove';
 import StorageService from '~/components/StorageService/storageService';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; // Adjust the import path as necessary
+import ApplicationAPI from '~/API/ApplicationAPI';
 
-const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
+const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
     const [mentees, setMentees] = useState([]);
     const [selectedMentee, setSelectedMentee] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -22,27 +34,26 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
     const [totalPages, setTotalPages] = useState(1); // Total pages state
 
     useEffect(() => {
-        const fetchMentees = async () => {
-            setLoading(true);
-            try {
-                const mentorId = StorageService.getItem('userInfo').mentorId;
-                if (!mentorId) {
-                    throw new Error('MentorId not found in storage.');
-                }
-
-                const menteesData = await getMenteesToApprove(mentorId, page); // Pass page number to API call
-                setMentees(menteesData.mentees);
-                setTotalPages(menteesData.totalPages); // Assuming your API response includes total pages
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching mentees:', error);
-                setLoading(false);
-            }
-        };
-
-        fetchMentees();
+        fetchMenteesAp();
     }, [page]);
+    const fetchMenteesAp = async () => {
+        setLoading(true);
+        try {
+            const mentorId = StorageService.getItem('userInfo').mentorId;
+            if (!mentorId) {
+                throw new Error('MentorId not found in storage.');
+            }
 
+            const menteesData = await getMenteesToApprove(mentorId, page); // Pass page number to API call
+            setMentees(menteesData.mentees);
+            setTotalPages(menteesData.totalPages); // Assuming your API response includes total pages
+            setLoading(false);
+            console.log(mentees);
+        } catch (error) {
+            console.error('Error fetching mentees:', error);
+            setLoading(false);
+        }
+    };
     const handlePageChange = (event, value) => {
         setPage(value); // Update page state when pagination changes
     };
@@ -54,15 +65,8 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
 
     const approveMentee = async (applicationId) => {
         try {
-            const response = await fetch(`https://tortee-463vt.ondigitalocean.app/api/v1/application/approve/${applicationId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: message,
-                }),
-            });
+            console.log(selectedMentee);
+            const response = await ApplicationAPI.applicationApprove(selectedMentee.id);
             if (response.ok) {
                 console.log('Mentee approved successfully');
                 // Optionally, update the mentees list or show a success message
@@ -74,12 +78,29 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
         }
     };
 
-    const handleConfirm = () => {
-        if (actionType === 'approve') {
-            approveMentee(selectedMentee.id);
-        } else {
-            // Handle reject logic here
+    const rejectMentee = async (applicationId, message) => {
+        try {
+            console.log(selectedMentee);
+            const response = await ApplicationAPI.applicationReject(selectedMentee.id, message);
+            if (response.ok) {
+                console.log('Mentee approved successfully');
+                // Optionally, update the mentees list or show a success message
+            } else {
+                console.error('Error approving mentee');
+            }
+        } catch (error) {
+            console.error('Error approving mentee:', error);
         }
+    };
+
+    const handleConfirm = async () => {
+        if (actionType === 'approve') {
+            // approveMentee(selectedMentee.id);
+        } else {
+            rejectMentee(selectedMentee.id, message);
+        }
+        await fetchMentees();
+        await fetchMenteesAp();
         handleClose();
     };
 
@@ -133,11 +154,6 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                 </Box>
                                 <Box sx={{ flexGrow: 1 }}>
                                     <Typography variant="body1">{mentee.fullName}</Typography>
-                                    <Chip
-                                        label={`Status: ${mentee.status}`}
-                                        color={mentee.status === 'ACTIVE' ? 'success' : 'error'}
-                                        sx={{ fontSize: '1rem' }}
-                                    />
                                 </Box>
                                 <Button
                                     variant="outlined"
@@ -159,10 +175,7 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                         </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Reject">
-                                        <IconButton
-                                            color="secondary"
-                                            onClick={() => handleOpen(mentee, 'reject')}
-                                        >
+                                        <IconButton color="secondary" onClick={() => handleOpen(mentee, 'reject')}>
                                             <ClearIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -175,7 +188,10 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                 page={page}
                                 onChange={handlePageChange}
                                 renderItem={(item) => (
-                                    <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                                    <PaginationItem
+                                        slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                                        {...item}
+                                    />
                                 )}
                                 color="primary"
                             />
@@ -219,7 +235,11 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                             {selectedMentee && (
                                 <Grid container spacing={2} alignItems="center">
                                     <Grid item>
-                                        <Avatar src={selectedMentee.student.account.avatarUrl} alt={selectedMentee.fullName} sx={{ width: 120, height: 120, borderBottom: '3px solid #007bff' }} />
+                                        <Avatar
+                                            src={selectedMentee.student.account.avatarUrl}
+                                            alt={selectedMentee.fullName}
+                                            sx={{ width: 120, height: 120, borderBottom: '3px solid #007bff' }}
+                                        />
                                     </Grid>
                                     <Grid item xs>
                                         <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
@@ -227,8 +247,14 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                         </Typography>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography variant="body1"> Email: {selectedMentee.student.account.email}</Typography>
-                                        <Typography variant="body1"> University: {selectedMentee.student.university.name}</Typography>
+                                        <Typography variant="body1">
+                                            {' '}
+                                            Email: {selectedMentee.student.account.email}
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            {' '}
+                                            University: {selectedMentee.student.university.name}
+                                        </Typography>
                                     </Grid>
                                     <Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
                                         <Button
@@ -238,7 +264,14 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                                             href={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${selectedMentee.cvFile}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            sx={{ textDecoration: 'none', color: 'white', textTransform: 'none', py: 2, px: 4, fontSize: '1.2rem' }}
+                                            sx={{
+                                                textDecoration: 'none',
+                                                color: 'white',
+                                                textTransform: 'none',
+                                                py: 2,
+                                                px: 4,
+                                                fontSize: '1.2rem',
+                                            }}
                                         >
                                             View CV
                                         </Button>
@@ -256,34 +289,43 @@ const MenteeSection = ({ campaignId, onSelectMentee, handleAction }) => {
                         aria-labelledby="modal-title"
                         aria-describedby="modal-description"
                     >
-                        <Box sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 400,
-                            bgcolor: 'background.paper',
-                            border: '2px solid #000',
-                            boxShadow: 24,
-                            p: 4,
-                        }}>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                width: 400,
+                                bgcolor: 'background.paper',
+                                border: '2px solid #000',
+                                boxShadow: 24,
+                                p: 4,
+                            }}
+                        >
                             <Typography id="modal-title" variant="h6" component="h2">
                                 {actionType === 'approve' ? 'Approve Mentee' : 'Reject Mentee'}
                             </Typography>
-                            <Typography id="modal-description" sx={{ mt: 2 }}>
-                                What do you want to tell {selectedMentee?.fullName}?
-                            </Typography>
-                            <TextField
-                                fullWidth
-                                multiline
-                                rows={4}
-                                variant="outlined"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                sx={{ mt: 2 }}
-                            />
+                            {actionType !== 'approve' && (
+                                <>
+                                    <Typography id="modal-description" sx={{ mt: 2 }}>
+                                        What do you want to tell {selectedMentee?.fullName}?
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        multiline
+                                        rows={4}
+                                        variant="outlined"
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        sx={{ mt: 2 }}
+                                    />
+                                </>
+                            )}
+
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                                <Button onClick={handleClose} sx={{ mr: 2 }}>Cancel</Button>
+                                <Button onClick={handleClose} sx={{ mr: 2 }}>
+                                    Cancel
+                                </Button>
                                 <Button variant="contained" color="primary" onClick={handleConfirm}>
                                     Confirm
                                 </Button>

@@ -187,6 +187,7 @@ function AdAccount() {
     const [imageSelected, setImageSelected] = useState(false);
     const [isRejectModal, setIsRejectModal] = useState(false);
 
+
     const [message, setMessage] = useState('');
 
     const [actionType, setActionType] = useState('');
@@ -197,17 +198,20 @@ function AdAccount() {
     //new
     const handleOpenRejectModal = () =>{
         setIsRejectModal(true);
+        setMessage(null);
 
-        console.log(isRejectModal);
+
     };
 
     const handleCloseRejectModal = () =>{
         setIsRejectModal(false);
+        setMessage(null);
     };
 
     const handleConfirmRejectModal = () => {
         // Handle confirm logic
         setIsRejectModal(false);
+        setMessage(null);
     };
 
 
@@ -347,6 +351,7 @@ function AdAccount() {
 
         const handleCloseMessageModal = () => {
             setIsMessageModal(false);
+            setMessage('');
         };
         const handleAccept = async () => {
             try {
@@ -396,7 +401,7 @@ function AdAccount() {
                                 <Button variant="contained" color="success" onClick={handleAccept}>
                                     Approve
                                 </Button>
-                                <Button variant="contained" color="error" onclick={handleOpenRejectModal}>
+                                <Button variant="contained" color="error" onClick={handleOpenRejectModal}>
                                     Reject
                                 </Button>
                             </Box>
@@ -928,7 +933,8 @@ function AdAccount() {
                     </Box>
                 </Modal>
                 <Modal
-                    open={isRejectModal} onClose={handleCloseRejectModal}
+                    open={isRejectModal}
+                    onClose={handleCloseRejectModal}
                     aria-labelledby="modal-title"
                     aria-describedby="modal-description"
                 >
@@ -946,7 +952,7 @@ function AdAccount() {
                         }}
                     >
                         <Typography sx={{ mt: 2 }}>
-                            What do you want to tell {selectedMentee?.mentor.fullName}?
+                            What do you want to tell ?
                         </Typography>
                         <TextField
                             fullWidth
@@ -954,7 +960,7 @@ function AdAccount() {
                             rows={4}
                             variant="outlined"
                             value={message}
-                            onChange={(e) => setMessage(e.target.value)}
+                            onChange={(e) => setMessage()}
                             sx={{ mt: 2 }}
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>

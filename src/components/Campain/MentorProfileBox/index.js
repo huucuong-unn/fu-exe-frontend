@@ -112,8 +112,7 @@ const ProfileBox = () => {
 
     const handleProfileClick = async (newProfileId) => {
         if (usingProfileId) {
-            const host = 'https://tortee-463vt.ondigitalocean.app';  // Replace with your actual host URL
-            const endpoint = `${host}/api/v1/campaign-mentor-profile/swap-mentor-profile/${usingProfileId}?newMentorProfile=${newProfileId}`;
+            const endpoint = `https://tortee-463vt.ondigitalocean.app/api/v1/campaign-mentor-profile/swap-mentor-profile/${usingProfileId}?newMentorProfile=${newProfileId}`;
 
             try {
                 const response = await fetch(endpoint, {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const createMentorProfile = async (mentorProfileData) => {
-    const apiUrl = 'https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/create';
+    const apiUrl = 'https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/create-new-mentor-profile-skills';
 
     try {
         const response = await axios.post(apiUrl, mentorProfileData);

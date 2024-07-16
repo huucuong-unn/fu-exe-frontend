@@ -119,17 +119,19 @@ export const Application = () => {
             setIsReasonApplyValid(true);
         }
 
-        const data = new FormData(event.currentTarget);
-        console.log(mentorId);
-        console.log(studentId);
-        data.append('mentorId', mentorId);
-        data.append('studentId', studentId);
-        console.log(data);
-        try {
-            await ApplicationAPI.createApplication(data);
-            navigate('/user/history', { state: { selectApplyTab: true } });
-        } catch (error) {
-            console.log(error);
+        if (isEmailValid && isUsernameValid && isPhoneNumberValid && isIntroduceValid && isReasonApplyValid) {
+            const data = new FormData(event.currentTarget);
+            console.log(mentorId);
+            console.log(studentId);
+            data.append('mentorId', mentorId);
+            data.append('studentId', studentId);
+            console.log(data);
+            try {
+                await ApplicationAPI.createApplication(data);
+                navigate('/user/history', { state: { selectApplyTab: true } });
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 

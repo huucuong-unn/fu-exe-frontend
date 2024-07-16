@@ -10,7 +10,7 @@ import {
     Typography,
     InputLabel,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '~/assets/images/logo.png';
 import AccountAPI from '~/API/AccountAPI';
@@ -37,7 +37,6 @@ function SignUpForCompany() {
     const [imageHelperText, setImageHelperText] = useState('');
     const [imagePreview, setImagePreview] = useState(null);
     const [imageFile, setImageFile] = useState(null);
-    const [universities, setUniversities] = useState([]);
     const [imageSelected, setImageSelected] = useState(false);
     const [formValues, setFormValues] = useState({
         username: '',
@@ -56,6 +55,18 @@ function SignUpForCompany() {
         companyWebsiteUrl: '',
         facebookUrl: '',
     });
+    const [isUsernameValid, setIsUsernameValid] = useState(true);
+    const [isFullNameValid, setIsFullNameValid] = useState(true);
+    const [isCompanySizeValid, setIsCompanySizeValid] = useState(true);
+    const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
+    const [isDescriptionValid, setIsDescriptionValid] = useState(true);
+    const [isAddressValid, setIsAddressValid] = useState(true);
+    const [isEmailValid, setIsEmailValid] = useState(true);
+    const [isPasswordValid, setIsPasswordValid] = useState(true);
+    const [isConfirmPasswordValide, setIsConfirmPasswordValide] = useState(true);
+    const [isCompanyTypeValid, setIsCompanyTypeValid] = useState(true);
+    const [isCountryValid, setIsCountryValid] = useState(true);
+    const [isImgFileValid, setIsImgFileValid] = useState(true);
 
     const handleAvatarChange = (event) => {
         const file = event.target.files[0];
@@ -109,47 +120,155 @@ function SignUpForCompany() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
         const data = new FormData(event.currentTarget);
-        data.append('roleName', 'student');
+        const email = data.get('email');
+        const username = data.get('username');
+        const phoneNumber = data.get('phoneNumber');
+        const fullname = data.get('fullname');
+        const companySize = data.get('companySize');
+        const description = data.get('description');
+        const address = data.get('address');
+        const password = data.get('password');
+        const confirmPassword = data.get('confirmPassword');
+        const companyType = formValues.companyType;
+        const country = formValues.country;
+        const startDate = formValues.start;
+        const endDate = formValues.end;
 
-        const createAccountRequest = {
-            username: data.get('username'),
-            password: data.get('password'),
-            email: data.get('email'),
-            avatarUrl: data.get('avatarUrl'),
-            roleName: 'company',
-        };
+        if (!imageFile) {
+            setIsImgFileValid(false);
+        } else {
+            setIsImgFileValid(true);
+        }
 
-        // Append `createAccountRequest` fields to FormData
-        data.append('createAccountRequest.username', createAccountRequest.username);
-        data.append('createAccountRequest.password', createAccountRequest.password);
-        data.append('createAccountRequest.email', createAccountRequest.email);
-        data.append('createAccountRequest.avatarUrl', data.get('avatarUrl'));
-        data.append('createAccountRequest.roleName', createAccountRequest.roleName);
+        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
+            setIsEmailValid(false);
+        } else {
+            setIsEmailValid(true);
+        }
 
-        // Append `requestObject` fields to FormData
-        data.append('createCompanyRequest.name', data.get('name'));
-        data.append('createCompanyRequest.country', formValues.address);
-        data.append('createCompanyRequest.address', data.get('address'));
-        data.append('createCompanyRequest.avatarUrl', data.get('avatarUrl'));
-        data.append('createCompanyRequest.facebookUrl', data.get('facebookUrl'));
+        if (username.length < 5 || username.length > 50) {
+            setIsUsernameValid(false);
+        } else {
+            setIsUsernameValid(true);
+        }
 
-        data.append('createCompanyRequest.companyWebsiteUrl', data.get('companyWebsiteUrl'));
+        if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
+            setIsPhoneNumberValid(false);
+        } else {
+            setIsPhoneNumberValid(true);
+        }
 
-        data.append('createCompanyRequest.description', data.get('description'));
+        if (fullname.length < 5 || fullname.length > 50) {
+            setIsFullNameValid(false);
+        } else {
+            setIsFullNameValid(true);
+        }
 
-        data.append('createCompanyRequest.workingTime', formValues.start + '-' + formValues.end);
+        if (!/^[0-9]+$/.test(companySize)) {
+            setIsCompanySizeValid(false);
+        } else {
+            setIsCompanySizeValid(true);
+        }
 
-        data.append('createCompanyRequest.companySize', data.get('companySize'));
-        data.append('createCompanyRequest.companyType', formValues.companyType);
+        if (description.length < 5 || description.length > 100) {
+            setIsDescriptionValid(false);
+        } else {
+            setIsDescriptionValid(true);
+        }
 
-        try {
-            const result = await AccountAPI.createAccountForCompany(data);
-            //navigate('/sign-in', { state: { signupSuccess: true } });
-        } catch (error) {
-            console.log(error);
+        if (address.length < 5 || description.length > 100) {
+            setIsAddressValid(false);
+        } else {
+            setIsAddressValid(true);
+        }
+
+        if (password.length < 10 || password.length > 30) {
+            setIsPasswordValid(false);
+        } else {
+            setIsPasswordValid(true);
+        }
+
+        if (!(confirmPassword === password)) {
+            setIsConfirmPasswordValide(false);
+        } else {
+            setIsConfirmPasswordValide(true);
+        }
+
+        if (companyType === '' || companyType === null) {
+            setIsCompanyTypeValid(false);
+        } else {
+            setIsCompanyTypeValid(true);
+        }
+
+        if (country === '' || country === null) {
+            setIsCountryValid(false);
+        } else {
+            setIsCountryValid(true);
+        }
+
+        if (
+            isUsernameValid &&
+            isFullNameValid &&
+            isCompanySizeValid &&
+            isPhoneNumberValid &&
+            isDescriptionValid &&
+            isAddressValid &&
+            isEmailValid &&
+            isPasswordValid &&
+            isConfirmPasswordValide &&
+            isCompanyTypeValid &&
+            isCountryValid &&
+            isImgFileValid
+        ) {
+            event.preventDefault();
+
+            data.append('roleName', 'student');
+
+            const createAccountRequest = {
+                username: data.get('username'),
+                password: data.get('password'),
+                email: data.get('email'),
+                avatarUrl: data.get('avatarUrl'),
+                roleName: 'company',
+            };
+
+            // Append `createAccountRequest` fields to FormData
+            data.append('createAccountRequest.username', createAccountRequest.username);
+            data.append('createAccountRequest.password', createAccountRequest.password);
+            data.append('createAccountRequest.email', createAccountRequest.email);
+            data.append('createAccountRequest.avatarUrl', data.get('avatarUrl'));
+            data.append('createAccountRequest.roleName', createAccountRequest.roleName);
+
+            // Append `requestObject` fields to FormData
+            data.append('createCompanyRequest.name', data.get('name'));
+            data.append('createCompanyRequest.country', formValues.address);
+            data.append('createCompanyRequest.address', data.get('address'));
+            data.append('createCompanyRequest.avatarUrl', data.get('avatarUrl'));
+            data.append('createCompanyRequest.facebookUrl', data.get('facebookUrl'));
+
+            data.append('createCompanyRequest.companyWebsiteUrl', data.get('companyWebsiteUrl'));
+
+            data.append('createCompanyRequest.description', data.get('description'));
+
+            data.append('createCompanyRequest.workingTime', formValues.start + '-' + formValues.end);
+
+            data.append('createCompanyRequest.companySize', data.get('companySize'));
+            data.append('createCompanyRequest.companyType', formValues.companyType);
+
+            try {
+                const result = await AccountAPI.createAccountForCompany(data);
+                //navigate('/sign-in', { state: { signupSuccess: true } });
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
+
+    useEffect(() => {
+        console.log(formValues);
+    }, [formValues]);
 
     return (
         <ThemeProvider theme={defaultTheme}>
@@ -181,7 +300,7 @@ function SignUpForCompany() {
                         }}
                     >
                         <Typography component="h1" variant="h4">
-                            Sign up as mentee
+                            Sign up as company
                         </Typography>
                         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 5 }}>
                             <TextField
@@ -217,8 +336,13 @@ function SignUpForCompany() {
                                         : () => document.getElementById('avatarUrl').click()
                                 }
                             >
-                                {imageSelected ? 'Remove Avatar' : 'Please Choose Avatar'}
+                                {imageSelected ? 'Remove Logo' : 'Please Choose Logo'}
                             </Button>
+                            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
+                                <Typography color="error">
+                                    {!isImgFileValid ? 'Please choose mentor avatar' : ''}
+                                </Typography>
+                            </Box>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -229,26 +353,24 @@ function SignUpForCompany() {
                             >
                                 <TextField
                                     margin="normal"
-                                    required
                                     fullWidth
                                     id="username"
                                     label="Username"
                                     name="username"
-                                    autoComplete="username"
-                                    autoFocus
-                                    value={formValues.username}
+                                    error={!isUsernameValid}
+                                    helperText={!isUsernameValid ? 'Username must have more than 5 characters' : ''}
                                     onChange={handleInputChange}
                                     sx={{ flex: 1 }}
                                 />
                                 <TextField
                                     margin="normal"
-                                    required
                                     fullWidth
-                                    id="name"
+                                    id="fullname"
                                     label="Full Name"
-                                    name="name"
+                                    name="fullname"
                                     autoComplete="name"
-                                    value={formValues.name}
+                                    error={!isFullNameValid}
+                                    helperText={!isFullNameValid ? 'FullName must have more than 5 characters' : ''}
                                     onChange={handleInputChange}
                                     sx={{ flex: 1 }}
                                 />
@@ -262,29 +384,34 @@ function SignUpForCompany() {
                                 }}
                             >
                                 <Autocomplete
-                                    disablePortal
-                                    required
                                     fullWidth
+                                    defaultValue=""
                                     id="companyType"
                                     name="companyType"
-                                    options={['Type1', 'Type2', 'Type3']}
+                                    options={['IT Product', 'Finance', 'Entertain']}
                                     getOptionLabel={(option) => option}
                                     value={formValues.companyType}
                                     onChange={(event, newValue) =>
                                         setFormValues({ ...formValues, companyType: newValue })
                                     }
                                     renderInput={(params) => (
-                                        <TextField {...params} label="Company Type" margin="normal" />
+                                        <TextField
+                                            {...params}
+                                            label="Company Type"
+                                            margin="normal"
+                                            error={!isCompanyTypeValid}
+                                            helperText={!isCompanyTypeValid ? 'Please choose company type' : ''}
+                                        />
                                     )}
                                 />
                                 <TextField
                                     margin="normal"
-                                    required
                                     fullWidth
                                     name="companySize"
                                     label="Company Size"
                                     id="companySize"
-                                    value={formValues.companySize}
+                                    error={!isCompanySizeValid}
+                                    helperText={!isCompanySizeValid ? 'Company must be number' : ''}
                                     onChange={handleInputChange}
                                 />
                             </Box>
@@ -298,25 +425,33 @@ function SignUpForCompany() {
                             >
                                 <Autocomplete
                                     disablePortal
-                                    required
                                     fullWidth
+                                    defaultValue=""
                                     id="country"
                                     name="country"
-                                    options={['Country1', 'Country2', 'Country3']}
-                                    getOptionLabel={(option) => option}
+                                    options={['Vietnam', 'Thailand', 'Japan']}
                                     value={formValues.country}
+                                    getOptionLabel={(option) => option}
                                     onChange={(event, newValue) => setFormValues({ ...formValues, country: newValue })}
-                                    renderInput={(params) => <TextField {...params} label="Country" margin="normal" />}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Country"
+                                            margin="normal"
+                                            error={!isCountryValid}
+                                            helperText={!isCountryValid ? 'Please choose country' : ''}
+                                        />
+                                    )}
                                 />
                                 <TextField
                                     margin="normal"
-                                    required
                                     fullWidth
                                     id="phone"
                                     label="Phone Number"
                                     name="phone"
                                     autoComplete="phone"
-                                    value={formValues.phone}
+                                    error={!isPhoneNumberValid}
+                                    helperText={!isPhoneNumberValid ? 'Phone number must be number' : ''}
                                     onChange={handleInputChange}
                                 />
                             </Box>
@@ -350,7 +485,6 @@ function SignUpForCompany() {
                                         id="start"
                                         name="start"
                                         options={dateInWeek}
-                                        value={formValues.start}
                                         onChange={(event, newValue) =>
                                             setFormValues({ ...formValues, start: newValue })
                                         }
@@ -377,7 +511,6 @@ function SignUpForCompany() {
                                         id="end"
                                         name="end"
                                         options={dateInWeek}
-                                        value={formValues.end}
                                         onChange={(event, newValue) => setFormValues({ ...formValues, end: newValue })}
                                         renderInput={(params) => <TextField {...params} label="End" margin="normal" />}
                                     />
@@ -387,81 +520,77 @@ function SignUpForCompany() {
                             <TextField
                                 id="description"
                                 name="description"
-                                label="description"
+                                label="Description"
                                 multiline
                                 rows={5}
                                 sx={{ width: '100%', flex: 1 }}
-                                value={formValues.description}
+                                error={!isDescriptionValid}
+                                helperText={!isDescriptionValid ? 'Description must be 6-100 characters.' : ''}
                                 onChange={handleInputChange}
                             />
 
                             <TextField
                                 margin="normal"
-                                required
                                 fullWidth
                                 id="address"
                                 label="Address"
                                 name="address"
                                 autoComplete="address"
-                                value={formValues.address}
+                                error={!isAddressValid}
+                                helperText={!isAddressValid ? 'Address must be 6-100 characters.' : ''}
                                 onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
-                                required
                                 fullWidth
                                 id="companyWebsiteUrl"
                                 label="Company Website Url"
                                 name="companyWebsiteUrl"
                                 autoComplete="companyWebsiteUrl"
-                                value={formValues.companyWebsiteUrl}
                                 onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
-                                required
                                 fullWidth
                                 id="facebookUrl"
                                 label="Facebook Url"
                                 name="facebookUrl"
                                 autoComplete="facebookUrl"
-                                value={formValues.facebookUrl}
                                 onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
-                                required
                                 fullWidth
                                 id="email"
                                 label="Email Address"
                                 name="email"
                                 autoComplete="email"
                                 type="email"
-                                value={formValues.email}
+                                error={!isEmailValid}
+                                helperText={!isEmailValid ? 'Email invalid' : ''}
                                 onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
-                                required
                                 fullWidth
                                 name="password"
                                 label="Password"
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
-                                value={formValues.password}
+                                error={!isPasswordValid}
+                                helperText={!isPasswordValid ? 'Password must be 11-30 characters.' : ''}
                                 onChange={handleInputChange}
                             />
                             <TextField
                                 margin="normal"
-                                required
                                 fullWidth
                                 name="confirmPassword"
                                 label="Confirm Password"
                                 type="password"
                                 id="confirmPassword"
-                                autoComplete="current-password"
-                                value={formValues.confirmPassword}
+                                error={!isConfirmPasswordValide}
+                                helperText={!isConfirmPasswordValide ? 'Confirm password must equal password' : ''}
                                 onChange={handleInputChange}
                             />
                             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>

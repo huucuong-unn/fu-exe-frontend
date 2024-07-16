@@ -19,6 +19,10 @@ import {
     Card,
     Grid,
 } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { Link } from 'react-router-dom';
 
@@ -186,37 +190,48 @@ function AdAccount() {
     const [universities, setUniversities] = useState([]);
     const [imageSelected, setImageSelected] = useState(false);
     const [isRejectModal, setIsRejectModal] = useState(false);
-
-    const [message, setMessage] = useState('');
-
-    const [actionType, setActionType] = useState('');
-
-
-    const IMAGE_HOST = process.env.REACT_APP_IMG_HOST;
-
-    //new
-    const handleOpenRejectModal = () =>{
-        setIsRejectModal(true);
-
-        console.log(isRejectModal);
-    };
-
-    const handleCloseRejectModal = () =>{
-        setIsRejectModal(false);
-    };
-
-    const handleConfirmRejectModal = () => {
-        // Handle confirm logic
-        setIsRejectModal(false);
-    };
-
-
     const [searchParams, setSearchParams] = useState({
         userName: '',
         email: '',
         role: '',
         status: '',
     });
+    const [params, setParams] = useState({
+        userName: searchParams.userName || null,
+        email: searchParams.email || null,
+        role: searchParams.role || null,
+        status: searchParams.status || null,
+        page: 1,
+        limit: 7,
+    });
+    const [totalPage, setTotalPage] = useState(0);
+    const [message, setMessage] = useState('');
+    const [actionType, setActionType] = useState('');
+    const IMAGE_HOST = process.env.REACT_APP_IMG_HOST;
+
+    const handlePageChange = (event, value) => {
+        setParams((prev) => ({
+            ...prev,
+            page: value,
+        }));
+    };
+
+    //new
+    const handleOpenRejectModal = () => {
+        setIsRejectModal(true);
+        setMessage(null);
+    };
+
+    const handleCloseRejectModal = () => {
+        setIsRejectModal(false);
+        setMessage(null);
+    };
+
+    const handleConfirmRejectModal = () => {
+        // Handle confirm logic
+        setIsRejectModal(false);
+        setMessage(null);
+    };
 
     const handleOpenCreateModal = () => {
         setIsCreateModal(true);
@@ -309,16 +324,10 @@ function AdAccount() {
     };
     const fetchData = async () => {
         try {
-            const params = {
-                userName: searchParams.userName || null,
-                email: searchParams.email || null,
-                role: searchParams.role || null,
-                status: searchParams.status || null,
-                page: 1,
-                limit: 10,
-            };
             const accountsData = await AccountAPI.getAccountForAdminSearch(params);
+            console.log(accountsData);
             setAccounts(accountsData.listResult);
+            setTotalPage(accountsData.totalPage);
         } catch (error) {
             setError('Error fetching data');
         }
@@ -326,7 +335,11 @@ function AdAccount() {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [params]);
+
+    useEffect(() => {
+        console.log(accounts);
+    }, [accounts]);
 
     const handleChangeStatus = async (accountId) => {
         try {
@@ -347,6 +360,7 @@ function AdAccount() {
 
         const handleCloseMessageModal = () => {
             setIsMessageModal(false);
+            setMessage('');
         };
         const handleAccept = async () => {
             try {
@@ -359,9 +373,6 @@ function AdAccount() {
                 console.log(error);
             }
         };
-
-
-
 
         return (
             <Box>
@@ -396,7 +407,7 @@ function AdAccount() {
                                 <Button variant="contained" color="success" onClick={handleAccept}>
                                     Approve
                                 </Button>
-                                <Button variant="contained" color="error" onclick={handleOpenRejectModal}>
+                                <Button variant="contained" color="error" onClick={handleOpenRejectModal}>
                                     Reject
                                 </Button>
                             </Box>
@@ -928,7 +939,8 @@ function AdAccount() {
                     </Box>
                 </Modal>
                 <Modal
-                    open={isRejectModal} onClose={handleCloseRejectModal}
+                    open={isRejectModal}
+                    onClose={handleCloseRejectModal}
                     aria-labelledby="modal-title"
                     aria-describedby="modal-description"
                 >
@@ -945,28 +957,26 @@ function AdAccount() {
                             p: 4,
                         }}
                     >
-                        <Typography sx={{ mt: 2 }}>
-                            What do you want to tell {selectedMentee?.mentor.fullName}?
-                        </Typography>
+                        <Typography sx={{ mt: 2 }}>What do you want to tell ?</Typography>
                         <TextField
                             fullWidth
                             multiline
                             rows={4}
                             variant="outlined"
                             value={message}
-                            onChange={(e) => setMessage(e.target.value)}
+                            onChange={(e) => setMessage()}
                             sx={{ mt: 2 }}
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                            <Button onClick={handleCloseRejectModal} sx={{ mr: 2 }}>Cancel</Button>
+                            <Button onClick={handleCloseRejectModal} sx={{ mr: 2 }}>
+                                Cancel
+                            </Button>
                             <Button variant="contained" color="primary" onClick={handleConfirmRejectModal}>
                                 Confirm
                             </Button>
                         </Box>
                     </Box>
                 </Modal>
-
-
 
                 <Modal open={isMessageModal} onClose={handleCloseMessageModal}>
                     <Box
@@ -1077,7 +1087,7 @@ function AdAccount() {
                     <TableHead>
                         <TableRow>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
-                                ID
+                                No
                             </TableCell>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                 Username
@@ -1134,6 +1144,16 @@ function AdAccount() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                <Pagination
+                    count={totalPage}
+                    page={params.page}
+                    onChange={handlePageChange}
+                    renderItem={(item) => (
+                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                    )}
+                />
+            </Box>
             <AccountModal
                 open={Boolean(selectedMentee)}
                 handleClose={handleCloseModal}
@@ -1212,12 +1232,12 @@ function AdAccount() {
                                 onClick={
                                     imageSelected
                                         ? () =>
-                                            handleRemoveImage(
-                                                setImagePreview,
-                                                setImageFile,
-                                                setImageError,
-                                                setImageHelperText,
-                                            )
+                                              handleRemoveImage(
+                                                  setImagePreview,
+                                                  setImageFile,
+                                                  setImageError,
+                                                  setImageHelperText,
+                                              )
                                         : () => document.getElementById('avatarUrl').click()
                                 }
                             >

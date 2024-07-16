@@ -18,6 +18,10 @@ import {
     Typography,
     Avatar,
 } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { styled } from '@mui/system';
 import { useState, useEffect } from 'react';
 import CompanyAPI from '~/API/CompanyAPI';
@@ -82,6 +86,15 @@ const AdMentee = () => {
     const [student, setStudent] = useState(null);
     const [companies, setCompanies] = useState([]);
     const [campaigns, setCampaigns] = useState([]);
+    const [params, setParams] = useState({
+        menteeName: '',
+        mentorFullName: '',
+        campaignId: '',
+        companyId: '',
+        page: 1,
+        limit: 10,
+    });
+    const [totalPage, setTotalPage] = useState(0);
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -89,6 +102,13 @@ const AdMentee = () => {
 
     const handleCloseModal = () => {
         setSelectedMentee(null);
+    };
+
+    const handlePageChange = (event, value) => {
+        setParams((prev) => ({
+            ...prev,
+            page: value,
+        }));
     };
 
     const handleSearch = async () => {
@@ -115,28 +135,22 @@ const AdMentee = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const params = {
-                    menteeName: '',
-                    mentorFullName: '',
-                    campaignId: '',
-                    companyId: '',
-                    page: 1,
-                    limit: 10,
-                };
                 const companiesData = await CompanyAPI.getAllWithStatusActiveWithoutPaging();
                 const campaignsData = await CampaignAPI.getAllWithoutPaging();
                 const menteesData = await MentorApplyAPI.findAllByMenteeNameAndMentorFullNameAndCampaignIdAndCompanyId(
                     params,
                 );
+                console.log(menteesData);
                 setCompanies(companiesData);
                 setCampaigns(campaignsData);
                 setMentees(menteesData.listResult);
+                setTotalPage(menteesData.totalPage);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
         fetchData();
-    }, []);
+    }, [params]);
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'end', gap: 4 }}>
@@ -249,7 +263,16 @@ const AdMentee = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                <Pagination
+                    count={totalPage}
+                    page={params.page}
+                    onChange={handlePageChange}
+                    renderItem={(item) => (
+                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                    )}
+                />
+            </Box>
             <Modal open={Boolean(selectedMentee)} onClose={handleCloseModal}>
                 <Box
                     sx={{

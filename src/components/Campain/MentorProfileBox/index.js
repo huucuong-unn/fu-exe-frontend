@@ -58,6 +58,8 @@ const ProfileBox = () => {
     const [selectedProfileId, setSelectedProfileId] = useState(null);
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [currentSkill, setCurrentSkill] = useState('');
+    const [usingProfileId, setUsingProfileId] = useState('');
+
 
     const [skills, setSkills] = useState([]);
     const profilesPerPage = 6;
@@ -82,7 +84,19 @@ const ProfileBox = () => {
                 if (userInfo && userInfo.mentorId) {
                     const profileResponse = await MentorProfileAPI.getAllMentorProfiles(userInfo.mentorId);
 
-                    setProfiles(profileResponse);
+                    if (profileResponse && profileResponse.length > 0) {
+                        setProfiles(profileResponse);
+
+
+                        const usingProfile = profileResponse.find(profile => profile.mentorProfile.status === 'using'|| profile.mentorProfile.status === 'USING');
+                    if (usingProfile) {
+                        setUsingProfileId(usingProfile.mentorProfile.id);
+                        console.log(usingProfile)
+                        console.log('Using profiles found');
+                    }
+                } else {
+                    console.error('No profiles found');
+                }
 
                 } else {
                     console.error('Mentor ID not found in local storage');
@@ -95,6 +109,36 @@ const ProfileBox = () => {
         fetchSkills();
         fetchProfiles();
     }, []);
+
+    const handleProfileClick = async (newProfileId) => {
+        if (usingProfileId) {
+            const endpoint = `https://tortee-463vt.ondigitalocean.app/api/v1/campaign-mentor-profile/swap-mentor-profile/${usingProfileId}?newMentorProfile=${newProfileId}`;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error swapping profiles: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('Profile swapped successfully:', result);
+                setSelectedProfileId(newProfileId);
+                setUsingProfileId(newProfileId); // Update the using profile ID after swap
+
+            } catch (error) {
+                console.error('Error swapping profiles:', error);
+            }
+        } else {
+            console.error('No "USING" profile found to swap');
+        }
+    };
+
 
 
 
@@ -313,13 +357,10 @@ const ProfileBox = () => {
                         <Grid item xs={12} sm={6} md={4} key={index}>
                             <Card
                                 sx={{
-                                    border: selectedProfileId === profile.id ? '2px solid green' : 'none',
+                                    border: profile.mentorProfile.status === 'USING' ? '2px solid green' : 'none',
                                     cursor: 'pointer',
                                 }}
-                                // onClick={() => handleProfileClick(
-                                //
-                                //     profile.id
-                                // )}
+                                onClick={() => handleProfileClick(profile.mentorProfile.id)}
                             >
                                 <CardContent>
                                     <Box display="flex" alignItems="center" mb={2}>

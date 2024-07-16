@@ -4,7 +4,6 @@ const storageService = {
     },
     getItem(key) {
         const value = localStorage.getItem(key);
-        console.log(value);
         return value ? JSON.parse(value) : null;
     },
     removeItem(key) {

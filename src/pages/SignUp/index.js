@@ -41,6 +41,8 @@ export default function SignUp() {
     const [dobHelperText, setDobHelperText] = useState('');
     const [passwordError, setPasswordError] = useState(false);
     const [passwordHelperText, setPasswordHelperText] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+    const [confirmPasswordHelperText, setConfirmPasswordHelperText] = useState('');
     const [usernameError, setUsernameError] = useState(false);
     const [usernameHelperText, setUsernameHelperText] = useState('');
     const [imageError, setImageError] = useState(false);
@@ -86,6 +88,10 @@ export default function SignUp() {
 
     const validatePassword = (password) => {
         return password.length >= 10;
+    };
+
+    const validateConfirmPassword = (confirmPassword, password) => {
+        return confirmPassword === password;
     };
 
     const validateUsername = (username) => {
@@ -149,6 +155,16 @@ export default function SignUp() {
         if (!validatePassword(passwordValue)) {
             setPasswordError(true);
             setPasswordHelperText('Password must be at least 10 characters long.');
+            result = false;
+        } else {
+            setPasswordError(false);
+            setPasswordHelperText('');
+        }
+
+        const confirmPasswordValue = data.get('confirmPassword');
+        if (!validateConfirmPassword(confirmPasswordValue, passwordValue)) {
+            setConfirmPasswordError(true);
+            setConfirmPasswordHelperText('Confirm password must equal password');
             result = false;
         } else {
             setPasswordError(false);
@@ -347,7 +363,7 @@ export default function SignUp() {
                                         <img
                                             src={frontImagePreview}
                                             alt="Front of Student Card"
-                                            style={{ marginTop: '10px', width: '100%', height: 'auto' }}
+                                            style={{ marginTop: '10px', width: '100%', minHeight: '500px' }}
                                         />
                                     )}
                                 </Box>
@@ -392,7 +408,7 @@ export default function SignUp() {
                                         <img
                                             src={backImagePreview}
                                             alt="Back of Student Card"
-                                            style={{ marginTop: '10px', width: '100%', height: 'auto' }}
+                                            style={{ marginTop: '10px', width: '100%', minHeight: '500px' }}
                                         />
                                     )}
                                 </Box>
@@ -520,6 +536,7 @@ export default function SignUp() {
                                 type="password"
                                 id="confirmPassword"
                                 autoComplete="current-password"
+                                helperText={confirmPasswordError}
                             />
                             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                                 Sign Up

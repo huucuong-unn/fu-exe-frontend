@@ -22,6 +22,10 @@ import {
     Card,
     Autocomplete,
 } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import {
@@ -172,7 +176,6 @@ function AdCampaign() {
     const [imageHelperText, setImageHelperText] = useState('');
     const [imagePreview, setImagePreview] = useState(null);
     const [imageFile, setImageFile] = useState(null);
-    const [universities, setUniversities] = useState([]);
     const [imageSelected, setImageSelected] = useState(false);
     const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
     const [searchParams, setSearchParams] = useState({
@@ -181,7 +184,13 @@ function AdCampaign() {
         startDate: '',
         endDate: '',
     });
-
+    const [params, setParams] = useState({
+        campaignName: null,
+        status: null,
+        page: 1,
+        limit: 10,
+    });
+    const [totalPage, setTotalPage] = useState(0);
     const [newCampaign, setNewCampaign] = useState({
         name: '',
         startDate: '',
@@ -203,20 +212,24 @@ function AdCampaign() {
     const fetchCampaigns = async (params) => {
         try {
             const campaignData = await CampaignAPI.getAllForAdmin(params);
+            console.log(campaignData);
             setCampaigns(campaignData.listResult);
+            setTotalPage(campaignData.totalPage);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+    const handlePageChange = (event, value) => {
+        setParams((prev) => ({
+            ...prev,
+            page: value,
+        }));
+    };
+
     useEffect(() => {
-        fetchCampaigns({
-            campaignName: null,
-            status: null,
-            page: 1,
-            limit: 10,
-        });
-    }, []);
+        fetchCampaigns(params);
+    }, [params]);
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -437,7 +450,7 @@ function AdCampaign() {
                     <TableHead>
                         <TableRow>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
-                                ID
+                                No
                             </TableCell>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                 Name
@@ -532,7 +545,7 @@ function AdCampaign() {
                                         label={
                                             campaign.status === 'COMPANY_APPLY'
                                                 ? 'Company Apply'
-                                                : campaign.status === 'STUDENT_APPLY'
+                                                : campaign.status === 'MENTEE_APPLY'
                                                 ? 'Student Apply'
                                                 : campaign.status === 'TRAINING'
                                                 ? 'Training'
@@ -545,7 +558,7 @@ function AdCampaign() {
                                         color={
                                             campaign.status === 'COMPANY_APPLY'
                                                 ? 'primary'
-                                                : campaign.status === 'STUDENT_APPLY'
+                                                : campaign.status === 'MENTEE_APPLY'
                                                 ? 'secondary'
                                                 : campaign.status === 'TRAINING'
                                                 ? 'success'
@@ -560,6 +573,16 @@ function AdCampaign() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                <Pagination
+                    count={totalPage}
+                    page={params.page}
+                    onChange={handlePageChange}
+                    renderItem={(item) => (
+                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                    )}
+                />
+            </Box>
             <Modal open={Boolean(selectedMentee)} onClose={handleCloseModal}>
                 <Box
                     sx={{

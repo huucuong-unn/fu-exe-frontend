@@ -18,6 +18,10 @@ import {
     Chip,
     CircularProgress,
 } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { styled } from '@mui/system';
 
@@ -83,20 +87,31 @@ function AdMentor() {
     const [companyId, setCompanyId] = useState(null);
     const [loading, setLoading] = useState(true);
     const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
+    const [params, setParams] = useState({
+        mentorName: null,
+        campaignId: null,
+        companyId: null,
+        page: 1,
+        limit: 10,
+    });
+    const [totalPage, setTotalPage] = useState(0);
+
+    const handlePageChange = (event, value) => {
+        setParams((prev) => ({
+            ...prev,
+            page: value,
+        }));
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const params = {
-                    mentorName: null,
-                    campaignId: null,
-                    companyId: null,
-                    page: 1,
-                    limit: 10,
-                };
                 const companiesData = await CompanyAPI.getAllWithStatusActiveWithoutPaging();
                 const mentorsData = await MentorAPI.getMentorsForAdminSearch(params);
+                console.log(mentorsData);
                 setCompanies(companiesData);
                 setMentors(mentorsData.listResult);
+                setTotalPage(mentorsData.totalPage);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -104,7 +119,7 @@ function AdMentor() {
             }
         };
         fetchData();
-    }, []);
+    }, [params]);
 
     const handleRowClick = (mentee) => {
         setselectedMentor(mentee);
@@ -165,7 +180,7 @@ function AdMentor() {
                     <TableHead>
                         <TableRow>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
-                                ID
+                                No
                             </TableCell>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                 Name
@@ -217,6 +232,16 @@ function AdMentor() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                <Pagination
+                    count={totalPage}
+                    page={params.page}
+                    onChange={handlePageChange}
+                    renderItem={(item) => (
+                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                    )}
+                />
+            </Box>
             <Modal open={Boolean(selectedMentor)} onClose={handleCloseModal}>
                 <Box
                     sx={{

@@ -367,7 +367,7 @@ const ProfileBox = () => {
                                     cursor: profile.mentorProfile.status === 'USING' ? 'not-allowed' : 'pointer',
                                     pointerEvents: profile.mentorProfile.status === 'USING' ? 'none' : 'auto',
                                 }}
-                                onClick={() => handleProfileClick(profile.mentorProfile.id)}
+                                onDoubleClick={() => handleProfileClick(profile.mentorProfile.id)}
                             >
                                 <CardContent>
                                     <Box display="flex" alignItems="center" mb={2}>
@@ -375,9 +375,11 @@ const ProfileBox = () => {
                                         <Box ml={2}>
                                             <Typography variant="h6">{profile.mentorProfile.fullName}</Typography>
                                         </Box>
-                                        <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
-                                            <EditIcon />
-                                        </IconButton>
+                                        {profile.mentorProfile.status === 'ACTIVE'  && (
+                                            <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
+                                                <EditIcon />
+                                            </IconButton>
+                                        )}
                                     </Box>
 
                                     <Typography variant="body1" gutterBottom>

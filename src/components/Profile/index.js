@@ -1,5 +1,5 @@
 import { Box, Button, Container, Grid, TextField, Typography, Avatar, InputLabel } from '@mui/material';
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import StorageService from '~/components/StorageService/storageService';
 
 export const Profile = () => {
-    const [profile, setProfile] = useState(null);
+    const [profiles, setProfiles] = useState(null);
     const [emailError, setEmailError] = useState(false);
     const [emailHelperText, setEmailHelperText] = useState('');
     const [dobError, setDobError] = useState(false);
@@ -31,6 +31,22 @@ export const Profile = () => {
     const [backImageFile, setBackImageFile] = useState(null);
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const studentId = StorageService.getItem('userInfo').studentId;
+                const responses = await AccountAPI.getAccountProfile(studentId);
+                setProfiles(responses);
+                console.log(responses);
+
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+            }
+        };
+
+        fetchProfile();
+    },[])
 
 
     const validateEmail = (email) => {
@@ -200,109 +216,13 @@ export const Profile = () => {
         return format(date, 'MMMM dd, yyyy hh:mm a');
     };
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const studentId =StorageService.getItem('userInfo').studentId
-                const response = await AccountAPI.getAccountProfile(studentId, true);
-                setProfile(response.data);
-                setImagePreview(response.data.avatarUrl || '');
-            } catch (error) {
-                console.error('Error fetching profile:', error);
-            }
-        };
 
-        fetchProfile();
-    },[page]);
     return (
         <Container sx={{ py: 6 }}>
 
-            {/*<Box sx={{ border: '1px solid #ccc', borderRadius: 5 }}>*/}
-            {/*    <Box sx={{ p: 3 }}>*/}
-            {/*        <Typography variant="h6" component="h3">*/}
-            {/*            Personal Information*/}
-            {/*        </Typography>*/}
-            {/*        <Box*/}
-            {/*            sx={{*/}
-            {/*                width: '100%',*/}
-            {/*                mb: 2,*/}
-            {/*                display: 'flex',*/}
-            {/*                flexDirection: 'column',*/}
-            {/*                justifyContent: 'center',*/}
-            {/*                alignItems: 'center',*/}
-            {/*                gap: 1,*/}
-            {/*            }}*/}
-            {/*        >*/}
-            {/*            <Avatar*/}
-            {/*                sx={{ width: 100, height: 100, bgcolor: '#f48fb1' }} // Tăng kích thước Avatar*/}
-            {/*            />*/}
-            {/*            <Typography variant="h5">150 point</Typography>*/}
-            {/*        </Box>*/}
 
-            {/*        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>*/}
-            {/*            <Grid item xs={6}>*/}
-            {/*                <TextField*/}
-            {/*                    margin="normal"*/}
-            {/*                    required*/}
-            {/*                    fullWidth*/}
-            {/*                    id="fullName"*/}
-            {/*                    label="Full Name"*/}
-            {/*                    name="fullName"*/}
-            {/*                    autoComplete="fullName"*/}
-            {/*                    autoFocus*/}
-            {/*                />*/}
-            {/*            </Grid>*/}
-            {/*            <Grid item xs={6}>*/}
-            {/*                <TextField*/}
-            {/*                    margin="normal"*/}
-            {/*                    required*/}
-            {/*                    fullWidth*/}
-            {/*                    name="email"*/}
-            {/*                    label="Email"*/}
-            {/*                    type="email"*/}
-            {/*                    id="email"*/}
-            {/*                    autoComplete="email"*/}
-            {/*                />*/}
-            {/*            </Grid>*/}
-            {/*            <Grid item xs={6}>*/}
-            {/*                <TextField*/}
-            {/*                    margin="normal"*/}
-            {/*                    required*/}
-            {/*                    fullWidth*/}
-            {/*                    name="phone"*/}
-            {/*                    label="Phone Number"*/}
-            {/*                    type="number"*/}
-            {/*                    id="phone"*/}
-            {/*                    autoComplete="phone"*/}
-            {/*                />*/}
-            {/*            </Grid>*/}
-            {/*            <Grid item xs={6}>*/}
-            {/*                <TextField*/}
-            {/*                    margin="normal"*/}
-            {/*                    required*/}
-            {/*                    fullWidth*/}
-            {/*                    name="university"*/}
-            {/*                    label="University"*/}
-            {/*                    type="text"*/}
-            {/*                    id="university"*/}
-            {/*                    autoComplete="university"*/}
-            {/*                />*/}
-            {/*            </Grid>*/}
-            {/*            <Grid item xs={6}>*/}
-            {/*                <TextField*/}
-            {/*                    margin="normal"*/}
-            {/*                    required*/}
-            {/*                    fullWidth*/}
-            {/*                    name="studentCode"*/}
-            {/*                    label="Student Code"*/}
-            {/*                    type="text"*/}
-            {/*                    id="studentCode"*/}
-            {/*                    autoComplete="studentCode"*/}
-            {/*                />*/}
-            {/*            </Grid>*/}
-            {/*        </Grid>*/}
 
-            <Grid item xs={12} sm={10} md={8}  elevation={6} square>
+            <Grid item xs={12} sm={10} md={8} elevation={6} square>
                 <Box
                     sx={{
                         my: 8,
@@ -316,7 +236,7 @@ export const Profile = () => {
                         Your profiles
                     </Typography>
                     <Typography component="h1" color="text.secondary" sx={{ mt: 2 }}>
-                        {`Created Date: ${profile ? formatDate(profile.account.createdDate) : 'None'}`}
+                        {`Created Date: ${profiles ? formatDate(profiles.account.createdDate) : 'None'}`}
                     </Typography>
 
 
@@ -349,8 +269,8 @@ export const Profile = () => {
                         >
                             <Avatar
                                 alt="Avatar"
-                                src={imagePreview}
-                                sx={{ width: 120, height: 120, border: 'solid 2px black' }}
+                                // src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.account.avatarUrl}`}
+                                sx={{ width: 200, height: 200, border: 'solid 2px black' }}
                                 helperText="Avatar"
                             />
                         </Box>
@@ -380,10 +300,118 @@ export const Profile = () => {
 
                             }}
                         >
-                            <TextField margin="normal" required fullWidth name="studentCode" label="Student Code" />
+                            <TextField margin="normal" required fullWidth name="studentCode" label="Student Code"
+                                       // focused value={profiles.studentCode}
+                                />
 
-                            <TextField margin="normal" required fullWidth name="university" label="University" />
+                            <TextField margin="normal" required fullWidth name="university" label="University" focused
+                                       // value={profiles.university.name}
+                            />
 
+
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'left',
+                                alignItems: 'center',
+                                gap: 2,
+                                width: '100%',
+                            }}
+                        >
+                            <TextField
+                                error={usernameError}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="username"
+                                label="Username"
+                                name="username"
+                                autoComplete="username"
+                                autoFocus
+                                helperText={usernameHelperText}
+                                sx={{ flex: 1 }}
+                                focused
+                                // value={profiles.account.username}
+                            />
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="name"
+                                label="FullName"
+                                name="name"
+                                autoComplete="name"
+                                focused
+                                // value={profiles.name}
+                                sx={{ flex: 1 }}
+                            />
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'left',
+                                alignItems: 'center',
+                                gap: 2,
+                                width: '100%',
+                            }}
+                        >
+
+                            <TextField
+                                error={dobError}
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="dob"
+                                label="Date of Birth"
+                                type="date"
+                                // focused
+                                // value={profiles.student.dob}
+                                id="dob"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                helperText={dobHelperText}
+                            />
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'left',
+                                alignItems: 'center',
+                                gap: 2,
+                                width: '100%',
+                            }}
+                        >
+
+                            <TextField
+                                error={emailError}
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                type="email"
+                                // focused
+                                // value={profiles.account.email}
+                                helperText={emailHelperText}
+                            />
+                        </Box>
+
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space',
+                                alignItems: 'center',
+                                gap: 2,
+                                width: '100%',
+                            }}
+                        >
 
                             <Box
                                 sx={{
@@ -404,6 +432,7 @@ export const Profile = () => {
                                     type="file"
                                     id="front"
                                     name="front"
+
                                     style={{ display: 'none' }}
                                     onChange={(e) =>
                                         handleImageUpload(
@@ -423,13 +452,13 @@ export const Profile = () => {
                                 >
                                     Upload Front Image
                                 </Button>
-                                {frontImagePreview && (
-                                    <img
-                                        src={frontImagePreview}
-                                        alt="Front of Student Card"
-                                        style={{ marginTop: '10px', width: '100%', minHeight: '500px' }}
-                                    />
-                                )}
+
+                                <img
+                                    // src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.frontStudentCard}`}
+                                    alt="Front of Student Card"
+                                    style={{ marginTop: '10px', width: 300, height: 300 }}
+                                />
+
                             </Box>
                             <Box
                                 sx={{
@@ -469,121 +498,16 @@ export const Profile = () => {
                                 >
                                     Upload Back Image
                                 </Button>
-                                {backImagePreview && (
-                                    <img
-                                        src={backImagePreview}
-                                        alt="Back of Student Card"
-                                        style={{ marginTop: '10px', width: '100%', minHeight: '500px' }}
-                                    />
-                                )}
+
+                                <img
+                                    // src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.backStudentCard}`}
+                                    alt="Back of Student Card"
+                                    style={{ marginTop: '10px', width: 300, height: 300 }}
+                                />
+
                             </Box>
+
                         </Box>
-
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'left',
-                                alignItems: 'center',
-                                gap: 2,
-                                width: '100%',
-                            }}
-                        >
-                            <TextField
-                                error={usernameError}
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="username"
-                                label="Username"
-                                name="username"
-                                autoComplete="username"
-                                autoFocus
-                                helperText={usernameHelperText}
-                                sx={{ flex: 1 }}
-                            />
-                            <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="name"
-                                label="FullName"
-                                name="name"
-                                autoComplete="name"
-                                sx={{ flex: 1 }}
-                            />
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'left',
-                                alignItems: 'center',
-                                gap: 2,
-                                width: '100%',
-                            }}
-                        >
-                            <Autocomplete
-                                disablePortal
-                                required
-                                fullWidth
-                                id="universityId"
-                                name="universityId"
-                                options={universities}
-                                getOptionLabel={(option) => option.name}
-                                renderInput={(params) => (
-                                    <TextField {...params} label="University" margin="normal" />
-                                )}
-                            />
-                            <TextField
-                                error={dobError}
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="dob"
-                                label="Date of Birth"
-                                type="date"
-
-                                id="dob"
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                helperText={dobHelperText}
-                            />
-                        </Box>
-
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'left',
-                                alignItems: 'center',
-                                gap: 2,
-                                width: '100%',
-                            }}
-                        >
-                             <TextField
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="phone"
-                                label="Phone Number"
-                                name="phone"
-                                autoComplete="phone"
-                            />
-                        </Box>
-
-                        <TextField
-                            error={emailError}
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            type="email"
-                            helperText={emailHelperText}
-                        />
-
 
 
                     </Box>
@@ -605,3 +529,87 @@ export const Profile = () => {
         </Container>
     );
 };
+{/*<Box sx={{ border: '1px solid #ccc', borderRadius: 5 }}>*/}
+{/*    <Box sx={{ p: 3 }}>*/}
+{/*        <Typography variant="h6" component="h3">*/}
+{/*            Personal Information*/}
+{/*        </Typography>*/}
+{/*        <Box*/}
+{/*            sx={{*/}
+{/*                width: '100%',*/}
+{/*                mb: 2,*/}
+{/*                display: 'flex',*/}
+{/*                flexDirection: 'column',*/}
+{/*                justifyContent: 'center',*/}
+{/*                alignItems: 'center',*/}
+{/*                gap: 1,*/}
+{/*            }}*/}
+{/*        >*/}
+{/*            <Avatar*/}
+{/*                sx={{ width: 100, height: 100, bgcolor: '#f48fb1' }} // Tăng kích thước Avatar*/}
+{/*            />*/}
+{/*            <Typography variant="h5">150 point</Typography>*/}
+{/*        </Box>*/}
+
+{/*        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>*/}
+{/*            <Grid item xs={6}>*/}
+{/*                <TextField*/}
+{/*                    margin="normal"*/}
+{/*                    required*/}
+{/*                    fullWidth*/}
+{/*                    id="fullName"*/}
+{/*                    label="Full Name"*/}
+{/*                    name="fullName"*/}
+{/*                    autoComplete="fullName"*/}
+{/*                    autoFocus*/}
+{/*                />*/}
+{/*            </Grid>*/}
+{/*            <Grid item xs={6}>*/}
+{/*                <TextField*/}
+{/*                    margin="normal"*/}
+{/*                    required*/}
+{/*                    fullWidth*/}
+{/*                    name="email"*/}
+{/*                    label="Email"*/}
+{/*                    type="email"*/}
+{/*                    id="email"*/}
+{/*                    autoComplete="email"*/}
+{/*                />*/}
+{/*            </Grid>*/}
+{/*            <Grid item xs={6}>*/}
+{/*                <TextField*/}
+{/*                    margin="normal"*/}
+{/*                    required*/}
+{/*                    fullWidth*/}
+{/*                    name="phone"*/}
+{/*                    label="Phone Number"*/}
+{/*                    type="number"*/}
+{/*                    id="phone"*/}
+{/*                    autoComplete="phone"*/}
+{/*                />*/}
+{/*            </Grid>*/}
+{/*            <Grid item xs={6}>*/}
+{/*                <TextField*/}
+{/*                    margin="normal"*/}
+{/*                    required*/}
+{/*                    fullWidth*/}
+{/*                    name="university"*/}
+{/*                    label="University"*/}
+{/*                    type="text"*/}
+{/*                    id="university"*/}
+{/*                    autoComplete="university"*/}
+{/*                />*/}
+{/*            </Grid>*/}
+{/*            <Grid item xs={6}>*/}
+{/*                <TextField*/}
+{/*                    margin="normal"*/}
+{/*                    required*/}
+{/*                    fullWidth*/}
+{/*                    name="studentCode"*/}
+{/*                    label="Student Code"*/}
+{/*                    type="text"*/}
+{/*                    id="studentCode"*/}
+{/*                    autoComplete="studentCode"*/}
+{/*                />*/}
+{/*            </Grid>*/}
+{/*        </Grid>*/}

@@ -1,25 +1,17 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import { Link } from 'react-router-dom';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import React, { useEffect, useState } from 'react';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { Button, CssBaseline, TextField, Paper, Box, Grid, Typography, Divider, Tab } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Divider, Tab } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AccountAPI from '~/API/AccountAPI';
 import Alert from '@mui/material/Alert';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import storageService from '~/components/StorageService/storageService';
-
 import logo from '~/assets/images/logo.png';
+
+const clientId = '478388298220-qhn8p4akrr4hsidbvnp999v5tn0u3s93.apps.googleusercontent.com';
 
 function Copyright(props) {
     return (
@@ -33,8 +25,6 @@ function Copyright(props) {
         </Typography>
     );
 }
-
-// TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
@@ -66,7 +56,6 @@ export default function SignInSide() {
             case '3':
                 setLoginWithRole('company');
                 break;
-            // Add more cases as needed
             default:
                 setLoginWithRole('');
         }
@@ -81,9 +70,7 @@ export default function SignInSide() {
             data.append('loginWithRole', loginWithRole);
             const userInfo = await AccountAPI.login(data);
 
-            // Check if userInfo is not undefined or null
             if (userInfo) {
-                // Store user information in local storage
                 storageService.setItem('userInfo', userInfo);
                 switch (loginWithRole) {
                     case 'mentor':
@@ -107,6 +94,15 @@ export default function SignInSide() {
         }
     };
 
+    const handleGoogleLoginSuccess = (response) => {
+        console.log('Google login success:', response.profileObj);
+        // You can handle the response and navigate the user accordingly
+    };
+
+    const handleGoogleLoginFailure = (error) => {
+        console.log('Google login failure:', error);
+    };
+
     return (
         <ThemeProvider theme={defaultTheme}>
             {showAlert && (
@@ -122,7 +118,6 @@ export default function SignInSide() {
                     sm={4}
                     md={7}
                     sx={{
-                        // backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
                         backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) => (t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]),
                         backgroundSize: 'cover',
@@ -180,9 +175,12 @@ export default function SignInSide() {
                                             Sign In
                                         </Button>
                                         <Divider>Or</Divider>
-                                        <Button variant="outlined" size="medium" fullWidth sx={{ mt: 3, mb: 2 }}>
-                                            Login with Google
-                                        </Button>
+                                        <GoogleOAuthProvider clientId={clientId}>
+                                            <GoogleLogin
+                                                onSuccess={handleGoogleLoginSuccess}
+                                                onFailure={handleGoogleLoginFailure}
+                                            />
+                                        </GoogleOAuthProvider>
                                         <Grid container>
                                             <Grid item xs>
                                                 <Link to="/forgot-password" variant="body2">

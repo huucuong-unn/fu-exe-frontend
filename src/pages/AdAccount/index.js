@@ -393,7 +393,7 @@ function AdAccount() {
                             maxHeight: '700px',
                         }}
                     >
-                        {account.status == 'PENDING' ? (
+                        {account.status === 'PENDING' ? (
                             <Box
                                 sx={{
                                     position: 'absolute',
@@ -426,7 +426,7 @@ function AdAccount() {
                         >
                             <Avatar src={IMAGE_HOST + account.avatarUrl} sx={{ width: 80, height: 80 }} />
                         </Box>
-                        {account.role.name === 'student' ? (
+                        {account.role.name === 'student' || account.role.name === 'STUDENT' ? (
                             <>
                                 <Card
                                     variant="outlined"
@@ -605,7 +605,7 @@ function AdAccount() {
                                                 }}
                                             >
                                                 <Typography color="gray" variant="h7">
-                                                    Compnay Name
+                                                    Company Name
                                                 </Typography>
                                                 <Typography color="black" variant="h7" fontWeight="bold">
                                                     {account.company.name}

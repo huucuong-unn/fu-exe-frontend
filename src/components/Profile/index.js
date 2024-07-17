@@ -1,12 +1,14 @@
 import { Box, Button, Container, Grid, TextField, Typography, Avatar, InputLabel } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import Paper from '@mui/material/Paper';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useNavigate } from 'react-router-dom';
 import AccountAPI from '~/API/AccountAPI';
+import { format } from 'date-fns';
+import StorageService from '~/components/StorageService/storageService';
 
 export const Profile = () => {
-
+    const [profile, setProfile] = useState(null);
     const [emailError, setEmailError] = useState(false);
     const [emailHelperText, setEmailHelperText] = useState('');
     const [dobError, setDobError] = useState(false);
@@ -28,6 +30,8 @@ export const Profile = () => {
     const [backImagePreview, setBackImagePreview] = useState(null);
     const [backImageFile, setBackImageFile] = useState(null);
     const navigate = useNavigate();
+    const [page, setPage] = useState(1);
+
 
     const validateEmail = (email) => {
         const emailRegex =
@@ -184,12 +188,32 @@ export const Profile = () => {
                 const result = await AccountAPI.createAccount(data);
                 console.log(data);
 
-                navigate('/sign-in', { state: { signupSuccess: true } });
+
             } catch (error) {
                 console.log(error);
             }
         }
     };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return format(date, 'MMMM dd, yyyy hh:mm a');
+    };
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const studentId =StorageService.getItem('userInfo').studentId
+                const response = await AccountAPI.getAccountProfile(studentId, true);
+                setProfile(response.data);
+                setImagePreview(response.data.avatarUrl || '');
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+            }
+        };
+
+        fetchProfile();
+    },[page]);
     return (
         <Container sx={{ py: 6 }}>
 
@@ -278,7 +302,7 @@ export const Profile = () => {
             {/*            </Grid>*/}
             {/*        </Grid>*/}
 
-            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+            <Grid item xs={12} sm={10} md={8}  elevation={6} square>
                 <Box
                     sx={{
                         my: 8,
@@ -289,10 +313,14 @@ export const Profile = () => {
                     }}
                 >
                     <Typography component="h1" variant="h4">
-                        Sign up as mentee
+                        Your profiles
+                    </Typography>
+                    <Typography component="h1" color="text.secondary" sx={{ mt: 2 }}>
+                        {`Created Date: ${profile ? formatDate(profile.account.createdDate) : 'None'}`}
                     </Typography>
 
-                    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 5 }}>
+
+                    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 5, width: '100%' }}>
                         <TextField
                             type="file"
                             id="avatarUrl"
@@ -314,6 +342,7 @@ export const Profile = () => {
                             sx={{
                                 mt: 2,
                                 display: 'flex',
+                                justifyContent: 'left',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                             }}
@@ -321,7 +350,7 @@ export const Profile = () => {
                             <Avatar
                                 alt="Avatar"
                                 src={imagePreview}
-                                sx={{ width: 90, height: 90, border: 'solid 2px black' }}
+                                sx={{ width: 120, height: 120, border: 'solid 2px black' }}
                                 helperText="Avatar"
                             />
                         </Box>
@@ -340,7 +369,7 @@ export const Profile = () => {
                                     : () => document.getElementById('avatarUrl').click()
                             }
                         >
-                            {imageSelected ? 'Remove Avatar' : 'Please Choose Avatar'}
+                            {imageSelected ? 'Remove Avatar' : 'Change Avatar'}
                         </Button>
                         <Box
                             sx={{
@@ -348,8 +377,14 @@ export const Profile = () => {
                                 justifyContent: 'left',
                                 alignItems: 'center',
                                 gap: 2,
+
                             }}
                         >
+                            <TextField margin="normal" required fullWidth name="studentCode" label="Student Code" />
+
+                            <TextField margin="normal" required fullWidth name="university" label="University" />
+
+
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -361,6 +396,7 @@ export const Profile = () => {
                                     flex: 1,
                                 }}
                             >
+
                                 <InputLabel htmlFor="front" sx={{ fontWeight: 'bold' }}>
                                     Front Of Student Card
                                 </InputLabel>
@@ -404,6 +440,7 @@ export const Profile = () => {
                                     mt: 2,
                                     gap: 1,
                                     flex: 1,
+
                                 }}
                             >
                                 <InputLabel htmlFor="back" sx={{ fontWeight: 'bold' }}>
@@ -448,6 +485,7 @@ export const Profile = () => {
                                 justifyContent: 'left',
                                 alignItems: 'center',
                                 gap: 2,
+                                width: '100%',
                             }}
                         >
                             <TextField
@@ -481,6 +519,7 @@ export const Profile = () => {
                                 justifyContent: 'left',
                                 alignItems: 'center',
                                 gap: 2,
+                                width: '100%',
                             }}
                         >
                             <Autocomplete
@@ -503,7 +542,7 @@ export const Profile = () => {
                                 name="dob"
                                 label="Date of Birth"
                                 type="date"
-                                defaultValue="2000-05-31"
+
                                 id="dob"
                                 InputLabelProps={{
                                     shrink: true,
@@ -518,10 +557,10 @@ export const Profile = () => {
                                 justifyContent: 'left',
                                 alignItems: 'center',
                                 gap: 2,
+                                width: '100%',
                             }}
                         >
-                            <TextField margin="normal" required fullWidth name="studentCode" label="Student Code" />
-                            <TextField
+                             <TextField
                                 margin="normal"
                                 required
                                 fullWidth
@@ -544,28 +583,9 @@ export const Profile = () => {
                             type="email"
                             helperText={emailHelperText}
                         />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            helperText={passwordHelperText}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="confirmPassword"
-                            label="Confirm Password"
-                            type="password"
-                            id="confirmPassword"
-                            autoComplete="current-password"
-                            helperText={confirmPasswordError}
-                        />
+
+
+
                     </Box>
                     <Button
                         variant="contained"

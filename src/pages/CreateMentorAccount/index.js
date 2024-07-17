@@ -24,7 +24,7 @@ function CreateMentorAccount() {
                 <TextField required id="outlined-required" label="Confirm Password" sx={{ width: '50%' }} />
                 <Box
                     sx={{
-                        width: '100%',
+
                         display: 'flex',
                         justifyContent: 'right',
                         gap: 3,

@@ -58,10 +58,10 @@ const AccountAPI = {
         return axiosClient.get(url, authorizedConfig);
     },
 
-    changeStatus(id, includeAuthorization = false) {
-        const url = `/v1/account/change-status/${id}`;
+    getAccountProfile(id, includeAuthorization = false) {
+        const url = `/v1/student/${id}`;
         const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
-        return axiosClient.put(url, authorizedConfig);
+        return axiosClient.get(url, authorizedConfig);
     },
 
     changeStatus(id, includeAuthorization = false) {

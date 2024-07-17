@@ -95,7 +95,7 @@ export default function SignInSide() {
     };
 
     const handleGoogleLoginSuccess = (response) => {
-        console.log('Google login success:', response);
+        console.log('Google login success:', response.profileObj);
         // You can handle the response and navigate the user accordingly
     };
 

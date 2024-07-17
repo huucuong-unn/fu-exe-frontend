@@ -18,6 +18,7 @@ const getMenteesFromMentorAndCampaign = async (mentorId, campaignId, page = 2, l
             menteeUniversity: mentee.student.university.name,
             menteeEmail: mentee.student.account.email,
             menteeAvatarUrl: mentee.student.account.avatarUrl,
+            cvFile: mentee.cvFile,
             status: mentee.status,
             studentId: mentee.student.id,
             studentName: mentee.student.name,
@@ -28,7 +29,9 @@ const getMenteesFromMentorAndCampaign = async (mentorId, campaignId, page = 2, l
             studentAvatarUrl: mentee.student.account.avatarUrl,
             studentEmail: mentee.student.account.email,
             studentRole: mentee.student.account.role.name,
-            studentStatus: mentee.student.status
+            studentStatus: mentee.student.status,
+            frontStudentCard:  mentee.student.frontStudentCard,
+            backStudentCard:   mentee.student.backStudentCard,
 
         }));
 

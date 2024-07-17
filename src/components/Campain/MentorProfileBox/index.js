@@ -21,6 +21,7 @@ import StorageService from '~/components/StorageService/storageService'; // Impo
 import createMentorProfile from '~/API/Campain/createMentorProfile';
 import SkillAPI from '~/API/SkillAPI';
 import MentorProfileAPI from '~/API/Campain/MentorProfileAPI';
+import { format } from 'date-fns';
 
 const ProfileBox = () => {
     const theme = useTheme();
@@ -315,6 +316,7 @@ const ProfileBox = () => {
         } catch (error) {
             console.error('Error submitting form data:', error);
         } finally {
+            fetchProfiles();
             setOpenModal(false);
         }
     };
@@ -407,9 +409,8 @@ const ProfileBox = () => {
                                     </Typography>
 
                                     <Typography variant="body2" color="text.secondary">
-                                        {`Created Date: ${profile.mentorProfile.createdDate}` || 'None'}
+                                        {`Created Date: ${profile.mentorProfile.createdDate ? format(new Date(profile.mentorProfile.createdDate), 'PPpp') : 'None'}`}
                                     </Typography>
-
                                     <Typography variant="body2" color="text.secondary">
                                         {`Status: ${profile.mentorProfile.status}` || 'None'}
                                     </Typography>

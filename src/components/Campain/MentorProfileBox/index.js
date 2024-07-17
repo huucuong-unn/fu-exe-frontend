@@ -17,7 +17,6 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import getMentorProfileData from '~/API/Campain/MentorProfileAPI';
 import StorageService from '~/components/StorageService/storageService'; // Import the API function
 import createMentorProfile from '~/API/Campain/createMentorProfile';
 import SkillAPI from '~/API/SkillAPI';
@@ -59,6 +58,7 @@ const ProfileBox = () => {
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [currentSkill, setCurrentSkill] = useState('');
     const [usingProfileId, setUsingProfileId] = useState('');
+    const [currentOpendProfileId, setOpenCurrentProfileId]= useState('');
 
 
     const [skills, setSkills] = useState([]);
@@ -144,7 +144,12 @@ const ProfileBox = () => {
 
     const handleOpenModal = (index = null) => {
         if (index !== null) {
+
             const profileToEdit = profiles[index];
+            if(profileToEdit.mentorProfile.id){
+                setOpenCurrentProfileId(profileToEdit.mentorProfile.id)
+            }
+            console.log(currentOpendProfileId)
             setNewProfileInfo({
                 id: profileToEdit.mentorProfile.id,
                 createdDate: profileToEdit.mentorProfile.createdDate,
@@ -160,10 +165,16 @@ const ProfileBox = () => {
                 profilePicture: profileToEdit.mentorProfile.profilePicture,
                 status: profileToEdit.mentorProfile.status,
                 fullName: profileToEdit.mentorProfile.fullName,
-                skills: profileToEdit.mentorProfile.skills,
+                skills: profileToEdit.skills,
                 skillLevel: profileToEdit.mentorProfile.skillLevel,
             });
+            console.log(newProfileInfo)
+            console.log(skills);
+
+
             setEditIndex(index);
+
+            console.log(profileToEdit)
         } else {
             setNewProfileInfo({
                 id: '',
@@ -184,12 +195,14 @@ const ProfileBox = () => {
                 skillLevel: '',
             });
             setEditIndex(null);
+            setSelectedSkills([]);
         }
         setOpenModal(true);
     };
 
     const handleCloseModal = () => {
         setOpenModal(false);
+
     };
 
     // const handleCreateProfile = async () => {
@@ -244,38 +257,43 @@ const ProfileBox = () => {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
+        const mentorId = StorageService.getItem('userInfo').mentorId;
+        const profilePicture = "example.jpg";
+        const status = "ACTIVE";
+
+        let createMentorProfileRequest = {
+            mentorId,
+            profilePicture,
+            linkedinUrl: data.get('linkedinUrl'),
+            requirement: data.get('requirement'),
+            description: data.get('description'),
+            shortDescription: data.get('shortDescription'),
+            facebookUrl: data.get('facebookUrl'),
+            googleMeetUrl: data.get('googleMeetUrl'),
+            status,
+        };
+
+        if (currentOpendProfileId !== null) {
+            createMentorProfileRequest = {
+                ...createMentorProfileRequest,
+                mentorProfileId: currentOpendProfileId,
+            };
+        }
 
         const profileData = {
-            createMentorProfileRequest: {
-                mentorId: StorageService.getItem('userInfo').mentorId,
-                profilePicture: "example.jpg",
-
-                linkedinUrl: data.get('linkedinUrl'),
-                requirement: data.get('requirement'),
-                description: data.get('description'),
-                shortDescription: data.get('shortDescription'),
-                facebookUrl: data.get('facebookUrl'),
-                googleMeetUrl: data.get('googleMeetUrl'),
-
-
-                status: "ACTIVE"
-
-
-
-            },
+            createMentorProfileRequest,
             skills: selectedSkills,
-
         };
 
         const url = editIndex !== null
-            ? `https://tortee-463vt.ondigitalocean.app/api/https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/update`
+            ? `https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/update`
             : `https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/create-new-mentor-profile-skills`;
 
         const method = editIndex !== null ? 'PUT' : 'POST';
 
         try {
             const response = await fetch(url, {
-                method: method,
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -291,9 +309,11 @@ const ProfileBox = () => {
             }
         } catch (error) {
             console.error('Error submitting form data:', error);
+        } finally {
+            setOpenModal(false);
         }
-        setOpenModal(false);
     };
+
 
     const handleAddSkill = () => {
         if (currentSkill && !selectedSkills.includes(currentSkill)) {
@@ -519,15 +539,26 @@ const ProfileBox = () => {
                             Add Skill
                         </Button>
                     </Box>
-                    {selectedSkills.length > 0 && (
+
+                    {newProfileInfo.skills.length > 0 ? (
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                            {selectedSkills.map((skill, index) => (
-                                <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
+                            {newProfileInfo.skills.map((skill, index) => (
+                                <Chip key={index} label={skill.skill.name} onDelete={handleDeleteSkill(skill.skill.name)} />
                             ))}
                         </Box>
-                    )}
+                    ) : (
+                        selectedSkills.length > 0 && (
+                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                {selectedSkills.map((skill, index) => (
+                                    <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
+                                ))}
+                            </Box>
+                        )
+                                )}
 
-                    <Box
+
+
+                                <Box
                         sx={{
                             display: 'flex',
                             justifyContent: 'left',

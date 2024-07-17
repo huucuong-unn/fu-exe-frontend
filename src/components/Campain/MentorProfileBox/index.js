@@ -65,30 +65,18 @@ const ProfileBox = () => {
     const profilesPerPage = 6;
     const totalPages = Math.ceil(profiles.length / profilesPerPage);
 
-    useEffect(() => {
-        // Fetch skills list from API
-        const fetchSkills = async () => {
-            try {
-                const skillData = await SkillAPI.getAll();
-                setSkills(skillData);
-                console.log(skillData);
-            } catch (error) {
-                console.error('Error fetching skills:', error);
-            }
-        };
+    // Fetch profiles from the API
+    const fetchProfiles = async () => {
+        try {
+            const userInfo = StorageService.getItem('userInfo');
+            if (userInfo && userInfo.mentorId) {
+                const profileResponse = await MentorProfileAPI.getAllMentorProfiles(userInfo.mentorId);
 
-        // Fetch profiles from the API
-        const fetchProfiles = async () => {
-            try {
-                const userInfo = StorageService.getItem('userInfo');
-                if (userInfo && userInfo.mentorId) {
-                    const profileResponse = await MentorProfileAPI.getAllMentorProfiles(userInfo.mentorId);
-
-                    if (profileResponse && profileResponse.length > 0) {
-                        setProfiles(profileResponse);
+                if (profileResponse && profileResponse.length > 0) {
+                    setProfiles(profileResponse);
 
 
-                        const usingProfile = profileResponse.find(profile => profile.mentorProfile.status === 'using'|| profile.mentorProfile.status === 'USING');
+                    const usingProfile = profileResponse.find(profile => profile.mentorProfile.status === 'using'|| profile.mentorProfile.status === 'USING');
                     if (usingProfile) {
                         setUsingProfileId(usingProfile.mentorProfile.id);
                         console.log(usingProfile)
@@ -98,17 +86,32 @@ const ProfileBox = () => {
                     console.error('No profiles found');
                 }
 
-                } else {
-                    console.error('Mentor ID not found in local storage');
-                }
-            } catch (error) {
-                console.error('Error fetching profiles:', error);
+            } else {
+                console.error('Mentor ID not found in local storage');
             }
-        };
+        } catch (error) {
+            console.error('Error fetching profiles:', error);
+        }
+    };
+
+    const fetchSkills = async () => {
+        try {
+            const skillData = await SkillAPI.getAll();
+            setSkills(skillData);
+            console.log(skillData);
+        } catch (error) {
+            console.error('Error fetching skills:', error);
+        }
+    };
+
+    useEffect(() => {
+        // Fetch skills list from API
 
         fetchSkills();
         fetchProfiles();
     }, []);
+
+
 
     const handleProfileClick = async (newProfileId) => {
         if (usingProfileId) {
@@ -129,10 +132,12 @@ const ProfileBox = () => {
                 const result = await response.json();
                 console.log('Profile swapped successfully:', result);
                 setSelectedProfileId(newProfileId);
-                setUsingProfileId(newProfileId); // Update the using profile ID after swap
+                setUsingProfileId(newProfileId);
+                fetchProfiles();
 
             } catch (error) {
                 console.error('Error swapping profiles:', error);
+                fetchProfiles();
             }
         } else {
             console.error('No "USING" profile found to swap');
@@ -320,6 +325,7 @@ const ProfileBox = () => {
             console.log(currentSkill);
             setSelectedSkills([...selectedSkills, currentSkill]);
             setCurrentSkill('');
+
         }
     };
 
@@ -378,9 +384,10 @@ const ProfileBox = () => {
                             <Card
                                 sx={{
                                     border: profile.mentorProfile.status === 'USING' ? '2px solid green' : 'none',
-                                    cursor: 'pointer',
+                                    cursor: profile.mentorProfile.status === 'USING' ? 'not-allowed' : 'pointer',
+                                    pointerEvents: profile.mentorProfile.status === 'USING' ? 'none' : 'auto',
                                 }}
-                                onClick={() => handleProfileClick(profile.mentorProfile.id)}
+                                onDoubleClick={() => handleProfileClick(profile.mentorProfile.id)}
                             >
                                 <CardContent>
                                     <Box display="flex" alignItems="center" mb={2}>
@@ -388,9 +395,11 @@ const ProfileBox = () => {
                                         <Box ml={2}>
                                             <Typography variant="h6">{profile.mentorProfile.fullName}</Typography>
                                         </Box>
-                                        <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
-                                            <EditIcon />
-                                        </IconButton>
+                                        {profile.mentorProfile.status === 'ACTIVE'  && (
+                                            <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
+                                                <EditIcon />
+                                            </IconButton>
+                                        )}
                                     </Box>
 
                                     <Typography variant="body1" gutterBottom>

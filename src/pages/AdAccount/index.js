@@ -30,6 +30,7 @@ import { styled } from '@mui/system';
 
 import { useState, useEffect } from 'react';
 import AccountAPI from '~/API/AccountAPI';
+import { format } from 'date-fns';
 
 const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
     ({ theme }) => ({
@@ -190,6 +191,10 @@ function AdAccount() {
     const [universities, setUniversities] = useState([]);
     const [imageSelected, setImageSelected] = useState(false);
     const [isRejectModal, setIsRejectModal] = useState(false);
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return format(date, 'dd MMMM , yyyy ');
+    };
     const [searchParams, setSearchParams] = useState({
         userName: '',
         email: '',
@@ -393,7 +398,7 @@ function AdAccount() {
                             maxHeight: '700px',
                         }}
                     >
-                        {account.status == 'PENDING' ? (
+                        {account.status === 'PENDING' ? (
                             <Box
                                 sx={{
                                     position: 'absolute',
@@ -426,7 +431,7 @@ function AdAccount() {
                         >
                             <Avatar src={IMAGE_HOST + account.avatarUrl} sx={{ width: 80, height: 80 }} />
                         </Box>
-                        {account.role.name === 'student' ? (
+                        {account.role.name === 'student' || account.role.name === 'STUDENT' ? (
                             <>
                                 <Card
                                     variant="outlined"
@@ -475,7 +480,7 @@ function AdAccount() {
                                                 { label: 'Email', value: account.email },
                                                 { label: 'Full Name', value: account.student.name },
                                                 { label: 'University', value: account.student.university.name },
-                                                { label: 'Day Of Birth', value: account.student.dob },
+                                                { label: 'Day Of Birth',value: formatDate(account.student.dob) },
                                                 { label: 'Student Code', value: account.student.studentCode },
                                             ].map((item, index) => (
                                                 <Box
@@ -534,13 +539,13 @@ function AdAccount() {
                                         </Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                                             <img
-                                                height={150}
+                                                height={300}
                                                 width={300}
                                                 src={`${IMAGE_HOST}${account.student.frontStudentCard}`}
                                                 alt="Student Card"
                                             />
                                             <img
-                                                height={150}
+                                                height={300}
                                                 width={300}
                                                 src={`${IMAGE_HOST}${account.student.backStudentCard}`}
                                                 alt="Student Card"
@@ -605,7 +610,7 @@ function AdAccount() {
                                                 }}
                                             >
                                                 <Typography color="gray" variant="h7">
-                                                    Compnay Name
+                                                    Company Name
                                                 </Typography>
                                                 <Typography color="black" variant="h7" fontWeight="bold">
                                                     {account.company.name}

@@ -108,8 +108,9 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
         } else {
             rejectMentee(selectedMentee.id, message);
         }
-        await fetchMentees();
-        await fetchMenteesAp();
+
+        fetchMenteesAp();
+        fetchMentees();
         handleClose();
     };
 

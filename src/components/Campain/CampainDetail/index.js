@@ -694,7 +694,7 @@ const CampaignDetail = () => {
                                 <Typography variant="body1"> Email: {selectedMentee.menteeEmail}</Typography>
                                 <Typography variant="body1"> University: {selectedMentee.menteeUniversity}</Typography>
                             </Grid>
-                            <Grid  item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
+                            <Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
                                 <Box
                                     sx={{
                                         marginLeft: 2,
@@ -722,10 +722,6 @@ const CampaignDetail = () => {
                                         alt="Student Card"
                                     />
                                 </Box>
-
-
-
-
                             </Grid>
                             {/*/!* View CV button *!/*/}
                             {/*<Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>*/}

@@ -20,7 +20,7 @@ export const ShortMentorInfo = ({
     mentorId,
 }) => {
     const navigate = useNavigate();
-
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
     const handleApply = () => {
         navigate('/user/apply', { state: { mentorId: mentorId } });
     };
@@ -72,7 +72,11 @@ export const ShortMentorInfo = ({
                                 gap: 5,
                             }}
                         >
-                            <Avatar alt="avatar image" src={profilePicture} sx={{ width: 150, height: 150 }} />
+                            <Avatar
+                                alt="avatar image"
+                                src={IMGAGE_HOST + profilePicture}
+                                sx={{ width: 150, height: 150 }}
+                            />
                             <Chip
                                 icon={<BoltIcon />}
                                 label="Top Mentor"

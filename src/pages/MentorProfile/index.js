@@ -13,6 +13,7 @@ export const MentorProfile = () => {
     const { mentorId } = useParams();
     const [mentor, setMentor] = useState({});
     const [similarMentor, setSimilarMentor] = useState([]);
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     useEffect(() => {
         const getMentorByMentorProfileId = async () => {
@@ -60,7 +61,7 @@ export const MentorProfile = () => {
                 {mentor && (
                     <ShortMentorInfo
                         username={mentor?.mentorProfile?.mentorDTO?.fullName}
-                        profilePicture={mentor?.mentorProfile?.profilePicture}
+                        profilePicture={mentor?.mentorProfile?.mentorDTO.account.avatarUrl}
                         shortDescription={mentor?.mentorProfile?.shortDescription}
                         linkedinURL={mentor?.mentorProfile?.linkedinUrl}
                         facebookURL={mentor?.mentorProfile?.facebookUrl}
@@ -70,8 +71,6 @@ export const MentorProfile = () => {
                     />
                 )}
                 {mentor && <MentorAbout description={mentor?.mentorProfile?.description} />}
-                <Divider />
-                <MentorFeedback />
                 <Divider />
                 {mentor && <MentorSkill skills={mentor?.skills} />}
                 <Divider />

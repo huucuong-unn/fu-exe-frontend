@@ -33,7 +33,7 @@ function CompanyDetails() {
     const [company, setCompany] = useState({});
     const [similarMentor, setSimilarMentor] = useState([]);
     const [skills, setSkills] = useState([]);
-
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
@@ -141,7 +141,11 @@ function CompanyDetails() {
                             }}
                         >
                             <Box>
-                                <Avatar alt="avatar image" src={company.avatarUrl} sx={{ width: 150, height: 150 }} />
+                                <Avatar
+                                    alt="avatar image"
+                                    src={IMGAGE_HOST + company.account.avatarUrl}
+                                    sx={{ width: 150, height: 150 }}
+                                />
                             </Box>
                             <Box sx={{ textTransform: 'none', width: '100%' }}>
                                 <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>

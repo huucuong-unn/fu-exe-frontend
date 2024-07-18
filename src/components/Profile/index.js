@@ -1,4 +1,4 @@
-import { Box, Button, Container, Grid, TextField, Typography, Avatar, InputLabel } from '@mui/material';
+import { Box, Button, Container, Grid, TextField, Typography, Avatar, InputLabel,CircularProgress } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -9,6 +9,7 @@ import StorageService from '~/components/StorageService/storageService';
 
 export const Profile = () => {
     const [profiles, setProfiles] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [emailError, setEmailError] = useState(false);
     const [emailHelperText, setEmailHelperText] = useState('');
     const [dobError, setDobError] = useState(false);
@@ -39,14 +40,15 @@ export const Profile = () => {
                 const responses = await AccountAPI.getAccountProfile(studentId);
                 setProfiles(responses);
                 console.log(responses);
-
             } catch (error) {
                 console.error('Error fetching profile:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchProfile();
-    },[])
+    }, []);
 
 
     const validateEmail = (email) => {
@@ -219,10 +221,12 @@ export const Profile = () => {
 
     return (
         <Container sx={{ py: 6 }}>
-
-
-
-            <Grid item xs={12} sm={10} md={8} elevation={6} square>
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <Grid item xs={12} sm={10} md={8} elevation={6} square>
                 <Box
                     sx={{
                         my: 8,
@@ -269,7 +273,7 @@ export const Profile = () => {
                         >
                             <Avatar
                                 alt="Avatar"
-                                // src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.account.avatarUrl}`}
+                                src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.account.avatarUrl}`}
                                 sx={{ width: 200, height: 200, border: 'solid 2px black' }}
                                 helperText="Avatar"
                             />
@@ -301,11 +305,11 @@ export const Profile = () => {
                             }}
                         >
                             <TextField margin="normal" required fullWidth name="studentCode" label="Student Code"
-                                       // focused value={profiles.studentCode}
+                                        focused value={profiles.studentCode}
                                 />
 
-                            <TextField margin="normal" required fullWidth name="university" label="University" focused
-                                       // value={profiles.university.name}
+                            <TextField margin="normal" required fullWidth name="university" label="University"
+                                       focused value={profiles.university.name}
                             />
 
 
@@ -333,7 +337,7 @@ export const Profile = () => {
                                 helperText={usernameHelperText}
                                 sx={{ flex: 1 }}
                                 focused
-                                // value={profiles.account.username}
+                                value={profiles.account.username}
                             />
                             <TextField
                                 margin="normal"
@@ -344,7 +348,7 @@ export const Profile = () => {
                                 name="name"
                                 autoComplete="name"
                                 focused
-                                // value={profiles.name}
+                                 value={profiles.name}
                                 sx={{ flex: 1 }}
                             />
                         </Box>
@@ -367,8 +371,8 @@ export const Profile = () => {
                                 name="dob"
                                 label="Date of Birth"
                                 type="date"
-                                // focused
-                                // value={profiles.student.dob}
+                                 focused
+                                 value={profiles.dob}
                                 id="dob"
                                 InputLabelProps={{
                                     shrink: true,
@@ -397,8 +401,8 @@ export const Profile = () => {
                                 name="email"
                                 autoComplete="email"
                                 type="email"
-                                // focused
-                                // value={profiles.account.email}
+                                 focused
+                                 value={profiles.account.email}
                                 helperText={emailHelperText}
                             />
                         </Box>
@@ -454,7 +458,7 @@ export const Profile = () => {
                                 </Button>
 
                                 <img
-                                    // src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.frontStudentCard}`}
+                                    src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.frontStudentCard}`}
                                     alt="Front of Student Card"
                                     style={{ marginTop: '10px', width: 300, height: 300 }}
                                 />
@@ -500,7 +504,7 @@ export const Profile = () => {
                                 </Button>
 
                                 <img
-                                    // src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.backStudentCard}`}
+                                     src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${profiles.backStudentCard}`}
                                     alt="Back of Student Card"
                                     style={{ marginTop: '10px', width: 300, height: 300 }}
                                 />
@@ -526,6 +530,7 @@ export const Profile = () => {
                     </Button>
                 </Box>
             </Grid>
+                )}
         </Container>
     );
 };

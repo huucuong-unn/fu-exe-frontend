@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import {
     Box,
     Typography,
@@ -12,24 +11,42 @@ import {
 } from '@mui/material';
 import { BarChart, LineChart, axisClasses } from '@mui/x-charts';
 
+const chartSettingForBarChart = {
+    xAxis: [{ label: 'application' }],
+    width: 600,
+    height: 400,
+};
+
+const datasetForBarChar = [
+    // Data truncated for brevity
+    { london: 59, paris: 57, newYork: 86, seoul: 21, month: 'Jan' },
+    // More data...
+];
+
+const chartSetting = {
+    yAxis: [{ label: '' }],
+    width: 600,
+    height: 400,
+    sx: {
+        [`.${axisClasses.left} .${axisClasses.label}`]: {
+            transform: 'translate(-20px, 0)',
+        },
+    },
+};
+
+const dataset = [
+    { london: 59, paris: 57, newYork: 86, seoul: 21, month: 'Spring 2024' },
+    // More data...
+];
+
+const rows = [
+    { name: 1, calories: 159, fat: 6.0 },
+    // More data...
+];
+
+const valueFormatter = (value) => `${value}`;
+
 function AdDashboard() {
-    const [topCompanies, setTopCompanies] = useState([]);
-    const [applicationsByMonth, setApplicationsByMonth] = useState([]);
-    const [monthlyRevenue, setMonthlyRevenue] = useState([]);
-
-    useEffect(() => {
-        fetch('https://tortee-463vt.ondigitalocean.app/api/v1/dashboard')
-            .then(response => response.json())
-            .then(data => {
-                setTopCompanies(data.topFiveCompany);
-                setApplicationsByMonth(data.applicationByMonth);
-                setMonthlyRevenue(data.monthlyRevenue);
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }, []);
-
-    const valueFormatter = (value) => `${value}`;
-
     return (
         <Box
             sx={{
@@ -45,17 +62,21 @@ function AdDashboard() {
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, width: '100%' }}>
                 <ChartBox title="Mentorship Campaign Participation - Quarterly Breakdown">
                     <BarChart
-                        dataset={monthlyRevenue.map(data => ({ month: data.month, revenue: data.revenue }))}
+                        dataset={dataset}
                         xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
-                        series={[{ dataKey: 'revenue', label: 'Revenue', valueFormatter }]}
+                        series={[
+                            { dataKey: 'london', label: 'Mentee', valueFormatter },
+                            { dataKey: 'paris', label: 'Mentor', valueFormatter },
+                            { dataKey: 'newYork', label: 'Company', valueFormatter },
+                        ]}
                         {...chartSetting}
                     />
                 </ChartBox>
 
                 <ChartBox title="Monthly Revenue - 2024">
                     <LineChart
-                        xAxis={[{ data: monthlyRevenue.map(data => data.month) }]}
-                        series={[{ data: monthlyRevenue.map(data => data.revenue) }]}
+                        xAxis={[{ data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] }]}
+                        series={[{ data: [11, 5.5, 2, 8.5, 1.5, 5, 11, 5.5, 2, 8.5, 1.5, 5] }]}
                         width={600}
                         height={400}
                     />
@@ -63,9 +84,9 @@ function AdDashboard() {
 
                 <ChartBox title="Student Applications by Month">
                     <BarChart
-                        dataset={applicationsByMonth.map(data => ({ month: data.month, applicationCount: data.applicationCount }))}
+                        dataset={datasetForBarChar}
                         yAxis={[{ scaleType: 'band', dataKey: 'month' }]}
-                        series={[{ dataKey: 'applicationCount', label: 'Application', valueFormatter }]}
+                        series={[{ dataKey: 'seoul', label: 'Application', valueFormatter }]}
                         layout="horizontal"
                         grid={{ vertical: true }}
                         {...chartSettingForBarChart}
@@ -96,11 +117,11 @@ function AdDashboard() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {topCompanies.map((company, index) => (
-                                    <TableRow key={company.companyName} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                        <TableCell component="th" scope="row">{index + 1}</TableCell>
-                                        <TableCell align="left">{company.companyName}</TableCell>
-                                        <TableCell align="left">{company.applicationCount}</TableCell>
+                                {rows.map((row) => (
+                                    <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                        <TableCell component="th" scope="row">{row.name}</TableCell>
+                                        <TableCell align="left">{row.calories}</TableCell>
+                                        <TableCell align="left">{row.fat}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -131,22 +152,5 @@ const ChartBox = ({ title, children }) => (
         </Box>
     </Box>
 );
-
-const chartSettingForBarChart = {
-    xAxis: [{ label: 'application' }],
-    width: 600,
-    height: 400,
-};
-
-const chartSetting = {
-    yAxis: [{ label: '' }],
-    width: 600,
-    height: 400,
-    sx: {
-        [`.${axisClasses.left} .${axisClasses.label}`]: {
-            transform: 'translate(-20px, 0)',
-        },
-    },
-};
 
 export default AdDashboard;

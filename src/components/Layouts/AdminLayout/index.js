@@ -108,11 +108,11 @@ export function NavbarAdmin() {
                     <MenuIcon />
                 </IconButton>
 
-                <IconButton color="inherit" aria-label={notificationsLabel(100)} onClick={handleOpenUserMenu}>
-                    <Badge badgeContent={100} color="secondary">
-                        <NotificationsIcon />
-                    </Badge>
-                </IconButton>
+                {/*<IconButton color="inherit" aria-label={notificationsLabel(100)} onClick={handleOpenUserMenu}>*/}
+                {/*    <Badge badgeContent={100} color="secondary">*/}
+                {/*        <NotificationsIcon />*/}
+                {/*    </Badge>*/}
+                {/*</IconButton>*/}
                 <Menu
                     sx={{ mt: '45px' }}
                     id="menu-appbar"

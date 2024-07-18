@@ -15,7 +15,7 @@ import {
     Select,
     Typography,
     Pagination,
-    PaginationItem
+    PaginationItem,
 } from '@mui/material';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -161,7 +161,9 @@ const CampaignList = () => {
                                             sx={{
                                                 color: (theme) => {
                                                     if (theme.palette.mode === 'light') {
-                                                        return selectedItemIndex === index ? 'primary.main' : 'grey.300';
+                                                        return selectedItemIndex === index
+                                                            ? 'primary.main'
+                                                            : 'grey.300';
                                                     }
                                                     return selectedItemIndex === index ? 'primary.main' : 'grey.700';
                                                 },
@@ -192,11 +194,13 @@ const CampaignList = () => {
                                                     day: '2-digit',
                                                     month: '2-digit',
                                                     year: 'numeric',
-                                                })} - {new Date(campaign.endDate).toLocaleDateString('en-GB', {
-                                                day: '2-digit',
-                                                month: '2-digit',
-                                                year: 'numeric',
-                                            })}
+                                                })}{' '}
+                                                -{' '}
+                                                {new Date(campaign.endDate).toLocaleDateString('en-GB', {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric',
+                                                })}
                                             </Typography>
                                             <Typography
                                                 color="text.secondary"
@@ -213,24 +217,23 @@ const CampaignList = () => {
                                                     color={
                                                         campaign.status === 'Company-apply'
                                                             ? 'primary'
-                                                            : campaign.status === 'Mentee-apply'
-                                                                ? 'secondary'
-                                                                : campaign.status === 'Tranning'
-                                                                    ? 'success'
-                                                                    : campaign.status === 'Close'
-                                                                        ? 'error'
-                                                                        : 'default'
+                                                            : campaign.status === 'Student-apply'
+                                                            ? 'secondary'
+                                                            : campaign.status === 'Tranning'
+                                                            ? 'success'
+                                                            : campaign.status === 'Close'
+                                                            ? 'error'
+                                                            : 'default'
                                                     }
                                                 />
                                             </CardContent>
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    sx={{ width: { lg: '40%', md: '70%', xs: '80%' } }}
-                                                >
-                                                    View Campaign Detail
-                                                </Button>
-
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                sx={{ width: { lg: '40%', md: '70%', xs: '80%' } }}
+                                            >
+                                                View Campaign Detail
+                                            </Button>
                                         </Box>
                                     </Box>
                                     <Box

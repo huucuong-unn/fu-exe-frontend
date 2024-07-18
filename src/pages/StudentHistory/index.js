@@ -175,14 +175,16 @@ function StudentHistory() {
             </Typography>
             <Tabs value={value} onChange={handleChange} aria-label="icon label tabs example">
                 <Tab icon={<PaymentIcon />} label="PAYMENTS" />
-                {userInfo.role === 'student' ? (
-                    <>
-                        <Tab icon={<SchoolIcon />} label="APPLICATIONS" />
-                        <Tab icon={<SchoolIcon />} label="APPLYS" />
-                    </>
-                ) : (
-                    ''
-                )}
+                <Tab
+                    disabled={userInfo.role !== 'student'}
+                    icon={userInfo.role === 'student' ? <SchoolIcon /> : null}
+                    label={userInfo.role === 'student' ? 'APPLICATIONS' : null}
+                />
+                <Tab
+                    disabled={userInfo.role !== 'student'}
+                    icon={userInfo.role === 'student' ? <SchoolIcon /> : null}
+                    label={userInfo.role === 'student' ? 'APPLYS' : null}
+                />
             </Tabs>
             <CustomTabPanel value={value} index={0}>
                 <TableContainer component={Paper}>

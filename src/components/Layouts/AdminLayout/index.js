@@ -8,6 +8,9 @@ import MuiDrawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import Logout from '@mui/icons-material/Logout';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import { useNavigate } from 'react-router-dom';
 
 import { MainListItems, SecondaryListItems } from '~/components/listItems';
 
@@ -138,6 +141,15 @@ export function NavbarAdmin() {
 }
 
 export function Sidebar() {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        // Remove user information from localStorage
+        localStorage.removeItem('userInfo');
+
+        // Redirect to the sign-up page
+        navigate('/admin/sign-in');
+    };
     const [open, setOpen] = useState(true);
     const theme = useTheme();
 
@@ -169,6 +181,12 @@ export function Sidebar() {
                 <MainListItems />
                 <Divider sx={{ my: 1 }} />
             </List>
+            <MenuItem onClick={handleLogout}>
+                <ListItemIcon>
+                    <Logout fontSize="small" />
+                </ListItemIcon>
+                Logout
+            </MenuItem>{' '}
         </Drawer>
     );
 }

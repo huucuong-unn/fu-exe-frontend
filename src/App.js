@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { adminRoutes, companyRoutes, publicRoutes } from '~/routes';
+import { adminRoutes, companyRoutes, publicRoutes, studentRoutes } from '~/routes';
 import DefaultLayout from './components/Layouts/DefaultLayout';
 import { Fragment, useEffect } from 'react';
 import { generateToken, messaging } from './firebase';
@@ -112,6 +112,29 @@ function App() {
                     </Route>
                     <Route element={<ProtectedRoutes roleName={'mentor'} />}>
                         {companyRoutes.map((route, index) => {
+                            const Page = route.component;
+                            let Layout = DefaultLayout;
+
+                            if (route.layout) {
+                                Layout = route.layout;
+                            } else if (route.layout === null) {
+                                Layout = Fragment;
+                            }
+                            return (
+                                <Route
+                                    key={index}
+                                    path={route.path}
+                                    element={
+                                        <Layout>
+                                            <Page />
+                                        </Layout>
+                                    }
+                                />
+                            );
+                        })}
+                    </Route>
+                    <Route element={<ProtectedRoutes roleName={'student'} />}>
+                        {studentRoutes.map((route, index) => {
                             const Page = route.component;
                             let Layout = DefaultLayout;
 

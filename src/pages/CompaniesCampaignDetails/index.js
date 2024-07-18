@@ -36,7 +36,7 @@ import {
 import { styled } from '@mui/material/styles';
 
 function CompaniesCampaignDetail() {
-    const steps = ['COMPANY_APPLY', 'MENTEE_APPLY', 'TRAINING', 'CLOSED'];
+    const steps = ['COMPANY_APPLY', 'STUDENT_APPLY', 'TRAINING', 'CLOSED'];
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
@@ -525,7 +525,6 @@ function CompaniesCampaignDetail() {
                                                 width: '100%',
                                                 position: 'relative',
                                             }}
-                                            onClick={() => handleItemClick()}
                                         >
                                             <Box
                                                 sx={{
@@ -589,26 +588,6 @@ function CompaniesCampaignDetail() {
                                                             }}
                                                             size="medium"
                                                         />
-                                                        <Button
-                                                            variant="contained"
-                                                            sx={{
-                                                                position: 'absolute',
-                                                                top: 0,
-                                                                right: 0,
-                                                                mt: 3,
-                                                                mr: 4,
-                                                                backgroundColor: '#4CAF50',
-                                                            }}
-                                                            onClick={(event) => {
-                                                                event.stopPropagation(); // Prevent click event from propagating to parent elements
-                                                                handleRowClick({
-                                                                    mentorID: mentor.id,
-                                                                    name: mentor.name,
-                                                                });
-                                                            }}
-                                                        >
-                                                            Edit
-                                                        </Button>
                                                     </Box>
                                                     <Typography
                                                         color="text.secondary"

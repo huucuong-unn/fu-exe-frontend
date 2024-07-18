@@ -30,6 +30,7 @@ import { styled } from '@mui/system';
 
 import { useState, useEffect } from 'react';
 import AccountAPI from '~/API/AccountAPI';
+import { format } from 'date-fns';
 
 const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />)(
     ({ theme }) => ({
@@ -190,6 +191,16 @@ function AdAccount() {
     const [universities, setUniversities] = useState([]);
     const [imageSelected, setImageSelected] = useState(false);
     const [isRejectModal, setIsRejectModal] = useState(false);
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return format(date, 'dd MMMM , yyyy ');
+    };
+    const [searchParams, setSearchParams] = useState({
+        userName: '',
+        email: '',
+        role: '',
+        status: '',
+    });
     const [params, setParams] = useState({
         userName: '' || null,
         email: '' || null,
@@ -228,10 +239,19 @@ function AdAccount() {
         setMessage(null);
     };
 
-    const handleConfirmRejectModal = () => {
+    const handleConfirmRejectModal = async () => {
         // Handle confirm logic
-        setIsRejectModal(false);
-        setMessage(null);
+        try {
+            console.log(selectedAccountPending);
+            await AccountAPI.rejectAccount(selectedAccountPending.id, message);
+            await fetchData();
+            setIsRejectModal(false);
+            setSelectedAccountPending(null);
+            setMessage(null);
+        } catch (error) {
+            setIsRejectModal(false);
+            setMessage(null);
+        }
     };
 
     const handleOpenCreateModal = () => {
@@ -394,7 +414,7 @@ function AdAccount() {
                             maxHeight: '700px',
                         }}
                     >
-                        {account.status == 'PENDING' ? (
+                        {account.status === 'PENDING' ? (
                             <Box
                                 sx={{
                                     position: 'absolute',
@@ -427,7 +447,7 @@ function AdAccount() {
                         >
                             <Avatar src={IMAGE_HOST + account.avatarUrl} sx={{ width: 80, height: 80 }} />
                         </Box>
-                        {account.role.name === 'student' ? (
+                        {account.role.name === 'student' || account.role.name === 'STUDENT' ? (
                             <>
                                 <Card
                                     variant="outlined"
@@ -476,7 +496,7 @@ function AdAccount() {
                                                 { label: 'Email', value: account.email },
                                                 { label: 'Full Name', value: account.student.name },
                                                 { label: 'University', value: account.student.university.name },
-                                                { label: 'Day Of Birth', value: account.student.dob },
+                                                { label: 'Day Of Birth', value: formatDate(account.student.dob) },
                                                 { label: 'Student Code', value: account.student.studentCode },
                                             ].map((item, index) => (
                                                 <Box
@@ -535,13 +555,13 @@ function AdAccount() {
                                         </Box>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                                             <img
-                                                height={150}
+                                                height={300}
                                                 width={300}
                                                 src={`${IMAGE_HOST}${account.student.frontStudentCard}`}
                                                 alt="Student Card"
                                             />
                                             <img
-                                                height={150}
+                                                height={300}
                                                 width={300}
                                                 src={`${IMAGE_HOST}${account.student.backStudentCard}`}
                                                 alt="Student Card"
@@ -606,7 +626,7 @@ function AdAccount() {
                                                 }}
                                             >
                                                 <Typography color="gray" variant="h7">
-                                                    Compnay Name
+                                                    Company Name
                                                 </Typography>
                                                 <Typography color="black" variant="h7" fontWeight="bold">
                                                     {account.company.name}
@@ -965,7 +985,7 @@ function AdAccount() {
                             rows={4}
                             variant="outlined"
                             value={message}
-                            onChange={(e) => setMessage()}
+                            onChange={(e) => setMessage(e.target.value)}
                             sx={{ mt: 2 }}
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
@@ -1130,6 +1150,10 @@ function AdAccount() {
                                     {account.status === 'PENDING' ? (
                                         <Typography color="orange" fontWeight="bold">
                                             Pending
+                                        </Typography>
+                                    ) : account.status === 'REJECTED' ? (
+                                        <Typography color="red" fontWeight="bold">
+                                            Rejected
                                         </Typography>
                                     ) : (
                                         <FormControlLabel

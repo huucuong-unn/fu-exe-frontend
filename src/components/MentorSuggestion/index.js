@@ -43,6 +43,7 @@ export default function MentorSuggestion() {
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [mentors, setMentors] = useState([]);
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -161,10 +162,14 @@ export default function MentorSuggestion() {
                                       }}
                                   >
                                       <CardHeader
-                                          avatar={<Avatar src={mentor?.mentorProfile?.profilePicture} />}
+                                          avatar={
+                                              <Avatar
+                                                  src={IMGAGE_HOST + mentor?.mentorProfile?.mentorDTO.account.avatarUrl}
+                                              />
+                                          }
                                           title={
                                               <Typography fontWeight="bold">
-                                                  {mentor?.mentorProfile?.mentorDTO?.account?.username}
+                                                  {mentor?.mentorProfile?.mentorDTO?.fullName}
                                               </Typography>
                                           }
                                           subheader={mentor?.mentorProfile?.shortDescription}

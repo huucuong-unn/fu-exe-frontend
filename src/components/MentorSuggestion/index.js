@@ -175,7 +175,7 @@ export default function MentorSuggestion() {
                                           subheader={mentor?.mentorProfile?.shortDescription}
                                       />
                                       <img
-                                          src={mentor?.mentorProfile?.mentorDTO?.company?.avatarUrl}
+                                          src={IMGAGE_HOST + mentor?.mentorProfile?.mentorDTO?.company?.avatarUrl}
                                           alt={`Logo ${index + 1}`}
                                           style={logoStyle}
                                       />

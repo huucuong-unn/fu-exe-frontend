@@ -159,6 +159,7 @@ export default function Mentors() {
         page: 1,
         limit: 10,
     });
+
     const [totalPage, setTotalPage] = useState(0);
     const [countMentor, setCountMentor] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState('');
@@ -210,6 +211,7 @@ export default function Mentors() {
 
         filterMentors();
     }, [searchKeyword]);
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     return (
         <Container id="mentors" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
@@ -286,7 +288,7 @@ export default function Mentors() {
                                             <Box>
                                                 <Avatar
                                                     alt="avatar image"
-                                                    src={mentor.mentorProfile.profilePicture}
+                                                    src={IMGAGE_HOST + mentor.mentorProfile.profilePicture}
                                                     sx={{ width: 150, height: 150 }}
                                                 />
                                             </Box>

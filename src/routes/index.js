@@ -65,6 +65,7 @@ const publicRoutes = [
 
     //Payment
     { path: '/payment', component: Payment },
+    { path: '/admin/account', component: AdAccount, layout: AdminLayout },
 
     { path: '/NotAuthoried', component: NotAuthorized, layout: null },
     { path: '/test', component: UserProfilesTest, layout: null },
@@ -75,7 +76,6 @@ const adminRoutes = [
     { path: '/admin/mentee', component: AdMentee, layout: AdminLayout },
     { path: '/admin/mentor', component: AdMentor, layout: AdminLayout },
     { path: '/admin/campaign', component: AdCampaign, layout: AdminLayout },
-    { path: '/admin/account', component: AdAccount, layout: AdminLayout },
     { path: '/admin/orders', component: AdOrder, layout: AdminLayout },
     { path: '/admin/dashboard', component: AdDashboard, layout: AdminLayout },
 ];

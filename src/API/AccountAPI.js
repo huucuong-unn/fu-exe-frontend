@@ -84,6 +84,11 @@ const AccountAPI = {
         const authorizedConfig = this.addAuthorizationHeader(data, includeAuthorization);
         return axiosClient.post(url, authorizedConfig);
     },
+    getPoint(id, includeAuthorization = false) {
+        const url = `/v1/account/point/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
+    },
 };
 
 export default AccountAPI;

@@ -232,10 +232,19 @@ function AdAccount() {
         setMessage(null);
     };
 
-    const handleConfirmRejectModal = () => {
+    const handleConfirmRejectModal = async () => {
         // Handle confirm logic
-        setIsRejectModal(false);
-        setMessage(null);
+        try {
+            console.log(selectedAccountPending);
+            await AccountAPI.rejectAccount(selectedAccountPending.id, message);
+            await fetchData();
+            setIsRejectModal(false);
+            setSelectedAccountPending(null);
+            setMessage(null);
+        } catch (error) {
+            setIsRejectModal(false);
+            setMessage(null);
+        }
     };
 
     const handleOpenCreateModal = () => {
@@ -969,7 +978,7 @@ function AdAccount() {
                             rows={4}
                             variant="outlined"
                             value={message}
-                            onChange={(e) => setMessage()}
+                            onChange={(e) => setMessage(e.target.value)}
                             sx={{ mt: 2 }}
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
@@ -1134,6 +1143,10 @@ function AdAccount() {
                                     {account.status === 'PENDING' ? (
                                         <Typography color="orange" fontWeight="bold">
                                             Pending
+                                        </Typography>
+                                    ) : account.status === 'REJECTED' ? (
+                                        <Typography color="red" fontWeight="bold">
+                                            Rejected
                                         </Typography>
                                     ) : (
                                         <FormControlLabel

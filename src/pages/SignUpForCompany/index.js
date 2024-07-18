@@ -441,15 +441,13 @@ function SignUpForCompany() {
                                 <Autocomplete
                                     disablePortal
                                     fullWidth
-                                    defaultValue=""
                                     id="country"
                                     name="country"
-                                    options={countries}
                                     loading={loading}
+                                    options={countries}
                                     getOptionLabel={(option) => option.name}
-                                    value={formValues.country}
-
-                                    onChange={(event, newValue) => setFormValues({ ...formValues, country: newValue })}
+                                    value={formValues.country ? countries.find(country => country.name === formValues.country) : null}
+                                    onChange={(event, newValue) => setFormValues({ ...formValues, country: newValue ? newValue.name : '' })}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}

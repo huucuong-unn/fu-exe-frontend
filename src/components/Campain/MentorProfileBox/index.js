@@ -17,11 +17,11 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
-import getMentorProfileData from '~/API/Campain/MentorProfileAPI';
 import StorageService from '~/components/StorageService/storageService'; // Import the API function
 import createMentorProfile from '~/API/Campain/createMentorProfile';
 import SkillAPI from '~/API/SkillAPI';
 import MentorProfileAPI from '~/API/Campain/MentorProfileAPI';
+import { format } from 'date-fns';
 
 const ProfileBox = () => {
     const theme = useTheme();
@@ -58,39 +58,55 @@ const ProfileBox = () => {
     const [selectedProfileId, setSelectedProfileId] = useState(null);
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [currentSkill, setCurrentSkill] = useState('');
+    const [usingProfileId, setUsingProfileId] = useState('');
+    const [currentOpendProfileId, setOpenCurrentProfileId]= useState('');
+
 
     const [skills, setSkills] = useState([]);
     const profilesPerPage = 6;
     const totalPages = Math.ceil(profiles.length / profilesPerPage);
 
-    useEffect(() => {
-        // Fetch skills list from API
-        const fetchSkills = async () => {
-            try {
-                const skillData = await SkillAPI.getAll();
-                setSkills(skillData);
-                console.log(skillData);
-            } catch (error) {
-                console.error('Error fetching skills:', error);
-            }
-        };
+    // Fetch profiles from the API
+    const fetchProfiles = async () => {
+        try {
+            const userInfo = StorageService.getItem('userInfo');
+            if (userInfo && userInfo.mentorId) {
+                const profileResponse = await MentorProfileAPI.getAllMentorProfiles(userInfo.mentorId);
 
-        // Fetch profiles from the API
-        const fetchProfiles = async () => {
-            try {
-                const userInfo = StorageService.getItem('userInfo');
-                if (userInfo && userInfo.mentorId) {
-                    const profileResponse = await MentorProfileAPI.getAllMentorProfiles(userInfo.mentorId);
-
+                if (profileResponse && profileResponse.length > 0) {
                     setProfiles(profileResponse);
 
+
+                    const usingProfile = profileResponse.find(profile => profile.mentorProfile.status === 'using'|| profile.mentorProfile.status === 'USING');
+                    if (usingProfile) {
+                        setUsingProfileId(usingProfile.mentorProfile.id);
+                        console.log(usingProfile)
+                        console.log('Using profiles found');
+                    }
                 } else {
-                    console.error('Mentor ID not found in local storage');
+                    console.error('No profiles found');
                 }
-            } catch (error) {
-                console.error('Error fetching profiles:', error);
+
+            } else {
+                console.error('Mentor ID not found in local storage');
             }
-        };
+        } catch (error) {
+            console.error('Error fetching profiles:', error);
+        }
+    };
+
+    const fetchSkills = async () => {
+        try {
+            const skillData = await SkillAPI.getAll();
+            setSkills(skillData);
+            console.log(skillData);
+        } catch (error) {
+            console.error('Error fetching skills:', error);
+        }
+    };
+
+    useEffect(() => {
+        // Fetch skills list from API
 
         fetchSkills();
         fetchProfiles();
@@ -98,9 +114,48 @@ const ProfileBox = () => {
 
 
 
+    const handleProfileClick = async (newProfileId) => {
+        if (usingProfileId) {
+            const endpoint = `https://tortee-463vt.ondigitalocean.app/api/v1/campaign-mentor-profile/swap-mentor-profile/${usingProfileId}?newMentorProfile=${newProfileId}`;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error swapping profiles: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('Profile swapped successfully:', result);
+                setSelectedProfileId(newProfileId);
+                setUsingProfileId(newProfileId);
+                fetchProfiles();
+
+            } catch (error) {
+                console.error('Error swapping profiles:', error);
+                fetchProfiles();
+            }
+        } else {
+            console.error('No "USING" profile found to swap');
+        }
+    };
+
+
+
+
     const handleOpenModal = (index = null) => {
         if (index !== null) {
+
             const profileToEdit = profiles[index];
+            if(profileToEdit.mentorProfile.id){
+                setOpenCurrentProfileId(profileToEdit.mentorProfile.id)
+            }
+            console.log(currentOpendProfileId)
             setNewProfileInfo({
                 id: profileToEdit.mentorProfile.id,
                 createdDate: profileToEdit.mentorProfile.createdDate,
@@ -116,10 +171,16 @@ const ProfileBox = () => {
                 profilePicture: profileToEdit.mentorProfile.profilePicture,
                 status: profileToEdit.mentorProfile.status,
                 fullName: profileToEdit.mentorProfile.fullName,
-                skills: profileToEdit.mentorProfile.skills,
+                skills: profileToEdit.skills,
                 skillLevel: profileToEdit.mentorProfile.skillLevel,
             });
+            console.log(newProfileInfo)
+            console.log(skills);
+
+
             setEditIndex(index);
+
+            console.log(profileToEdit)
         } else {
             setNewProfileInfo({
                 id: '',
@@ -140,12 +201,14 @@ const ProfileBox = () => {
                 skillLevel: '',
             });
             setEditIndex(null);
+            setSelectedSkills([]);
         }
         setOpenModal(true);
     };
 
     const handleCloseModal = () => {
         setOpenModal(false);
+
     };
 
     // const handleCreateProfile = async () => {
@@ -200,38 +263,43 @@ const ProfileBox = () => {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
+        const mentorId = StorageService.getItem('userInfo').mentorId;
+        const profilePicture = "example.jpg";
+        const status = "ACTIVE";
+
+        let createMentorProfileRequest = {
+            mentorId,
+            profilePicture,
+            linkedinUrl: data.get('linkedinUrl'),
+            requirement: data.get('requirement'),
+            description: data.get('description'),
+            shortDescription: data.get('shortDescription'),
+            facebookUrl: data.get('facebookUrl'),
+            googleMeetUrl: data.get('googleMeetUrl'),
+            status,
+        };
+
+        if (currentOpendProfileId !== null) {
+            createMentorProfileRequest = {
+                ...createMentorProfileRequest,
+                mentorProfileId: currentOpendProfileId,
+            };
+        }
 
         const profileData = {
-            createMentorProfileRequest: {
-                mentorId: StorageService.getItem('userInfo').mentorId,
-                profilePicture: "example.jpg",
-
-                linkedinUrl: data.get('linkedinUrl'),
-                requirement: data.get('requirement'),
-                description: data.get('description'),
-                shortDescription: data.get('shortDescription'),
-                facebookUrl: data.get('facebookUrl'),
-                googleMeetUrl: data.get('googleMeetUrl'),
-
-
-                status: "ACTIVE"
-
-
-
-            },
+            createMentorProfileRequest,
             skills: selectedSkills,
-
         };
 
         const url = editIndex !== null
-            ? `https://tortee-463vt.ondigitalocean.app/api/https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/update`
+            ? `https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/update`
             : `https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/create-new-mentor-profile-skills`;
 
         const method = editIndex !== null ? 'PUT' : 'POST';
 
         try {
             const response = await fetch(url, {
-                method: method,
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -247,15 +315,19 @@ const ProfileBox = () => {
             }
         } catch (error) {
             console.error('Error submitting form data:', error);
+        } finally {
+            fetchProfiles();
+            setOpenModal(false);
         }
-        setOpenModal(false);
     };
+
 
     const handleAddSkill = () => {
         if (currentSkill && !selectedSkills.includes(currentSkill)) {
             console.log(currentSkill);
             setSelectedSkills([...selectedSkills, currentSkill]);
             setCurrentSkill('');
+
         }
     };
 
@@ -313,13 +385,11 @@ const ProfileBox = () => {
                         <Grid item xs={12} sm={6} md={4} key={index}>
                             <Card
                                 sx={{
-                                    border: selectedProfileId === profile.id ? '2px solid green' : 'none',
-                                    cursor: 'pointer',
+                                    border: profile.mentorProfile.status === 'USING' ? '2px solid green' : 'none',
+                                    cursor: profile.mentorProfile.status === 'USING' ? 'not-allowed' : 'pointer',
+                                    pointerEvents: profile.mentorProfile.status === 'USING' ? 'none' : 'auto',
                                 }}
-                                // onClick={() => handleProfileClick(
-                                //
-                                //     profile.id
-                                // )}
+                                onDoubleClick={() => handleProfileClick(profile.mentorProfile.id)}
                             >
                                 <CardContent>
                                     <Box display="flex" alignItems="center" mb={2}>
@@ -327,9 +397,11 @@ const ProfileBox = () => {
                                         <Box ml={2}>
                                             <Typography variant="h6">{profile.mentorProfile.fullName}</Typography>
                                         </Box>
-                                        <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
-                                            <EditIcon />
-                                        </IconButton>
+                                        {profile.mentorProfile.status === 'ACTIVE'  && (
+                                            <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
+                                                <EditIcon />
+                                            </IconButton>
+                                        )}
                                     </Box>
 
                                     <Typography variant="body1" gutterBottom>
@@ -337,9 +409,8 @@ const ProfileBox = () => {
                                     </Typography>
 
                                     <Typography variant="body2" color="text.secondary">
-                                        {`Created Date: ${profile.mentorProfile.createdDate}` || 'None'}
+                                        {`Created Date: ${profile.mentorProfile.createdDate ? format(new Date(profile.mentorProfile.createdDate), 'PPpp') : 'None'}`}
                                     </Typography>
-
                                     <Typography variant="body2" color="text.secondary">
                                         {`Status: ${profile.mentorProfile.status}` || 'None'}
                                     </Typography>
@@ -478,15 +549,26 @@ const ProfileBox = () => {
                             Add Skill
                         </Button>
                     </Box>
-                    {selectedSkills.length > 0 && (
+
+                    {newProfileInfo.skills.length > 0 ? (
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                            {selectedSkills.map((skill, index) => (
-                                <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
+                            {newProfileInfo.skills.map((skill, index) => (
+                                <Chip key={index} label={skill.skill.name} onDelete={handleDeleteSkill(skill.skill.name)} />
                             ))}
                         </Box>
-                    )}
+                    ) : (
+                        selectedSkills.length > 0 && (
+                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                {selectedSkills.map((skill, index) => (
+                                    <Chip key={index} label={skill} onDelete={handleDeleteSkill(skill)} />
+                                ))}
+                            </Box>
+                        )
+                                )}
 
-                    <Box
+
+
+                                <Box
                         sx={{
                             display: 'flex',
                             justifyContent: 'left',

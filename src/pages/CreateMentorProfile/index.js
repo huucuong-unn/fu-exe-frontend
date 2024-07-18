@@ -29,6 +29,18 @@ function CreateMentorProfile() {
     const [imageFile, setImageFile] = useState(null);
     const [imageSelected, setImageSelected] = useState(false);
 
+    const [isUsernameValid, setIsUsernameValid] = useState(true);
+    const [isFullNameValid, setIsFullNameValid] = useState(true);
+    const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(true);
+    const [isEmailValid, setIsEmailValid] = useState(true);
+    const [isPasswordValid, setIsPasswordValid] = useState(true);
+    const [isConfirmPasswordValide, setIsConfirmPasswordValide] = useState(true);
+    const [isDescriptionValid, setIsDescriptionValid] = useState(true);
+    const [isShortDescriptionValid, setIsShortDescriptionValid] = useState(true);
+    const [isRequireValid, setIsRequireValid] = useState(true);
+    const [isSkillValid, setIsSkillValid] = useState(true);
+    const [isImgFileValid, setIsImgFileValid] = useState(true);
+
     const handleAddSkill = () => {
         if (currentSkill && !selectedSkills.includes(currentSkill)) {
             setSelectedSkills([...selectedSkills, currentSkill]);
@@ -45,7 +57,6 @@ function CreateMentorProfile() {
             try {
                 const skillData = await SkillAPI.getAll();
                 setSkills(skillData);
-                console.log(skillData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -86,35 +97,130 @@ function CreateMentorProfile() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        data.append('roleName', 'mentor');
 
-        // Append `createAccountRequest` fields to FormData
-        data.append('createAccountRequest.username', data.get('username'));
-        data.append('createAccountRequest.password', data.get('password'));
-        data.append('createAccountRequest.email', data.get('email'));
-        data.append('createAccountRequest.avatarUrl', data.get('avatarUrl'));
-        data.append('createAccountRequest.roleName', data.get('roleName'));
+        const email = data.get('email');
+        const username = data.get('username');
+        const phoneNumber = data.get('phoneNumber');
+        const fullname = data.get('fullName');
+        const description = data.get('description');
+        const shortDescription = data.get('shortDescription');
+        const password = data.get('password');
+        const confirmPassword = data.get('confirmPassword');
+        const require = data.get('requirement');
+        const skill = data.get('skill');
 
-        // Append `requestObject` fields to FormData
-        data.append('mentorRequest.mentorProfileRequest.linkedinUrl', data.get('linkedinUrl'));
-        data.append('mentorRequest.mentorProfileRequest.requirement', data.get('requirement'));
-        data.append('mentorRequest.mentorProfileRequest.description', data.get('description'));
-        data.append('mentorRequest.mentorProfileRequest.shortDescription', data.get('shortDescription'));
-        data.append('mentorRequest.mentorProfileRequest.facebookUrl', data.get('facebookUrl'));
-        data.append('mentorRequest.mentorProfileRequest.googleMeetUrl', data.get('googleMeetUrl'));
-        data.append('mentorRequest.companyId', storageService.getItem('userInfo').companyId);
-        data.append('mentorRequest.fullName', data.get('fullName'));
+        if (!imageFile) {
+            setIsImgFileValid(false);
+        } else {
+            setIsImgFileValid(true);
+        }
 
-        data.append('mentorRequest.skillNames', selectedSkills);
+        if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
+            setIsEmailValid(false);
+        } else {
+            setIsEmailValid(true);
+        }
 
-        try {
-            const result = await AccountAPI.createAccountForMentor(data);
-            navigate('/company/create-mentor-History');
-            console.log(data);
-        } catch (error) {
-            console.log(error);
+        if (username.length < 5 || username.length > 50) {
+            setIsUsernameValid(false);
+        } else {
+            setIsUsernameValid(true);
+        }
+
+        if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
+            setIsPhoneNumberValid(false);
+        } else {
+            setIsPhoneNumberValid(true);
+        }
+
+        if (fullname.length < 5 || fullname.length > 50) {
+            setIsFullNameValid(false);
+        } else {
+            setIsFullNameValid(true);
+        }
+
+        if (description.length < 5 || description.length > 100) {
+            setIsDescriptionValid(false);
+        } else {
+            setIsDescriptionValid(true);
+        }
+
+        if (shortDescription.length < 5 || shortDescription.length > 50) {
+            setIsShortDescriptionValid(false);
+        } else {
+            setIsShortDescriptionValid(true);
+        }
+
+        if (password.length < 10 || password.length > 30) {
+            setIsPasswordValid(false);
+        } else {
+            setIsPasswordValid(true);
+        }
+
+        if (!(confirmPassword === password)) {
+            setIsConfirmPasswordValide(false);
+        } else {
+            setIsConfirmPasswordValide(true);
+        }
+
+        if (require.length < 5 || require.length > 50) {
+            setIsRequireValid(false);
+        } else {
+            setIsRequireValid(true);
+        }
+
+        if (selectedSkills.length === 0) {
+            setIsSkillValid(false);
+        } else {
+            setIsSkillValid(true);
+        }
+
+        if (
+            isUsernameValid &&
+            isPhoneNumberValid &&
+            isEmailValid &&
+            isPasswordValid &&
+            isConfirmPasswordValide &&
+            isFullNameValid &&
+            isDescriptionValid &&
+            isShortDescriptionValid &&
+            isRequireValid &&
+            isSkillValid &&
+            isImgFileValid
+        ) {
+            data.append('roleName', 'mentor');
+            console.log('hgfgf');
+            // Append `createAccountRequest` fields to FormData
+            data.append('createAccountRequest.username', data.get('username'));
+            data.append('createAccountRequest.password', data.get('password'));
+            data.append('createAccountRequest.email', data.get('email'));
+            data.append('createAccountRequest.avatarUrl', data.get('avatarUrl'));
+            data.append('createAccountRequest.roleName', data.get('roleName'));
+
+            // Append `requestObject` fields to FormData
+            data.append('mentorRequest.mentorProfileRequest.linkedinUrl', data.get('linkedinUrl'));
+            data.append('mentorRequest.mentorProfileRequest.requirement', data.get('requirement'));
+            data.append('mentorRequest.mentorProfileRequest.description', data.get('description'));
+            data.append('mentorRequest.mentorProfileRequest.shortDescription', data.get('shortDescription'));
+            data.append('mentorRequest.mentorProfileRequest.facebookUrl', data.get('facebookUrl'));
+            data.append('mentorRequest.mentorProfileRequest.googleMeetUrl', data.get('googleMeetUrl'));
+            data.append('mentorRequest.companyId', storageService.getItem('userInfo').companyId);
+            data.append('mentorRequest.fullName', data.get('fullName'));
+
+            data.append('mentorRequest.skillNames', selectedSkills);
+
+            try {
+                const result = await AccountAPI.createAccountForMentor(data);
+                navigate('/company/create-mentor-History');
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
+
+    useEffect(() => {
+        console.log(imageSelected);
+    }, [imageSelected]);
     return (
         <Container id="companies" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
             <TypographyMaterial variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
@@ -129,7 +235,7 @@ function CreateMentorProfile() {
                     flexDirection: 'column',
                     alignItems: 'start',
                     justifyContent: 'center',
-                    gap: 3,
+                    gap: 2,
                     border: '1px solid #ccc',
                     padding: 2,
                     borderRadius: 3,
@@ -164,6 +270,11 @@ function CreateMentorProfile() {
                 >
                     {imageSelected ? 'Remove Avatar' : 'Please Choose Avatar'}
                 </Button>
+                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    <TypographyMaterial color="error">
+                        {!isImgFileValid ? 'Please choose mentor avatar' : ''}
+                    </TypographyMaterial>
+                </Box>
                 <Box
                     sx={{
                         display: 'flex',
@@ -175,20 +286,29 @@ function CreateMentorProfile() {
                 >
                     <TextField
                         name="username"
-                        required
-                        id="outlined-required"
+                        id="username"
                         label="Username"
                         sx={{ width: '100%' }}
+                        error={!isUsernameValid}
+                        helperText={!isUsernameValid ? 'Username must have more than 5 characters' : ''}
                     />
                     <TextField
                         name="phoneNumber"
-                        required
-                        id="outlined-required"
+                        id="phoneNumber"
                         label="Phone number"
                         sx={{ width: '100%' }}
+                        error={!isPhoneNumberValid}
+                        helperText={!isPhoneNumberValid ? 'Phone number must be number' : ''}
                     />
                 </Box>
-                <TextField required name="email" id="outlined-required" label="Email" sx={{ width: '100%' }} />
+                <TextField
+                    name="email"
+                    id="email"
+                    label="Email"
+                    sx={{ width: '100%' }}
+                    error={!isEmailValid}
+                    helperText={!isEmailValid ? 'Email invalid' : ''}
+                />
 
                 <Box
                     sx={{
@@ -201,12 +321,20 @@ function CreateMentorProfile() {
                 >
                     <TextField
                         name="password"
-                        required
-                        id="outlined-required"
+                        id="password"
                         label="Password"
                         sx={{ width: '100%' }}
+                        error={!isPasswordValid}
+                        helperText={!isPasswordValid ? 'Password must be 11-30 characters.' : ''}
                     />
-                    <TextField required id="outlined-required" label="Confirm Password" sx={{ width: '100%' }} />
+                    <TextField
+                        name="confirmPassword"
+                        id="confirmPassword"
+                        label="Confirm Password"
+                        sx={{ width: '100%' }}
+                        error={!isConfirmPasswordValide}
+                        helperText={!isConfirmPasswordValide ? 'Confirm password must equal password' : ''}
+                    />
                 </Box>
                 <Box
                     sx={{
@@ -219,29 +347,33 @@ function CreateMentorProfile() {
                 >
                     <TextField
                         name="fullName"
-                        required
-                        id="outlined-required"
+                        id="fullName"
                         label="Full Name"
                         sx={{ width: '100%' }}
+                        error={!isFullNameValid}
+                        helperText={!isFullNameValid ? 'FullName must have more than 5 characters' : ''}
                     />
                 </Box>
 
                 <TextField
-                    id="outlined-multiline-static"
+                    id="description"
                     name="description"
                     label="Description"
                     multiline
                     rows={5}
                     sx={{ width: '100%' }}
+                    error={!isDescriptionValid}
+                    helperText={!isDescriptionValid ? 'Description must be 6-100 characters.' : ''}
                 />
                 <TextField
-                    id="outlined-multiline-static"
+                    id="shortDescription"
                     name="shortDescription"
-                    jk
                     label="Short Description"
                     multiline
                     rows={3}
                     sx={{ width: '100%' }}
+                    error={!isShortDescriptionValid}
+                    helperText={!isShortDescriptionValid ? 'Short description must be 6-50 characters.' : ''}
                 />
                 <Box
                     sx={{
@@ -252,23 +384,10 @@ function CreateMentorProfile() {
                         width: '100%',
                     }}
                 >
-                    <TextField
-                        name="linkedinUrl"
-                        required
-                        id="outlined-required"
-                        label="LinkedIn Url"
-                        sx={{ width: '100%' }}
-                    />
-                    <TextField
-                        name="facebookUrl"
-                        required
-                        id="outlined-required"
-                        label="Facebook Url"
-                        sx={{ width: '100%' }}
-                    />
+                    <TextField name="linkedinUrl" id="outlined-required" label="LinkedIn Url" sx={{ width: '100%' }} />
+                    <TextField name="facebookUrl" id="outlined-required" label="Facebook Url" sx={{ width: '100%' }} />
                     <TextField
                         name="googleMeetUrl"
-                        required
                         id="outlined-required"
                         label="Google Meet Url"
                         sx={{ width: '100%' }}
@@ -285,12 +404,26 @@ function CreateMentorProfile() {
                 >
                     <Autocomplete
                         disablePortal
-                        id="combo-box-demo"
+                        id="skill"
+                        name="skill"
                         options={skills}
                         getOptionLabel={(option) => option.name}
-                        onChange={(event, newValue) => setCurrentSkill(newValue.name)}
+                        onChange={(event, newValue) => {
+                            if (newValue) {
+                                setCurrentSkill(newValue.name);
+                            } else {
+                                setCurrentSkill('');
+                            }
+                        }}
                         sx={{ width: '80%' }}
-                        renderInput={(params) => <TextField {...params} label="Skill" />}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Skill"
+                                error={!isSkillValid}
+                                helperText={!isSkillValid ? 'Please choose skill' : ''}
+                            />
+                        )}
                     />
                     <Button variant="contained" onClick={handleAddSkill}>
                         Add Skill
@@ -304,12 +437,14 @@ function CreateMentorProfile() {
                     </Box>
                 )}
                 <TextField
-                    id="outlined-multiline-static"
+                    id="requirement"
                     name="requirement"
                     label="Require"
                     multiline
                     rows={3}
                     sx={{ width: '100%' }}
+                    error={!isRequireValid}
+                    helperText={!isRequireValid ? 'Require must be 6-50 characters.' : ''}
                 />
                 <Box
                     sx={{
@@ -317,23 +452,20 @@ function CreateMentorProfile() {
                         display: 'flex',
                         justifyContent: 'right',
                         gap: 3,
-
                     }}
                 >
-                    <Link to="/company/create-mentor-profile">
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            sx={{
-                                backgroundColor: '#365E32',
-                                '&:hover': {
-                                    backgroundColor: '#508D4E',
-                                },
-                            }}
-                        >
-                            Create
-                        </Button>
-                    </Link>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#365E32',
+                            '&:hover': {
+                                backgroundColor: '#508D4E',
+                            },
+                        }}
+                    >
+                        Create
+                    </Button>
                 </Box>
             </Box>
         </Container>

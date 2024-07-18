@@ -35,6 +35,7 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
 
     useEffect(() => {
         fetchMenteesAp();
+        fetchMentees();
     }, [page]);
     const fetchMenteesAp = async () => {
         setLoading(true);
@@ -70,12 +71,16 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
             if (response.ok) {
                 console.log('Mentee approved successfully');
                 // Optionally, update the mentees list or show a success message
+                fetchMenteesAp();
+                fetchMentees();
             } else {
                 console.error('Error approving mentee');
             }
         } catch (error) {
             console.error('Error approving mentee:', error);
         }
+        fetchMenteesAp();
+        fetchMentees();
     };
 
     const rejectMentee = async (applicationId, message) => {
@@ -85,22 +90,27 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
             if (response.ok) {
                 console.log('Mentee approved successfully');
                 // Optionally, update the mentees list or show a success message
+                fetchMenteesAp();
+                fetchMentees();
             } else {
                 console.error('Error approving mentee');
             }
         } catch (error) {
             console.error('Error approving mentee:', error);
         }
+        fetchMenteesAp();
+        fetchMentees();
     };
 
     const handleConfirm = async () => {
         if (actionType === 'approve') {
-            // approveMentee(selectedMentee.id);
+             approveMentee(selectedMentee.id);
         } else {
             rejectMentee(selectedMentee.id, message);
         }
-        await fetchMentees();
-        await fetchMenteesAp();
+
+        fetchMenteesAp();
+        fetchMentees();
         handleClose();
     };
 
@@ -256,6 +266,8 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
                                             University: {selectedMentee.student.university.name}
                                         </Typography>
                                     </Grid>
+
+
                                     <Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
                                         <Button
                                             variant="contained"
@@ -276,9 +288,7 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
                                             View CV
                                         </Button>
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        {/* Add more details here if needed */}
-                                    </Grid>
+
                                 </Grid>
                             )}
                         </Box>

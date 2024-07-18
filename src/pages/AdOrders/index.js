@@ -13,6 +13,10 @@ import {
     Typography,
     Chip,
 } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { useEffect, useState } from 'react';
 import TransactionAPI from '~/API/TransactionAPI';
@@ -25,28 +29,36 @@ function AdOrder() {
     const [sortAmount, setSortAmount] = useState(null);
     const [sortPoint, setSortPoint] = useState(null);
     const [sortCreatedDate, setSortCreatedDate] = useState(null);
-
-    useEffect(() => {
-        fetchData();
-    }, []);
+    const [params, setParams] = useState({
+        email: email,
+        sortAmount: sortAmount,
+        sortPoint: sortPoint,
+        sortCreatedDate: sortCreatedDate,
+        status: status,
+        page: 1,
+        limit: 10,
+    });
+    const [totalPage, setTotalPage] = useState(0);
 
     const fetchData = async () => {
         try {
-            const params = {
-                email: email,
-                sortAmount: sortAmount,
-                sortPoint: sortPoint,
-                sortCreatedDate: sortCreatedDate,
-                status: status,
-                page: 1,
-                limit: 10,
-            };
-            console.log(params);
             const ordersData = await TransactionAPI.getAllTransactionForAdmin(params);
             setOrders(ordersData.listResult);
+            setTotalPage(ordersData.totalPage);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [params]);
+
+    const handlePageChange = (event, value) => {
+        setParams((prev) => ({
+            ...prev,
+            page: value,
+        }));
     };
 
     const handleSearch = () => {
@@ -176,6 +188,16 @@ function AdOrder() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                <Pagination
+                    count={totalPage}
+                    page={params.page}
+                    onChange={handlePageChange}
+                    renderItem={(item) => (
+                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                    )}
+                />
+            </Box>
         </Box>
     );
 }

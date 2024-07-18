@@ -61,7 +61,7 @@ const CampaignDetail = () => {
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
-
+    const IMAGE_HOST = process.env.REACT_APP_IMG_HOST;
     useEffect(() => {
         const fetchCampaign = async () => {
             try {
@@ -688,32 +688,66 @@ const CampaignDetail = () => {
                                     sx={{ fontSize: '1rem' }}
                                 />
                             </Grid>
+
                             <Grid item xs={12}>
                                 {/* Display mentee's email and university */}
                                 <Typography variant="body1"> Email: {selectedMentee.menteeEmail}</Typography>
                                 <Typography variant="body1"> University: {selectedMentee.menteeUniversity}</Typography>
                             </Grid>
-                            {/* View CV button */}
-                            <Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    component="a"
-                                    href={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${selectedMentee.cvFile}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                            <Grid  item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
+                                <Box
                                     sx={{
-                                        textDecoration: 'none',
-                                        color: 'white',
-                                        textTransform: 'none',
-                                        py: 2,
-                                        px: 4,
-                                        fontSize: '1.2rem',
+                                        marginLeft: 2,
+                                        marginRight: 2,
+                                        paddingBottom: 2,
+                                        borderBottom: '1px dashed #e0e0e0',
+                                        textAlign: 'center',
                                     }}
                                 >
-                                    View CV
-                                </Button>
+                                    <Typography color="text.primary" variant="h5" fontWeight="bold">
+                                        Student Card
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                                    <img
+                                        height={150}
+                                        width={300}
+                                        src={`${IMAGE_HOST}${selectedMentee.frontStudentCard}`}
+                                        alt="Student Card"
+                                    />
+                                    <img
+                                        height={150}
+                                        width={300}
+                                        src={`${IMAGE_HOST}${selectedMentee.backStudentCard}`}
+                                        alt="Student Card"
+                                    />
+                                </Box>
+
+
+
+
                             </Grid>
+                            {/*/!* View CV button *!/*/}
+                            {/*<Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>*/}
+                            {/*    <Button*/}
+                            {/*        variant="contained"*/}
+                            {/*        color="primary"*/}
+                            {/*        component="a"*/}
+                            {/*        href={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${selectedMentee.cvFile}`}*/}
+                            {/*        target="_blank"*/}
+                            {/*        rel="noopener noreferrer"*/}
+                            {/*        sx={{*/}
+                            {/*            textDecoration: 'none',*/}
+                            {/*            color: 'white',*/}
+                            {/*            textTransform: 'none',*/}
+                            {/*            py: 2,*/}
+                            {/*            px: 4,*/}
+                            {/*            fontSize: '1.2rem',*/}
+                            {/*        }}*/}
+                            {/*    >*/}
+                            {/*        View CV*/}
+                            {/*    </Button>*/}
+                            {/*</Grid>*/}
 
                             {/* Additional mentee details */}
                             <Grid item xs={12}>

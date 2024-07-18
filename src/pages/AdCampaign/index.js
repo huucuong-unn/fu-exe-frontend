@@ -22,6 +22,10 @@ import {
     Card,
     Autocomplete,
 } from '@mui/material';
+import Pagination from '@mui/material/Pagination';
+import PaginationItem from '@mui/material/PaginationItem';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import {
@@ -167,16 +171,11 @@ function AdCampaign() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isNameValid, setIsNameValid] = useState(true);
-    const [isNumberOfSessionValid, setIsNumberOfSessionValid] = useState(true);
-    const [isMinOnlineSessionValid, setIsMinOnlineSessionValid] = useState(true);
-    const [isMinOfflineSessionValid, setIsMinOfflineSessionValid] = useState(true);
-    const [isMinSessionDurationValid, setIsMinSessionDurationValid] = useState(true);
     const [campaigns, setCampaigns] = useState([]);
     const [imageError, setImageError] = useState(false);
     const [imageHelperText, setImageHelperText] = useState('');
     const [imagePreview, setImagePreview] = useState(null);
     const [imageFile, setImageFile] = useState(null);
-    const [universities, setUniversities] = useState([]);
     const [imageSelected, setImageSelected] = useState(false);
     const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
     const [searchParams, setSearchParams] = useState({
@@ -185,7 +184,13 @@ function AdCampaign() {
         startDate: '',
         endDate: '',
     });
-
+    const [params, setParams] = useState({
+        campaignName: null,
+        status: null,
+        page: 1,
+        limit: 10,
+    });
+    const [totalPage, setTotalPage] = useState(0);
     const [newCampaign, setNewCampaign] = useState({
         name: '',
         startDate: '',
@@ -198,23 +203,33 @@ function AdCampaign() {
         trainingEndDate: '',
     });
 
+    const [isCompanyApplyDateValid, setIsCompanyApplyDateValid] = useState(true);
+    const [isMenteeApplyDateValid, setIsMenteeApplyDateValid] = useState(true);
+    const [isTranningApplyDateValid, setIsTranningApplyDateValid] = useState(true);
+    const [isStartDateAndEndDateValid, setIsStartDateAndEndDateValid] = useState(true);
+    const [isImgFileValid, setIsImgFileValid] = useState(true);
+
     const fetchCampaigns = async (params) => {
         try {
             const campaignData = await CampaignAPI.getAllForAdmin(params);
+            console.log(campaignData);
             setCampaigns(campaignData.listResult);
+            setTotalPage(campaignData.totalPage);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+    const handlePageChange = (event, value) => {
+        setParams((prev) => ({
+            ...prev,
+            page: value,
+        }));
+    };
+
     useEffect(() => {
-        fetchCampaigns({
-            campaignName: null,
-            status: null,
-            page: 1,
-            limit: 10,
-        });
-    }, []);
+        fetchCampaigns(params);
+    }, [params]);
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -255,6 +270,22 @@ function AdCampaign() {
         event.preventDefault();
 
         const name = newCampaign.name;
+        const startDate = newCampaign.startDate;
+        const endDate = newCampaign.endDate;
+        const companyApplyStartDate = newCampaign.companyApplyStartDate;
+        const companyApplyEndDate = newCampaign.companyApplyEndDate;
+        const menteeApplyStartDate = newCampaign.menteeApplyStartDate;
+        const menteeApplyEndDate = newCampaign.menteeApplyEndDate;
+        const trainingStartDate = newCampaign.trainingStartDate;
+        const trainingEndDate = newCampaign.trainingEndDate;
+
+        if (!imageFile) {
+            setIsImgFileValid(false);
+            return;
+        } else {
+            setIsImgFileValid(true);
+        }
+
         if (name.length < 5 || name.length > 50) {
             setIsNameValid(false);
             return;
@@ -262,42 +293,95 @@ function AdCampaign() {
             setIsNameValid(true);
         }
 
-        // Additional validation for other fields can be added here
-        // For simplicity, we'll assume the other fields are valid
+        if (startDate >= endDate || endDate <= startDate) {
+            setIsStartDateAndEndDateValid(false);
+            return;
+        } else {
+            setIsStartDateAndEndDateValid(true);
+        }
 
-        try {
-            const formData = new FormData();
-            formData.append('name', newCampaign.name);
-            formData.append('startDate', newCampaign.startDate);
-            formData.append('endDate', newCampaign.endDate);
-            formData.append('companyApplyStartDate', newCampaign.companyApplyStartDate);
-            formData.append('companyApplyEndDate', newCampaign.companyApplyEndDate);
-            formData.append('menteeApplyStartDate', newCampaign.menteeApplyStartDate);
-            formData.append('menteeApplyEndDate', newCampaign.menteeApplyEndDate);
-            formData.append('trainingStartDate', newCampaign.trainingStartDate);
-            formData.append('trainingEndDate', newCampaign.trainingEndDate);
-            formData.append('img', imageFile);
+        if (
+            companyApplyStartDate < startDate ||
+            companyApplyEndDate > endDate ||
+            companyApplyEndDate === '' ||
+            companyApplyStartDate === '' ||
+            companyApplyStartDate === companyApplyEndDate
+        ) {
+            setIsCompanyApplyDateValid(false);
+            return;
+        } else {
+            setIsCompanyApplyDateValid(true);
+        }
 
-            console.log(formData);
-            // Assuming CampaignAPI.createCampaign is a function that sends a POST request to create a new campaign
-            const response = await CampaignAPI.createCampaign(formData);
+        if (
+            menteeApplyStartDate < companyApplyEndDate ||
+            menteeApplyStartDate >= menteeApplyEndDate ||
+            menteeApplyEndDate === '' ||
+            menteeApplyStartDate === '' ||
+            menteeApplyStartDate === menteeApplyEndDate
+        ) {
+            setIsMenteeApplyDateValid(false);
+            return;
+        } else {
+            setIsMenteeApplyDateValid(true);
+        }
 
-            setNewCampaign(null);
-            // console.log('Campaign created successfully:', response);
+        if (
+            trainingStartDate < menteeApplyEndDate ||
+            trainingStartDate >= trainingEndDate ||
+            trainingStartDate === '' ||
+            trainingEndDate === '' ||
+            trainingStartDate === trainingEndDate
+        ) {
+            setIsTranningApplyDateValid(false);
+        } else {
+            setIsTranningApplyDateValid(true);
+        }
 
-            // Close the modal and refresh the campaign list
-            setIsCreateModalOpen(false);
-            fetchCampaigns({
-                campaignName: null,
-                status: null,
-                page: 1,
-                limit: 10,
-            });
-        } catch (error) {
-            console.error('Error creating campaign:', error);
-            // Handle error (e.g., display an error message to the user)
+        if (isCompanyApplyDateValid && isMenteeApplyDateValid && isTranningApplyDateValid) {
+            try {
+                const formData = new FormData();
+                formData.append('name', newCampaign.name);
+                formData.append('startDate', newCampaign.startDate);
+                formData.append('endDate', newCampaign.endDate);
+                formData.append('companyApplyStartDate', newCampaign.companyApplyStartDate);
+                formData.append('companyApplyEndDate', newCampaign.companyApplyEndDate);
+                formData.append('menteeApplyStartDate', newCampaign.menteeApplyStartDate);
+                formData.append('menteeApplyEndDate', newCampaign.menteeApplyEndDate);
+                formData.append('trainingStartDate', newCampaign.trainingStartDate);
+                formData.append('trainingEndDate', newCampaign.trainingEndDate);
+                formData.append('img', imageFile);
+
+                console.log(formData);
+                // Assuming CampaignAPI.createCampaign is a function that sends a POST request to create a new campaign
+                const response = await CampaignAPI.createCampaign(formData);
+
+                setNewCampaign(null);
+                // console.log('Campaign created successfully:', response);
+
+                // Close the modal and refresh the campaign list
+                setIsCreateModalOpen(false);
+                fetchCampaigns({
+                    campaignName: null,
+                    status: null,
+                    page: 1,
+                    limit: 10,
+                });
+            } catch (error) {
+                console.error('Error creating campaign:', error);
+                // Handle error (e.g., display an error message to the user)
+            }
         }
     };
+
+    useEffect(() => {
+        console.log(isCompanyApplyDateValid);
+    }, [isCompanyApplyDateValid]);
+
+    useEffect(() => {
+        console.log(newCampaign.companyApplyStartDate);
+        console.log(newCampaign.companyApplyEndDate);
+    }, [newCampaign]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -366,7 +450,7 @@ function AdCampaign() {
                     <TableHead>
                         <TableRow>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
-                                ID
+                                No
                             </TableCell>
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                 Name
@@ -461,7 +545,7 @@ function AdCampaign() {
                                         label={
                                             campaign.status === 'COMPANY_APPLY'
                                                 ? 'Company Apply'
-                                                : campaign.status === 'STUDENT_APPLY'
+                                                : campaign.status === 'MENTEE_APPLY'
                                                 ? 'Student Apply'
                                                 : campaign.status === 'TRAINING'
                                                 ? 'Training'
@@ -474,7 +558,7 @@ function AdCampaign() {
                                         color={
                                             campaign.status === 'COMPANY_APPLY'
                                                 ? 'primary'
-                                                : campaign.status === 'STUDENT_APPLY'
+                                                : campaign.status === 'MENTEE_APPLY'
                                                 ? 'secondary'
                                                 : campaign.status === 'TRAINING'
                                                 ? 'success'
@@ -489,6 +573,16 @@ function AdCampaign() {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
+                <Pagination
+                    count={totalPage}
+                    page={params.page}
+                    onChange={handlePageChange}
+                    renderItem={(item) => (
+                        <PaginationItem slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }} {...item} />
+                    )}
+                />
+            </Box>
             <Modal open={Boolean(selectedMentee)} onClose={handleCloseModal}>
                 <Box
                     sx={{
@@ -879,7 +973,13 @@ function AdCampaign() {
                                 }}
                             >
                                 <Typography>Start date</Typography>
-                                <TextField id="outlined-basic" variant="outlined" size="small" type="date" />
+                                <TextField
+                                    id="startDate"
+                                    name="startDate"
+                                    variant="outlined"
+                                    size="small"
+                                    type="date"
+                                />
                             </Box>
                             <Typography>to</Typography>
                             <Box
@@ -891,7 +991,7 @@ function AdCampaign() {
                                 }}
                             >
                                 <Typography>End date</Typography>
-                                <TextField id="outlined-basic" variant="outlined" size="small" type="date" />
+                                <TextField id="endDate" name="endDate" variant="outlined" size="small" type="date" />
                             </Box>
                         </Box>
                     </Box>
@@ -940,6 +1040,8 @@ function AdCampaign() {
                                 type="file"
                                 id="avatarUrl"
                                 name="avatarUrl"
+                                error={!isImgFileValid}
+                                helperText={!isImgFileValid ? 'Please choose campaign picture' : ''}
                                 onChange={handleImageUpload}
                                 accept="image/jpeg, image/jpg, image/png"
                             />
@@ -982,6 +1084,8 @@ function AdCampaign() {
                                     variant="outlined"
                                     size="small"
                                     type="date"
+                                    error={!isStartDateAndEndDateValid}
+                                    helperText={!isStartDateAndEndDateValid ? 'Start date or End date invalid' : ''}
                                     value={newCampaign?.startDate}
                                     onChange={handleInputChange}
                                 />
@@ -1002,6 +1106,8 @@ function AdCampaign() {
                                     variant="outlined"
                                     size="small"
                                     type="date"
+                                    error={!isStartDateAndEndDateValid}
+                                    helperText={!isStartDateAndEndDateValid ? 'Start date or End date invalid' : ''}
                                     value={newCampaign?.endDate}
                                     onChange={handleInputChange}
                                 />
@@ -1036,6 +1142,8 @@ function AdCampaign() {
                                     type="date"
                                     value={newCampaign?.companyApplyStartDate}
                                     onChange={handleInputChange}
+                                    error={!isCompanyApplyDateValid}
+                                    helperText={!isCompanyApplyDateValid ? 'Company apply date invalid' : ''}
                                 />
                             </Box>
                             <Typography>to</Typography>
@@ -1056,6 +1164,8 @@ function AdCampaign() {
                                     type="date"
                                     value={newCampaign?.companyApplyEndDate}
                                     onChange={handleInputChange}
+                                    error={!isCompanyApplyDateValid}
+                                    helperText={!isCompanyApplyDateValid ? 'Company apply date invalid' : ''}
                                 />
                             </Box>
                         </Box>
@@ -1086,6 +1196,8 @@ function AdCampaign() {
                                     variant="outlined"
                                     size="small"
                                     type="date"
+                                    error={!isMenteeApplyDateValid}
+                                    helperText={!isMenteeApplyDateValid ? 'Mentee apply date invalid' : ''}
                                     value={newCampaign?.menteeApplyStartDate}
                                     onChange={handleInputChange}
                                 />
@@ -1106,6 +1218,8 @@ function AdCampaign() {
                                     variant="outlined"
                                     size="small"
                                     type="date"
+                                    error={!isMenteeApplyDateValid}
+                                    helperText={!isMenteeApplyDateValid ? 'Mentee apply date invalid' : ''}
                                     value={newCampaign?.menteeApplyEndDate}
                                     onChange={handleInputChange}
                                 />
@@ -1138,6 +1252,8 @@ function AdCampaign() {
                                     variant="outlined"
                                     size="small"
                                     type="date"
+                                    error={!isTranningApplyDateValid}
+                                    helperText={!isTranningApplyDateValid ? 'Training date invalid' : ''}
                                     value={newCampaign?.trainingStartDate}
                                     onChange={handleInputChange}
                                 />
@@ -1158,6 +1274,8 @@ function AdCampaign() {
                                     variant="outlined"
                                     size="small"
                                     type="date"
+                                    error={!isTranningApplyDateValid}
+                                    helperText={!isTranningApplyDateValid ? 'Training date invalid' : ''}
                                     value={newCampaign?.trainingEndDate}
                                     onChange={handleInputChange}
                                 />

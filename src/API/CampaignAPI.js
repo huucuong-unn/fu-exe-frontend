@@ -39,6 +39,11 @@ const CampaignAPI = {
             },
         });
     },
+    updateCampaign(id, includeAuthorization = false) {
+        const url = `/v1/campaign/change-status/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader({}, includeAuthorization);
+        return axiosClient.delete(url, authorizedConfig);
+    },
 };
 
 export default CampaignAPI;

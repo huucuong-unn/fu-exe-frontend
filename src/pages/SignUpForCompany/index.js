@@ -16,6 +16,7 @@ import logo from '~/assets/images/logo.png';
 import AccountAPI from '~/API/AccountAPI';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Copyright(props) {
     return (
@@ -69,6 +70,20 @@ function SignUpForCompany() {
     const [isCompanyTypeValid, setIsCompanyTypeValid] = useState(true);
     const [isCountryValid, setIsCountryValid] = useState(true);
     const [isImgFileValid, setIsImgFileValid] = useState(true);
+    const [countries, setCountries] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        axios.get('https://countriesnow.space/api/v0.1/countries/flag/images')
+            .then(response => {
+                setCountries(response.data.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching countries:', error);
+                setLoading(false);
+            });
+    }, []);
 
     const handleAvatarChange = (event) => {
         const file = event.target.files[0];
@@ -244,8 +259,8 @@ function SignUpForCompany() {
             data.append('createAccountRequest.roleName', createAccountRequest.roleName);
 
             // Append `requestObject` fields to FormData
-            data.append('createCompanyRequest.name', data.get('name'));
-            data.append('createCompanyRequest.country', formValues.address);
+            data.append('createCompanyRequest.name', data.get('fullname'));
+            data.append('createCompanyRequest.country', formValues.country);
             data.append('createCompanyRequest.address', data.get('address'));
             data.append('createCompanyRequest.avatarUrl', data.get('avatarUrl'));
             data.append('createCompanyRequest.facebookUrl', data.get('facebookUrl'));
@@ -428,13 +443,13 @@ function SignUpForCompany() {
                                 <Autocomplete
                                     disablePortal
                                     fullWidth
-                                    defaultValue=""
                                     id="country"
                                     name="country"
-                                    options={['Vietnam', 'Thailand', 'Japan', 'America', 'Singapore']}
-                                    value={formValues.country}
-                                    getOptionLabel={(option) => option}
-                                    onChange={(event, newValue) => setFormValues({ ...formValues, country: newValue })}
+                                    loading={loading}
+                                    options={countries}
+                                    getOptionLabel={(option) => option.name}
+                                    value={formValues.country ? countries.find(country => country.name === formValues.country) : null}
+                                    onChange={(event, newValue) => setFormValues({ ...formValues, country: newValue ? newValue.name : '' })}
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}

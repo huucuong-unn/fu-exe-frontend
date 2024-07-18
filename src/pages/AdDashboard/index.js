@@ -29,7 +29,22 @@ function AdDashboard() {
     }, []);
 
     const valueFormatter = (value) => `${value}`;
+    const dataset = [
+        { mentee: 21, mentor: 10, company: 1, seoul: 2, month: 'Fall 2023' },
+        { mentee: 42, mentor: 12, company: 3, seoul: 5, month: 'Spring 2024' },
+        { mentee: 50, mentor: 25, company: 6, seoul: 1, month: 'Summer 2024' },
 
+
+    ];
+
+    const revenueFormatter = (value) => {
+        if (value >= 1e9) {
+            return `${(value / 1e9).toFixed(1)}B`;
+        } else if (value >= 1e6) {
+            return `${(value / 1e6).toFixed(1)}M`;
+        }
+        return value.toString();
+    };
     return (
         <Box
             sx={{
@@ -45,9 +60,13 @@ function AdDashboard() {
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, width: '100%' }}>
                 <ChartBox title="Mentorship Campaign Participation - Quarterly Breakdown">
                     <BarChart
-                        dataset={monthlyRevenue.map(data => ({ month: data.month, revenue: data.revenue }))}
+                        dataset={dataset}
                         xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
-                        series={[{ dataKey: 'revenue', label: 'Revenue', valueFormatter }]}
+                        series={[
+                            { dataKey: 'mentee', label: 'Mentee', valueFormatter },
+                            { dataKey: 'mentor', label: 'Mentor', valueFormatter },
+                            { dataKey: 'company', label: 'Company', valueFormatter },
+                        ]}
                         {...chartSetting}
                     />
                 </ChartBox>
@@ -55,6 +74,7 @@ function AdDashboard() {
                 <ChartBox title="Monthly Revenue - 2024">
                     <LineChart
                         xAxis={[{ data: monthlyRevenue.map(data => data.month) }]}
+                        yAxis={[{  valueFormatter: revenueFormatter }]}
                         series={[{ data: monthlyRevenue.map(data => data.revenue) }]}
                         width={600}
                         height={400}

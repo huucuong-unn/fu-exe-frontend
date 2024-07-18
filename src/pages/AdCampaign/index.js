@@ -195,6 +195,7 @@ function AdCampaign() {
     const [totalPage, setTotalPage] = useState(0);
     const [newCampaign, setNewCampaign] = useState({
         name: '',
+        description: '',
         startDate: '',
         endDate: '',
         companyApplyStartDate: '',
@@ -239,6 +240,16 @@ function AdCampaign() {
     useEffect(() => {
         fetchCampaigns();
     }, [isPaging]);
+
+    const handleUpdateCampaignStatus = async (event, id) => {
+        try {
+            event.stopPropagation();
+            const campaignData = await CampaignAPI.updateCampaign(id);
+            fetchCampaigns();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -380,12 +391,7 @@ function AdCampaign() {
     };
 
     useEffect(() => {
-        console.log(isCompanyApplyDateValid);
-    }, [isCompanyApplyDateValid]);
-
-    useEffect(() => {
-        console.log(newCampaign.companyApplyStartDate);
-        console.log(newCampaign.companyApplyEndDate);
+        console.log(newCampaign);
     }, [newCampaign]);
 
     const handleInputChange = (event) => {
@@ -475,6 +481,9 @@ function AdCampaign() {
                             <TableCell align="left" sx={{ fontWeight: 'bold' }}>
                                 Status
                             </TableCell>
+                            <TableCell align="left" sx={{ fontWeight: 'bold' }}>
+                                Action
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -550,12 +559,12 @@ function AdCampaign() {
                                         label={
                                             campaign.status === 'COMPANY_APPLY'
                                                 ? 'Company Apply'
-                                                : campaign.status === 'MENTEE_APPLY'
-                                                ? 'Mentee Apply'
+                                                : campaign.status === 'STUDENT_APPLY'
+                                                ? 'Student Apply'
                                                 : campaign.status === 'TRAINING'
                                                 ? 'Training'
-                                                : campaign.status === 'CLOSE'
-                                                ? 'Close'
+                                                : campaign.status === 'CLOSED'
+                                                ? 'Closed'
                                                 : 'default'
                                         }
                                         sx={{ mr: 2, mb: 1 }}
@@ -563,15 +572,23 @@ function AdCampaign() {
                                         color={
                                             campaign.status === 'COMPANY_APPLY'
                                                 ? 'primary'
-                                                : campaign.status === 'MENTEE_APPLY'
+                                                : campaign.status === 'STUDENT_APPLY'
                                                 ? 'secondary'
                                                 : campaign.status === 'TRAINING'
                                                 ? 'success'
-                                                : campaign.status === 'CLOSE'
+                                                : campaign.status === 'CLOSED'
                                                 ? 'error'
                                                 : 'default'
                                         }
                                     />
+                                </TableCell>
+                                <TableCell align="left">
+                                    <Button
+                                        variant="contained"
+                                        onClick={(event) => handleUpdateCampaignStatus(event, campaign.id)}
+                                    >
+                                        Change Status
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -603,18 +620,6 @@ function AdCampaign() {
                         textAlign: 'center',
                     }}
                 >
-                    <Button
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            right: 0,
-                            m: 2,
-                        }}
-                        variant="contained"
-                        onClick={handleOpenEditModal}
-                    >
-                        Edit
-                    </Button>
                     <Box
                         sx={{
                             display: 'flex',
@@ -835,51 +840,6 @@ function AdCampaign() {
                                         </Typography>
                                         <Typography color="black" variant="h7" fontWeight="bold">
                                             {selectedMentee?.numberOfMentees}
-                                        </Typography>
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: { md: 'center' },
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <Typography color="gray" variant="h7">
-                                            Number of Sessions
-                                        </Typography>
-                                        <Typography color="black" variant="h7" fontWeight="bold">
-                                            {selectedMentee?.numberOfSessions}
-                                        </Typography>
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: { md: 'center' },
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <Typography color="gray" variant="h7">
-                                            Min Online Sessions
-                                        </Typography>
-                                        <Typography color="black" variant="h7" fontWeight="bold">
-                                            {selectedMentee?.minOnlineSessions}
-                                        </Typography>
-                                    </Box>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: { md: 'center' },
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <Typography color="gray" variant="h7">
-                                            Min Offline Sessions
-                                        </Typography>
-                                        <Typography color="black" variant="h7" fontWeight="bold">
-                                            {selectedMentee?.minOfflineSessions}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -1174,6 +1134,7 @@ function AdCampaign() {
                                 />
                             </Box>
                         </Box>
+
                         <Box
                             sx={{
                                 display: 'flex',
@@ -1285,6 +1246,29 @@ function AdCampaign() {
                                     onChange={handleInputChange}
                                 />
                             </Box>
+                        </Box>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'end',
+                                justifyContent: 'center',
+                                gap: 2,
+                                border: '1px solid #ccc',
+                                borderRadius: 2,
+                                padding: 2,
+                                mt: 2,
+                            }}
+                        >
+                            <TextField
+                                id="description"
+                                name="description"
+                                label="Description"
+                                multiline
+                                rows={5}
+                                value={newCampaign?.description}
+                                sx={{ width: '100%', flex: 1 }}
+                                onChange={handleInputChange}
+                            />
                         </Box>
                     </Box>
                     <Box sx={{ position: 'absolute', bottom: 4, right: 10, display: 'flex', gap: 2 }}>

@@ -45,6 +45,14 @@ const rows = [
 ];
 
 const valueFormatter = (value) => `${value}`;
+const revenueFormatter = (value) => {
+    if (value >= 1e9) {
+        return `${(value / 1e9).toFixed(1)}B`;
+    } else if (value >= 1e6) {
+        return `${(value / 1e6).toFixed(1)}M`;
+    }
+    return value.toString();
+};
 
 function AdDashboard() {
     return (

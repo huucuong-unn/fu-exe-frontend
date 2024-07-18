@@ -10,11 +10,12 @@ import {
     Typography,
     InputLabel,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import{ useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '~/assets/images/logo.png';
 import AccountAPI from '~/API/AccountAPI';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 function Copyright(props) {
     return (
@@ -67,6 +68,20 @@ function SignUpForCompany() {
     const [isCompanyTypeValid, setIsCompanyTypeValid] = useState(true);
     const [isCountryValid, setIsCountryValid] = useState(true);
     const [isImgFileValid, setIsImgFileValid] = useState(true);
+    const [countries, setCountries] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        axios.get('https://countriesnow.space/api/v0.1/countries/flag/images')
+            .then(response => {
+                setCountries(response.data.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching countries:', error);
+                setLoading(false);
+            });
+    }, []);
 
     const handleAvatarChange = (event) => {
         const file = event.target.files[0];
@@ -429,9 +444,11 @@ function SignUpForCompany() {
                                     defaultValue=""
                                     id="country"
                                     name="country"
-                                    options={['Vietnam', 'Thailand', 'Japan']}
+                                    options={countries}
+                                    loading={loading}
+                                    getOptionLabel={(option) => option.name}
                                     value={formValues.country}
-                                    getOptionLabel={(option) => option}
+
                                     onChange={(event, newValue) => setFormValues({ ...formValues, country: newValue })}
                                     renderInput={(params) => (
                                         <TextField

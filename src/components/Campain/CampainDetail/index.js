@@ -274,7 +274,11 @@ const CampaignDetail = () => {
                             }}
                         >
                             <Box>
-                                <Avatar alt="avatar image" src={campaign?.img} sx={{ width: 150, height: 150 }} />
+                                <Avatar
+                                    alt="avatar image"
+                                    src={IMAGE_HOST + campaign?.img}
+                                    sx={{ width: 150, height: 150 }}
+                                />
                             </Box>
                             <Box sx={{ textTransform: 'none' }}>
                                 <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
@@ -582,7 +586,7 @@ const CampaignDetail = () => {
                                 <Grid container spacing={2} alignItems="center">
                                     <Grid item>
                                         <Avatar
-                                            src={mentee.menteeAvatarUrl}
+                                            src={IMAGE_HOST + mentee.studentAvatarUrl}
                                             alt={mentee.studentName}
                                             sx={{ width: 100, height: 100, borderBottom: '3px solid #007bff' }}
                                         />
@@ -670,7 +674,7 @@ const CampaignDetail = () => {
                             <Grid item>
                                 {/* Display mentee's avatar with underline */}
                                 <Avatar
-                                    src={selectedMentee.menteeAvatarUrl}
+                                    src={IMAGE_HOST + selectedMentee.menteeAvatarUrl}
                                     alt={selectedMentee.menteeName}
                                     sx={{ width: 120, height: 120, borderBottom: '3px solid #007bff' }}
                                 />
@@ -710,13 +714,13 @@ const CampaignDetail = () => {
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                                     <img
-                                        height={150}
+                                        height={200}
                                         width={300}
                                         src={`${IMAGE_HOST}${selectedMentee.frontStudentCard}`}
                                         alt="Student Card"
                                     />
                                     <img
-                                        height={150}
+                                        height={200}
                                         width={300}
                                         src={`${IMAGE_HOST}${selectedMentee.backStudentCard}`}
                                         alt="Student Card"

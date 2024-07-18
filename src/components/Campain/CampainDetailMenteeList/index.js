@@ -21,6 +21,9 @@ import StorageService from '~/components/StorageService/storageService';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; // Adjust the import path as necessary
 import ApplicationAPI from '~/API/ApplicationAPI';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'; // Zalo doesn't have an official icon, so WhatsApp is used as an alternative
+
 
 const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
     const [mentees, setMentees] = useState([]);
@@ -219,12 +222,13 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
                                 top: '50%',
                                 left: '50%',
                                 transform: 'translate(-50%, -50%)',
-                                width: '80%',
-                                maxWidth: 600,
+                                width: '90%',
+                                maxWidth: 700,
                                 bgcolor: 'background.paper',
                                 boxShadow: 24,
                                 p: 4,
-                                borderRadius: 8,
+                                borderRadius: 2,
+                                overflowY: 'auto',
                             }}
                         >
                             <IconButton
@@ -234,65 +238,146 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
                                     position: 'absolute',
                                     top: 10,
                                     right: 10,
-                                    color: 'text.secondary',
+                                    color: 'grey.500',
+                                    zIndex: 1,
                                 }}
                             >
                                 <CloseIcon />
                             </IconButton>
-                            <Typography variant="h6" id="modal-modal-title" sx={{ mb: 2 }}>
+                            <Typography variant="h5" id="modal-modal-title" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center', color: 'primary.main' }}>
                                 Mentee Details
                             </Typography>
                             {selectedMentee && (
-                                <Grid container spacing={2} alignItems="center">
-                                    <Grid item>
+                                <Grid container spacing={3} justifyContent="center">
+                                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                                         <Avatar
                                             src={selectedMentee.student.account.avatarUrl}
                                             alt={selectedMentee.fullName}
-                                            sx={{ width: 120, height: 120, borderBottom: '3px solid #007bff' }}
+                                            sx={{
+                                                width: 150,
+                                                height: 150,
+                                                borderRadius: '50%',
+                                                border: '4px solid #007bff',
+                                                boxShadow: 3,
+                                            }}
                                         />
                                     </Grid>
-                                    <Grid item xs>
-                                        <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1 }}>
-                                            {selectedMentee.fullName}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography variant="body1">
-                                            {' '}
-                                            Email: {selectedMentee.student.account.email}
-                                        </Typography>
-                                        <Typography variant="body1">
-                                            {' '}
-                                            University: {selectedMentee.student.university.name}
-                                        </Typography>
-                                    </Grid>
+                                    <Grid item xs={12} md={10}>
+                                        <Grid container spacing={2} justifyContent="center">
+                                            <Grid item xs={12} sm={4}>
+                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                    Full Name:
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ mb: 1 }}>
+                                                    {selectedMentee.fullName}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={12} sm={5}>
+                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                    Email:
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ mb: 1 }}>
+                                                    {selectedMentee.student.account.email}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={12} sm={3}>
+                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                    Phone Number:
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ mb: 1 }}>
+                                                    {selectedMentee.phoneNumber}
+                                                </Typography>
+                                            </Grid>
 
+                                            <Grid item xs={12} sm={6}>
+                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                    Student Code:
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ mb: 1 }}>
+                                                    {selectedMentee.student.studentCode}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                                                    University:
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ mb: 1 }}>
+                                                    {selectedMentee.student.university.name}
+                                                </Typography>
 
-                                    <Grid item xs={12} sx={{ textAlign: 'center', pt: 2 }}>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            component="a"
-                                            href={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${selectedMentee.cvFile}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            sx={{
-                                                textDecoration: 'none',
-                                                color: 'white',
-                                                textTransform: 'none',
-                                                py: 2,
-                                                px: 4,
-                                                fontSize: '1.2rem',
-                                            }}
-                                        >
-                                            View CV
-                                        </Button>
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                    <IconButton
+                                                        component="a"
+                                                        href={selectedMentee.facebookUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        sx={{ color: 'primary.main' }}
+                                                    >
+                                                        <FacebookIcon />
+                                                    </IconButton>
+                                                    <Typography variant="body1">Click to see Facebook</Typography>
+                                                </Box>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <IconButton
+                                                        component="a"
+                                                        href={`https://${selectedMentee.zaloAccount}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        sx={{ color: 'success.main' }}
+                                                    >
+                                                        <WhatsAppIcon />
+                                                    </IconButton>
+                                                    <Typography variant="body1">Click to see Zalo</Typography>
+                                                </Box>
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <Typography variant="body2" sx={{ mb: 2, fontSize: '1.1rem', whiteSpace: 'pre-wrap' }}>
+                                                    <strong>Introduce:</strong> {selectedMentee.introduce}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ mb: 2, fontSize: '1.1rem', whiteSpace: 'pre-wrap' }}>
+                                                    <strong>Reason Apply:</strong> {selectedMentee.reasonApply}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                                                <Button
+                                                    variant="contained"
+                                                    color="primary"
+                                                    component="a"
+                                                    href={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${selectedMentee.cvFile}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    sx={{
+                                                        textDecoration: 'none',
+                                                        color: 'white',
+                                                        textTransform: 'none',
+                                                        py: 2,
+                                                        px: 4,
+                                                        fontSize: '1.1rem',
+                                                        borderRadius: 2,
+                                                        boxShadow: 2,
+                                                        '&:hover': {
+                                                            backgroundColor: '#0056b3',
+                                                        },
+                                                    }}
+                                                >
+                                                    View CV
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-
                                 </Grid>
                             )}
                         </Box>
                     </Modal>
+
+
+
+
+
+
                     <Modal
                         open={open}
                         onClose={handleClose}

@@ -251,7 +251,7 @@ const MenteeSection = ({ campaignId, fetchMentees, handleAction }) => {
                                 <Grid container spacing={3} justifyContent="center">
                                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                                         <Avatar
-                                            src={selectedMentee.student.account.avatarUrl}
+                                            src={`https://tortee-image-upload.s3.ap-southeast-1.amazonaws.com/${selectedMentee.student.account.avatarUrl}`}
                                             alt={selectedMentee.fullName}
                                             sx={{
                                                 width: 150,

@@ -51,6 +51,9 @@ const AccountAPI = {
     login(data, includeAuthorization = false) {
         return axiosClient.post('/v1/auth/login', data);
     },
+    loginWithGoogle(data, includeAuthorization = false) {
+        return axiosClient.post('/v1/auth/login-google', data);
+    },
 
     getAccountForAdminSearch(params, includeAuthorization = false) {
         const url = `/v1/account/account-for-admin`;

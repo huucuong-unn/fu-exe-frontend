@@ -45,6 +45,9 @@ const ProfileBox = () => {
         skills: [],
         skillLevel: '',
     });
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
+    const avatarUrl = StorageService.getItem('userInfo').avatarUrl;
+
     const [editIndex, setEditIndex] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [selectedProfileIndex, setSelectedProfileIndex] = useState(null);
@@ -59,8 +62,7 @@ const ProfileBox = () => {
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [currentSkill, setCurrentSkill] = useState('');
     const [usingProfileId, setUsingProfileId] = useState('');
-    const [currentOpendProfileId, setOpenCurrentProfileId]= useState('');
-
+    const [currentOpendProfileId, setOpenCurrentProfileId] = useState('');
 
     const [skills, setSkills] = useState([]);
     const profilesPerPage = 6;
@@ -76,17 +78,18 @@ const ProfileBox = () => {
                 if (profileResponse && profileResponse.length > 0) {
                     setProfiles(profileResponse);
 
-
-                    const usingProfile = profileResponse.find(profile => profile.mentorProfile.status === 'using'|| profile.mentorProfile.status === 'USING');
+                    const usingProfile = profileResponse.find(
+                        (profile) =>
+                            profile.mentorProfile.status === 'using' || profile.mentorProfile.status === 'USING',
+                    );
                     if (usingProfile) {
                         setUsingProfileId(usingProfile.mentorProfile.id);
-                        console.log(usingProfile)
+                        console.log(usingProfile);
                         console.log('Using profiles found');
                     }
                 } else {
                     console.error('No profiles found');
                 }
-
             } else {
                 console.error('Mentor ID not found in local storage');
             }
@@ -112,8 +115,6 @@ const ProfileBox = () => {
         fetchProfiles();
     }, []);
 
-
-
     const handleProfileClick = async (newProfileId) => {
         if (usingProfileId) {
             const endpoint = `https://tortee-463vt.ondigitalocean.app/api/v1/campaign-mentor-profile/swap-mentor-profile/${usingProfileId}?newMentorProfile=${newProfileId}`;
@@ -135,7 +136,6 @@ const ProfileBox = () => {
                 setSelectedProfileId(newProfileId);
                 setUsingProfileId(newProfileId);
                 fetchProfiles();
-
             } catch (error) {
                 console.error('Error swapping profiles:', error);
                 fetchProfiles();
@@ -145,17 +145,13 @@ const ProfileBox = () => {
         }
     };
 
-
-
-
     const handleOpenModal = (index = null) => {
         if (index !== null) {
-
             const profileToEdit = profiles[index];
-            if(profileToEdit.mentorProfile.id){
-                setOpenCurrentProfileId(profileToEdit.mentorProfile.id)
+            if (profileToEdit.mentorProfile.id) {
+                setOpenCurrentProfileId(profileToEdit.mentorProfile.id);
             }
-            console.log(currentOpendProfileId)
+            console.log(currentOpendProfileId);
             setNewProfileInfo({
                 id: profileToEdit.mentorProfile.id,
                 createdDate: profileToEdit.mentorProfile.createdDate,
@@ -174,13 +170,12 @@ const ProfileBox = () => {
                 skills: profileToEdit.skills,
                 skillLevel: profileToEdit.mentorProfile.skillLevel,
             });
-            console.log(newProfileInfo)
+            console.log(newProfileInfo);
             console.log(skills);
-
 
             setEditIndex(index);
 
-            console.log(profileToEdit)
+            console.log(profileToEdit);
         } else {
             setNewProfileInfo({
                 id: '',
@@ -208,7 +203,6 @@ const ProfileBox = () => {
 
     const handleCloseModal = () => {
         setOpenModal(false);
-
     };
 
     // const handleCreateProfile = async () => {
@@ -258,14 +252,13 @@ const ProfileBox = () => {
         }
     };
 
-
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
         const mentorId = StorageService.getItem('userInfo').mentorId;
-        const profilePicture = "example.jpg";
-        const status = "ACTIVE";
+        const profilePicture = 'example.jpg';
+        const status = 'ACTIVE';
 
         let createMentorProfileRequest = {
             mentorId,
@@ -291,9 +284,10 @@ const ProfileBox = () => {
             skills: selectedSkills,
         };
 
-        const url = editIndex !== null
-            ? `https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/update`
-            : `https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/create-new-mentor-profile-skills`;
+        const url =
+            editIndex !== null
+                ? `https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/update`
+                : `https://tortee-463vt.ondigitalocean.app/api/v1/mentor-profile/create-new-mentor-profile-skills`;
 
         const method = editIndex !== null ? 'PUT' : 'POST';
 
@@ -309,7 +303,7 @@ const ProfileBox = () => {
             if (response.ok) {
                 const result = await response.json();
                 console.log('Form data submitted successfully:', result);
-                handleCloseModal();  // Close the modal on successful submission
+                handleCloseModal(); // Close the modal on successful submission
             } else {
                 console.error('Error submitting form data:', response.statusText);
             }
@@ -321,13 +315,11 @@ const ProfileBox = () => {
         }
     };
 
-
     const handleAddSkill = () => {
         if (currentSkill && !selectedSkills.includes(currentSkill)) {
             console.log(currentSkill);
             setSelectedSkills([...selectedSkills, currentSkill]);
             setCurrentSkill('');
-
         }
     };
 
@@ -393,12 +385,15 @@ const ProfileBox = () => {
                             >
                                 <CardContent>
                                     <Box display="flex" alignItems="center" mb={2}>
-                                        <Avatar src={profile.profilePicture} alt={profile.mentorProfile.fullName} />
+                                        <Avatar src={IMGAGE_HOST + avatarUrl} />
                                         <Box ml={2}>
                                             <Typography variant="h6">{profile.mentorProfile.fullName}</Typography>
                                         </Box>
-                                        {profile.mentorProfile.status === 'ACTIVE'  && (
-                                            <IconButton onClick={() => handleOpenModal(index)} sx={{ marginLeft: 'auto' }}>
+                                        {profile.mentorProfile.status === 'ACTIVE' && (
+                                            <IconButton
+                                                onClick={() => handleOpenModal(index)}
+                                                sx={{ marginLeft: 'auto' }}
+                                            >
                                                 <EditIcon />
                                             </IconButton>
                                         )}
@@ -409,7 +404,11 @@ const ProfileBox = () => {
                                     </Typography>
 
                                     <Typography variant="body2" color="text.secondary">
-                                        {`Created Date: ${profile.mentorProfile.createdDate ? format(new Date(profile.mentorProfile.createdDate), 'PPpp') : 'None'}`}
+                                        {`Created Date: ${
+                                            profile.mentorProfile.createdDate
+                                                ? format(new Date(profile.mentorProfile.createdDate), 'PPpp')
+                                                : 'None'
+                                        }`}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         {`Status: ${profile.mentorProfile.status}` || 'None'}
@@ -553,7 +552,11 @@ const ProfileBox = () => {
                     {newProfileInfo.skills.length > 0 ? (
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                             {newProfileInfo.skills.map((skill, index) => (
-                                <Chip key={index} label={skill.skill.name} onDelete={handleDeleteSkill(skill.skill.name)} />
+                                <Chip
+                                    key={index}
+                                    label={skill.skill.name}
+                                    onDelete={handleDeleteSkill(skill.skill.name)}
+                                />
                             ))}
                         </Box>
                     ) : (
@@ -564,11 +567,9 @@ const ProfileBox = () => {
                                 ))}
                             </Box>
                         )
-                                )}
+                    )}
 
-
-
-                                <Box
+                    <Box
                         sx={{
                             display: 'flex',
                             justifyContent: 'left',

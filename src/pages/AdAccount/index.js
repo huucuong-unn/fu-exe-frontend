@@ -187,33 +187,37 @@ function AdAccount() {
     const [imageSelected, setImageSelected] = useState(false);
     const [isRejectModal, setIsRejectModal] = useState(false);
 
-
     const [message, setMessage] = useState('');
 
     const [actionType, setActionType] = useState('');
 
-
     const IMAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     //new
-    const handleOpenRejectModal = () =>{
+    const handleOpenRejectModal = () => {
         setIsRejectModal(true);
         setMessage(null);
-
-
     };
 
-    const handleCloseRejectModal = () =>{
+    const handleCloseRejectModal = () => {
         setIsRejectModal(false);
         setMessage(null);
     };
 
-    const handleConfirmRejectModal = () => {
+    const handleConfirmRejectModal = async () => {
         // Handle confirm logic
-        setIsRejectModal(false);
-        setMessage(null);
+        try {
+            console.log(selectedAccountPending);
+            await AccountAPI.rejectAccount(selectedAccountPending.id, message);
+            await fetchData();
+            setIsRejectModal(false);
+            setSelectedAccountPending(null);
+            setMessage(null);
+        } catch (error) {
+            setIsRejectModal(false);
+            setMessage(null);
+        }
     };
-
 
     const [searchParams, setSearchParams] = useState({
         userName: '',
@@ -364,9 +368,6 @@ function AdAccount() {
                 console.log(error);
             }
         };
-
-
-
 
         return (
             <Box>
@@ -951,28 +952,26 @@ function AdAccount() {
                             p: 4,
                         }}
                     >
-                        <Typography sx={{ mt: 2 }}>
-                            What do you want to tell ?
-                        </Typography>
+                        <Typography sx={{ mt: 2 }}>What do you want to tell ?</Typography>
                         <TextField
                             fullWidth
                             multiline
                             rows={4}
                             variant="outlined"
                             value={message}
-                            onChange={(e) => setMessage()}
+                            onChange={(e) => setMessage(e.target.value)}
                             sx={{ mt: 2 }}
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                            <Button onClick={handleCloseRejectModal} sx={{ mr: 2 }}>Cancel</Button>
+                            <Button onClick={handleCloseRejectModal} sx={{ mr: 2 }}>
+                                Cancel
+                            </Button>
                             <Button variant="contained" color="primary" onClick={handleConfirmRejectModal}>
                                 Confirm
                             </Button>
                         </Box>
                     </Box>
                 </Modal>
-
-
 
                 <Modal open={isMessageModal} onClose={handleCloseMessageModal}>
                     <Box
@@ -1126,6 +1125,10 @@ function AdAccount() {
                                         <Typography color="orange" fontWeight="bold">
                                             Pending
                                         </Typography>
+                                    ) : account.status === 'REJECTED' ? (
+                                        <Typography color="red" fontWeight="bold">
+                                            Rejected
+                                        </Typography>
                                     ) : (
                                         <FormControlLabel
                                             control={<IOSSwitch sx={{ m: 1 }} checked={account.status === 'ACTIVE'} />}
@@ -1218,12 +1221,12 @@ function AdAccount() {
                                 onClick={
                                     imageSelected
                                         ? () =>
-                                            handleRemoveImage(
-                                                setImagePreview,
-                                                setImageFile,
-                                                setImageError,
-                                                setImageHelperText,
-                                            )
+                                              handleRemoveImage(
+                                                  setImagePreview,
+                                                  setImageFile,
+                                                  setImageError,
+                                                  setImageHelperText,
+                                              )
                                         : () => document.getElementById('avatarUrl').click()
                                 }
                             >

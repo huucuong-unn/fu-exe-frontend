@@ -75,6 +75,12 @@ const AccountAPI = {
         const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
         return axiosClient.post(url, authorizedConfig);
     },
+
+    rejectAccount(id, data, includeAuthorization = false) {
+        const url = `/v1/account/reject/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader(data, includeAuthorization);
+        return axiosClient.post(url, authorizedConfig);
+    },
 };
 
 export default AccountAPI;

@@ -57,7 +57,7 @@ const CampaignDetail = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [showApprovalList, setShowApprovalList] = useState(false);
 
-    const steps = ['COMPANY_APPLY', 'MENTEE_APPLY', 'TRAINING', 'CLOSED'];
+    const steps = ['COMPANY_APPLY', 'STUDENT_APPLY', 'TRAINING', 'CLOSED'];
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
@@ -346,78 +346,6 @@ const CampaignDetail = () => {
                                 paddingBottom: 2,
                             }}
                         >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of online session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Number of offline session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    10 sessions
-                                </Typography>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    textAlign: 'left',
-                                    flexDirection: 'column',
-                                    alignItems: { md: 'start' },
-                                    justifyContent: 'left',
-                                }}
-                            >
-                                <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center', gap: 1 }}>
-                                    <Typography color="gray" variant="h7">
-                                        Min duration of session
-                                    </Typography>
-                                </Box>
-                                <Typography color="black" variant="h6" fontWeight="bold">
-                                    1 hour
-                                </Typography>
-                            </Box>
                             <Box
                                 sx={{
                                     display: 'flex',

@@ -39,7 +39,6 @@ const publicRoutes = [
     { path: '/mentors', component: Mentors },
     { path: '/mentor/:mentorId', component: MentorProfile },
     { path: '/user/profile', component: UserProfile },
-    { path: '/user/apply', component: Application },
     { path: '/user/history', component: StudentHistory },
 
     //Company
@@ -89,8 +88,10 @@ const companyRoutes = [
     { path: '/company/create-mentor-History', component: MentorHistoryForCompany },
 ];
 
+const studentRoutes = [{ path: '/user/apply', component: Application }];
+
 const mentorRoutes = [{ path: '/campaigns', component: MentorLandingPage, layout: LayoutWithFooter }];
 
 const privateRoutes = [];
 
-export { privateRoutes, publicRoutes, adminRoutes, companyRoutes };
+export { privateRoutes, publicRoutes, adminRoutes, companyRoutes, studentRoutes, mentorRoutes };

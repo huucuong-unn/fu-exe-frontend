@@ -182,7 +182,7 @@ function AdAccount() {
     const [isCreateModal, setIsCreateModal] = useState(false);
     const [isApprove, setIsApprove] = useState(false);
     const status = ['PENDING', 'ACTIVE', 'INACTIVE'];
-    const roles = ['Admin', 'Company', 'Student', 'Mentor', 'Mentee'];
+    const roles = ['admin', 'company', 'student', 'mentor', 'mentee'];
     const [imageError, setImageError] = useState(false);
     const [imageHelperText, setImageHelperText] = useState('');
     const [imagePreview, setImagePreview] = useState(null);
@@ -190,23 +190,18 @@ function AdAccount() {
     const [universities, setUniversities] = useState([]);
     const [imageSelected, setImageSelected] = useState(false);
     const [isRejectModal, setIsRejectModal] = useState(false);
-    const [searchParams, setSearchParams] = useState({
-        userName: '',
-        email: '',
-        role: '',
-        status: '',
-    });
     const [params, setParams] = useState({
-        userName: searchParams.userName || null,
-        email: searchParams.email || null,
-        role: searchParams.role || null,
-        status: searchParams.status || null,
+        userName: '' || null,
+        email: '' || null,
+        role: '' || null,
+        status: '' || null,
         page: 1,
         limit: 7,
     });
     const [totalPage, setTotalPage] = useState(0);
     const [message, setMessage] = useState('');
     const [actionType, setActionType] = useState('');
+    const [isPaging, setIsPaging] = useState(true);
     const IMAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     const handlePageChange = (event, value) => {
@@ -214,6 +209,12 @@ function AdAccount() {
             ...prev,
             page: value,
         }));
+
+        if (isPaging === true) {
+            setIsPaging(false);
+        } else {
+            setIsPaging(true);
+        }
     };
 
     //new
@@ -243,15 +244,15 @@ function AdAccount() {
 
     const handleSearchChange = (e) => {
         const { name, value } = e.target;
-        setSearchParams((prev) => ({ ...prev, [name]: value }));
+        setParams((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleRoleChange = (event, value) => {
-        setSearchParams((prev) => ({ ...prev, role: value }));
+        setParams((prev) => ({ ...prev, role: value }));
     };
 
     const handleStatusChange = (event, value) => {
-        setSearchParams((prev) => ({ ...prev, status: value }));
+        setParams((prev) => ({ ...prev, status: value }));
     };
 
     const handleRowClick = (account) => {
@@ -335,11 +336,11 @@ function AdAccount() {
 
     useEffect(() => {
         fetchData();
-    }, [params]);
+    }, [isPaging]);
 
     useEffect(() => {
-        console.log(accounts);
-    }, [accounts]);
+        console.log(params);
+    }, [params]);
 
     const handleChangeStatus = async (accountId) => {
         try {
@@ -1045,7 +1046,7 @@ function AdAccount() {
                         variant="outlined"
                         size="small"
                         name="userName"
-                        value={searchParams.userName}
+                        value={params.userName}
                         onChange={handleSearchChange}
                     />
                     <TextField
@@ -1054,7 +1055,7 @@ function AdAccount() {
                         variant="outlined"
                         size="small"
                         name="email"
-                        value={searchParams.email}
+                        value={params.email}
                         onChange={handleSearchChange}
                     />
                     <Autocomplete
@@ -1062,7 +1063,7 @@ function AdAccount() {
                         id="role-select"
                         options={roles}
                         sx={{ width: 200 }}
-                        value={searchParams.role}
+                        value={params.role}
                         onChange={handleRoleChange}
                         renderInput={(params) => <TextField {...params} label="Role..." />}
                         size="small"
@@ -1072,7 +1073,7 @@ function AdAccount() {
                         id="status-select"
                         options={status}
                         sx={{ width: 200 }}
-                        value={searchParams.status}
+                        value={params.status}
                         onChange={handleStatusChange}
                         renderInput={(params) => <TextField {...params} label="Status..." />}
                         size="small"

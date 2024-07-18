@@ -30,15 +30,16 @@ function AdOrder() {
     const [sortPoint, setSortPoint] = useState(null);
     const [sortCreatedDate, setSortCreatedDate] = useState(null);
     const [params, setParams] = useState({
-        email: email,
-        sortAmount: sortAmount,
-        sortPoint: sortPoint,
-        sortCreatedDate: sortCreatedDate,
-        status: status,
+        email: '',
+        sortAmount: '',
+        sortPoint: '',
+        sortCreatedDate: '',
+        status: '',
         page: 1,
         limit: 10,
     });
     const [totalPage, setTotalPage] = useState(0);
+    const [isPaging, setIsPaging] = useState(true);
 
     const fetchData = async () => {
         try {
@@ -52,6 +53,10 @@ function AdOrder() {
 
     useEffect(() => {
         fetchData();
+    }, [isPaging]);
+
+    useEffect(() => {
+        console.log(params);
     }, [params]);
 
     const handlePageChange = (event, value) => {
@@ -59,6 +64,12 @@ function AdOrder() {
             ...prev,
             page: value,
         }));
+
+        if (isPaging === true) {
+            setIsPaging(false);
+        } else {
+            setIsPaging(true);
+        }
     };
 
     const handleSearch = () => {
@@ -81,16 +92,16 @@ function AdOrder() {
                     label="Email..."
                     variant="outlined"
                     size="small"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={params.email}
+                    onChange={(e) => setParams({ ...params, email: e.target.value })}
                 />
                 <Autocomplete
                     disablePortal
                     id="combo-box-demo"
                     options={['SUCCESS', 'FAILED']}
                     sx={{ width: 200 }}
-                    value={status}
-                    onChange={(event, newValue) => setStatus(newValue)}
+                    value={params.status}
+                    onChange={(event, newValue) => setParams({ ...params, status: newValue })}
                     renderInput={(params) => <TextField {...params} label="Status" />}
                     size="small"
                 />
@@ -99,8 +110,8 @@ function AdOrder() {
                     id="combo-box-demo"
                     options={['asc', 'desc']}
                     sx={{ width: 200 }}
-                    value={sortAmount}
-                    onChange={(event, newValue) => setSortAmount(newValue)}
+                    value={params.sortAmount}
+                    onChange={(event, newValue) => setParams({ ...params, sortAmount: newValue })}
                     renderInput={(params) => <TextField {...params} label="Sort by amount" />}
                     size="small"
                 />
@@ -109,8 +120,8 @@ function AdOrder() {
                     id="combo-box-demo"
                     options={['asc', 'desc']}
                     sx={{ width: 200 }}
-                    value={sortPoint}
-                    onChange={(event, newValue) => setSortPoint(newValue)}
+                    value={params.sortPoint}
+                    onChange={(event, newValue) => setParams({ ...params, sortPoint: newValue })}
                     renderInput={(params) => <TextField {...params} label="Sort by points" />}
                     size="small"
                 />
@@ -119,12 +130,12 @@ function AdOrder() {
                     id="combo-box-demo"
                     options={['asc', 'desc']}
                     sx={{ width: 200 }}
-                    value={sortCreatedDate}
-                    onChange={(event, newValue) => setSortCreatedDate(newValue)}
+                    value={params.sortCreatedDate}
+                    onChange={(event, newValue) => setParams({ ...params, sortCreatedDate: newValue })}
                     renderInput={(params) => <TextField {...params} label="Sort by createdDate" />}
                     size="small"
                 />
-                <Button variant="contained" size="medium" onClick={handleSearch}>
+                <Button variant="contained" size="medium" onClick={fetchData}>
                     Search
                 </Button>
             </Box>

@@ -259,8 +259,8 @@ function SignUpForCompany() {
             data.append('createAccountRequest.roleName', createAccountRequest.roleName);
 
             // Append `requestObject` fields to FormData
-            data.append('createCompanyRequest.name', data.get('name'));
-            data.append('createCompanyRequest.country', formValues.address);
+            data.append('createCompanyRequest.name', data.get('fullname'));
+            data.append('createCompanyRequest.country', formValues.country);
             data.append('createCompanyRequest.address', data.get('address'));
             data.append('createCompanyRequest.avatarUrl', data.get('avatarUrl'));
             data.append('createCompanyRequest.facebookUrl', data.get('facebookUrl'));

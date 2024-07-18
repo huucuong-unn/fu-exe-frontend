@@ -26,6 +26,7 @@ import { useLocation } from 'react-router-dom';
 import ApplicationAPI from '~/API/ApplicationAPI';
 import TransactionAPI from '~/API/TransactionAPI';
 import storageService from '~/components/StorageService/storageService';
+import MentorApplyAPI from '~/API/MentorApply';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -56,6 +57,7 @@ function StudentHistory() {
     const [selectedApply, setSelectedApply] = useState(null);
     const [userInfo, setUserInfo] = useState(storageService.getItem('userInfo'));
     const [applys, setApplys] = useState([]);
+    const [mentorApplys, setMentorApplys] = useState([]);
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
@@ -100,7 +102,8 @@ function StudentHistory() {
                     createdDate: 'desc',
                 };
                 const response = await ApplicationAPI.getApplicationByStudentId(userInfo.studentId, params, false);
-
+                const response2 = await MentorApplyAPI.findMentorApplysByStudentId(userInfo.studentId);
+                setMentorApplys(response);
                 setApplys(response.listResult);
                 console.log(applys);
             } catch (error) {
@@ -144,7 +147,7 @@ function StudentHistory() {
         setSelectedMentee(mentee);
     };
 
-    const handleRowApplyClick = (applyss) => {
+    const handleRowApplyClick = (applys) => {
         setSelectedApply(applys);
     };
 
@@ -152,21 +155,6 @@ function StudentHistory() {
         setSelectedMentee(null);
         setSelectedApply(null);
     };
-
-    const applyss = [
-        {
-            tranningTime: '31/10/2003 - 1/1/2003',
-            mentorName: 'Le Cong Vinh',
-            companyName: 'FPT Software',
-            status: 'TRANNING',
-        },
-        {
-            tranningTime: '31/10/2003 - 1/1/2003',
-            mentorName: 'Le Cong Vinh',
-            companyName: 'FPT Software',
-            status: 'DONE',
-        },
-    ];
 
     return (
         <Container id="companies" sx={{ py: { xs: 8, sm: 16 }, padding: { lg: 16 } }}>
@@ -333,7 +321,8 @@ function StudentHistory() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {applyss.map((apply) => (
+                            //mentor apply
+                            {mentorApplys.map((apply) => (
                                 <StyledTableRow
                                     key={apply.id} // Assuming 'id' is a unique identifier for each application
                                     onClick={() => handleRowApplyClick(apply)}

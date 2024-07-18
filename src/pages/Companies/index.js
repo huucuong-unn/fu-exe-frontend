@@ -99,6 +99,7 @@ function Companies() {
     const [name, setName] = useState('');
     const [address, setAddress] = useState('');
     const navigate = useNavigate();
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     const handlePageChange = (event, value) => {
         setSort((prev) => ({
@@ -309,7 +310,7 @@ function Companies() {
                                                   pointerEvents: 'none',
                                               }}
                                           >
-                                              <img alt="" src={company.avatarUrl} />
+                                              <img alt="" src={IMGAGE_HOST + company.account.avatarUrl} />
                                           </AspectRatio>
                                           <Box sx={{ display: 'flex', gap: 1.5, mt: 'auto' }}>
                                               <div>

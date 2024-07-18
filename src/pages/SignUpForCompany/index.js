@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '~/assets/images/logo.png';
 import AccountAPI from '~/API/AccountAPI';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props) {
     return (
@@ -30,6 +31,7 @@ function Copyright(props) {
 }
 
 function SignUpForCompany() {
+    const navigate = useNavigate();
     const defaultTheme = createTheme();
     const dateInWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const [avatar, setAvatar] = useState(null);
@@ -154,7 +156,7 @@ function SignUpForCompany() {
             setIsUsernameValid(true);
         }
 
-        if (!/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/.test(phoneNumber)) {
+        if (phoneNumber === '') {
             setIsPhoneNumberValid(false);
         } else {
             setIsPhoneNumberValid(true);
@@ -172,13 +174,13 @@ function SignUpForCompany() {
             setIsCompanySizeValid(true);
         }
 
-        if (description.length < 5 || description.length > 100) {
+        if (description.length < 5 || description.length > 500) {
             setIsDescriptionValid(false);
         } else {
             setIsDescriptionValid(true);
         }
 
-        if (address.length < 5 || description.length > 100) {
+        if (address.length < 5 || description.length > 500) {
             setIsAddressValid(false);
         } else {
             setIsAddressValid(true);
@@ -259,7 +261,7 @@ function SignUpForCompany() {
 
             try {
                 const result = await AccountAPI.createAccountForCompany(data);
-                //navigate('/sign-in', { state: { signupSuccess: true } });
+                navigate('/sign-in', { state: { signupSuccess: true } });
             } catch (error) {
                 console.log(error);
             }
@@ -429,7 +431,7 @@ function SignUpForCompany() {
                                     defaultValue=""
                                     id="country"
                                     name="country"
-                                    options={['Vietnam', 'Thailand', 'Japan']}
+                                    options={['Vietnam', 'Thailand', 'Japan', 'America', 'Singapore']}
                                     value={formValues.country}
                                     getOptionLabel={(option) => option}
                                     onChange={(event, newValue) => setFormValues({ ...formValues, country: newValue })}

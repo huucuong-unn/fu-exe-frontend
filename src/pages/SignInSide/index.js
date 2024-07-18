@@ -32,6 +32,7 @@ const defaultTheme = createTheme();
 export default function SignInSide() {
     const [value, setValue] = useState('1');
     const [showAlert, setShowAlert] = useState(false);
+    const [showAlertError, setShowAlertError] = useState(false);
     const location = useLocation();
     const [loginWithRole, setLoginWithRole] = useState('student');
 
@@ -40,7 +41,7 @@ export default function SignInSide() {
             setShowAlert(true);
             const timer = setTimeout(() => {
                 setShowAlert(false);
-            }, 5000); // Show alert for 5 seconds
+            }, 5000);
             return () => clearTimeout(timer);
         }
     }, [location.state]);
@@ -92,6 +93,11 @@ export default function SignInSide() {
             }
         } catch (error) {
             console.log(error);
+            setShowAlertError(true);
+            const timer = setTimeout(() => {
+                setShowAlertError(false);
+            }, 5000);
+            return () => clearTimeout(timer);
         }
     };
 
@@ -141,6 +147,11 @@ export default function SignInSide() {
             {showAlert && (
                 <Alert width="50%" variant="filled" severity="success">
                     Registered Successfully
+                </Alert>
+            )}
+            {showAlertError && (
+                <Alert width="50%" variant="filled" severity="error">
+                    Incorrect username or password or please check login correct role !
                 </Alert>
             )}
             <Grid container component="main" sx={{ height: '100vh' }}>

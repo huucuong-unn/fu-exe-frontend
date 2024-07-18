@@ -179,7 +179,7 @@ export default function Mentors() {
     useEffect(() => {
         const getAll = async () => {
             try {
-                const getAllWithStatusActive = await MentorAPI.getAllWithStatusActive({ page: 1, limit: 10 });
+                const getAllWithStatusActive = await MentorAPI.getAllWithStatusActive(pagination);
                 setMentors(getAllWithStatusActive.listResult);
                 setAllMentors(getAllWithStatusActive.listResult);
                 setTotalPage(getAllWithStatusActive.totalPage);
@@ -191,7 +191,7 @@ export default function Mentors() {
         };
 
         getAll();
-    }, []);
+    }, [pagination]);
 
     useEffect(() => {
         const filterMentors = () => {
@@ -428,7 +428,7 @@ export default function Mentors() {
             </Grid>
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
                 <Pagination
-                    count={totalPage} // Calculate the total number of pages
+                    count={totalPage}
                     page={pagination.page}
                     onChange={handlePageChange}
                     renderItem={(item) => (

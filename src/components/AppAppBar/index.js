@@ -25,6 +25,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import logo from '~/assets/images/logo-outlined.png';
+import AccountAPI from '~/API/AccountAPI';
 
 const logoStyle = {
     width: '50px',
@@ -37,7 +38,7 @@ function AppAppBar({ mode, toggleColorMode }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const openForUserOption = Boolean(anchorEl);
     const navigate = useNavigate();
-
+    const [point, setPoint] = useState(0);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -92,13 +93,22 @@ function AppAppBar({ mode, toggleColorMode }) {
     const [userInfo, setUserInfo] = useState(storageService.getItem('userInfo') || null);
 
     useEffect(() => {
-        // This useEffect is now only for updating userInfo if it changes in localStorage
-        const storedUserInfo = storageService.getItem('userInfo');
-        if (storedUserInfo !== null) {
-            setUserInfo(storedUserInfo);
-            console.log(storedUserInfo);
-            console.log(userInfo);
-        }
+        const fetchPoints = async () => {
+            // This useEffect is now only for updating userInfo if it changes in localStorage
+            const storedUserInfo = await storageService.getItem('userInfo');
+            if (storedUserInfo !== null) {
+                const pointResponse = await AccountAPI.getPoint(storedUserInfo.id);
+                console.log(pointResponse);
+                setPoint(pointResponse);
+            }
+
+            if (storedUserInfo !== null) {
+                setUserInfo(storedUserInfo);
+                console.log(storedUserInfo);
+                console.log(userInfo);
+            }
+        };
+        fetchPoints();
     }, []);
 
     const toggleDrawer = (newOpen) => () => {
@@ -308,7 +318,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                     {userInfo?.role !== 'mentor' ? (
                                         <MenuItem onClick={handleCloseForPoint}>
                                             <Avatar src="https://cdn-icons-png.flaticon.com/128/4671/4671969.png" />
-                                            {userInfo?.point} Points
+                                            {point ? point : 0} Points
                                         </MenuItem>
                                     ) : (
                                         ''

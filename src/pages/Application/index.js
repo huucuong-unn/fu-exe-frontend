@@ -1,4 +1,4 @@
-import { Box, Button, Container, Typography, TextField, Autocomplete, InputLabel } from '@mui/material';
+import { Box, Button, Container, Typography, TextField, Autocomplete, InputLabel, Alert } from '@mui/material';
 import { useEffect, useState } from 'react';
 import ApplicationAPI from '~/API/ApplicationAPI';
 import storageService from '~/components/StorageService/storageService';
@@ -78,6 +78,7 @@ export const Application = () => {
     const [studentId, setStudentId] = useState(storageService.getItem('userInfo').studentId);
     const location = useLocation();
     const { mentorId } = location.state || {};
+    const [showAlertError, setShowAlertError] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -131,6 +132,11 @@ export const Application = () => {
                 navigate('/user/history', { state: { selectApplyTab: true } });
             } catch (error) {
                 console.log(error);
+                setShowAlertError(true);
+                const timer = setTimeout(() => {
+                    setShowAlertError(false);
+                }, 5000);
+                return () => clearTimeout(timer);
             }
         }
     };
@@ -144,6 +150,11 @@ export const Application = () => {
             <Typography variant="h4" sx={{ mb: { xs: 2, sm: 4 } }}>
                 Application
             </Typography>
+            {showAlertError && (
+                <Alert width="50%" variant="filled" severity="error" sx={{ marginBottom: 3 }}>
+                    Don't have enought point to submit !
+                </Alert>
+            )}
             <Box
                 component="form"
                 onSubmit={handleSubmit}

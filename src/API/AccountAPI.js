@@ -51,6 +51,9 @@ const AccountAPI = {
     login(data, includeAuthorization = false) {
         return axiosClient.post('/v1/auth/login', data);
     },
+    loginWithGoogle(data, includeAuthorization = false) {
+        return axiosClient.post('/v1/auth/login-google', data);
+    },
 
     getAccountForAdminSearch(params, includeAuthorization = false) {
         const url = `/v1/account/account-for-admin`;
@@ -80,6 +83,11 @@ const AccountAPI = {
         const url = `/v1/account/reject/${id}`;
         const authorizedConfig = this.addAuthorizationHeader(data, includeAuthorization);
         return axiosClient.post(url, authorizedConfig);
+    },
+    getPoint(id, includeAuthorization = false) {
+        const url = `/v1/account/point/${id}`;
+        const authorizedConfig = this.addAuthorizationHeader(includeAuthorization);
+        return axiosClient.get(url, authorizedConfig);
     },
 };
 

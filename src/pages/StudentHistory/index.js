@@ -103,7 +103,7 @@ function StudentHistory() {
                 };
                 const response = await ApplicationAPI.getApplicationByStudentId(userInfo.studentId, params, false);
                 const response2 = await MentorApplyAPI.findMentorApplysByStudentId(userInfo.studentId);
-                setMentorApplys(response);
+                setMentorApplys(response2);
                 setApplys(response.listResult);
                 console.log(applys);
             } catch (error) {
@@ -321,8 +321,7 @@ function StudentHistory() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            //mentor apply
-                            {mentorApplys.map((apply) => (
+                            {applys.map((apply) => (
                                 <StyledTableRow
                                     key={apply.id} // Assuming 'id' is a unique identifier for each application
                                     onClick={() => handleRowApplyClick(apply)}

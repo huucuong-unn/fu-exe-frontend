@@ -25,6 +25,7 @@ export default function LogoCollection() {
         address: '',
     });
     const navigate = useNavigate();
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     const avatarSize = {
         xs: { width: 80, height: 80 },
@@ -68,7 +69,7 @@ export default function LogoCollection() {
                             key={index}
                         >
                             <Avatar
-                                src={company?.avatarUrl}
+                                src={IMGAGE_HOST + company?.account.avatarUrl}
                                 sx={{
                                     width: {
                                         xs: avatarSize.xs.width,

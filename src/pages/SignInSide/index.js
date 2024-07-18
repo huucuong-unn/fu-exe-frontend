@@ -10,7 +10,7 @@ import AccountAPI from '~/API/AccountAPI';
 import Alert from '@mui/material/Alert';
 import storageService from '~/components/StorageService/storageService';
 import logo from '~/assets/images/logo.png';
-import { jwtDecode } from "jwt-decode"
+import { jwtDecode } from 'jwt-decode';
 
 const clientId = '478388298220-qhn8p4akrr4hsidbvnp999v5tn0u3s93.apps.googleusercontent.com';
 
@@ -32,6 +32,7 @@ const defaultTheme = createTheme();
 export default function SignInSide() {
     const [value, setValue] = useState('1');
     const [showAlert, setShowAlert] = useState(false);
+    const [showAlertError, setShowAlertError] = useState(false);
     const location = useLocation();
     const [loginWithRole, setLoginWithRole] = useState('student');
 
@@ -40,7 +41,7 @@ export default function SignInSide() {
             setShowAlert(true);
             const timer = setTimeout(() => {
                 setShowAlert(false);
-            }, 5000); // Show alert for 5 seconds
+            }, 5000);
             return () => clearTimeout(timer);
         }
     }, [location.state]);
@@ -92,42 +93,49 @@ export default function SignInSide() {
             }
         } catch (error) {
             console.log(error);
+            setShowAlertError(true);
+            const timer = setTimeout(() => {
+                setShowAlertError(false);
+            }, 5000);
+            return () => clearTimeout(timer);
         }
     };
 
     const handleGoogleLoginSuccess = async (response) => {
         try {
-        const token = "";
-        const decoded = jwtDecode(response?.credential);
-        console.log('Google login success:', response);
-        console.log('Google login success:', decoded);
-        const data = "";
-        data.append('loginWithRole', loginWithRole);
-        const userInfo = await AccountAPI.login(data);
+            const token = '';
+            const decoded = jwtDecode(response?.credential);
+            console.log('Google login success:', response);
+            console.log('Google login success:', decoded);
+            const data = {
+                emailOrUsername: decoded.email,
+                loginWithRole: loginWithRole,
+            };
 
-        if (userInfo) {
+            const userInfo = await AccountAPI.loginWithGoogle(data);
 
-            storageService.setItem('userInfo', userInfo);
-            switch (loginWithRole) {
-                case 'mentor':
-                    navigate('/campaigns');
-                    break;
-                case 'student':
-                    navigate('/');
-                    break;
-                case 'admin':
-                    navigate('/admin/dashboard');
-                    break;
-                case 'company':
-                    navigate('/company/campaign-history');
-                    break;
-                default:
-                    navigate('/');
+            if (userInfo) {
+                storageService.setItem('userInfo', userInfo);
+                switch (loginWithRole) {
+                    case 'mentor':
+                        navigate('/campaigns');
+                        break;
+                    case 'student':
+                        navigate('/');
+                        break;
+                    case 'admin':
+                        navigate('/admin/dashboard');
+                        break;
+                    case 'company':
+                        navigate('/company/campaign-history');
+                        break;
+                    default:
+                        navigate('/');
+                }
             }
+        } catch (error) {
+            console.log(error);
         }
-    } catch (error) {
-        console.log(error);
-    }
     };
 
     const handleGoogleLoginFailure = (error) => {
@@ -139,6 +147,11 @@ export default function SignInSide() {
             {showAlert && (
                 <Alert width="50%" variant="filled" severity="success">
                     Registered Successfully
+                </Alert>
+            )}
+            {showAlertError && (
+                <Alert width="50%" variant="filled" severity="error">
+                    Incorrect username or password or please check login correct role !
                 </Alert>
             )}
             <Grid container component="main" sx={{ height: '100vh' }}>

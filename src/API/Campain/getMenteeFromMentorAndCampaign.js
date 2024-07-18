@@ -1,4 +1,4 @@
-const getMenteesFromMentorAndCampaign = async (mentorId, campaignId, page = 2, limit = 10) => {
+const getMenteesFromMentorAndCampaign = async (mentorId, campaignId, page = 1, limit = 10) => {
     try {
         const response = await fetch(
             `https://tortee-463vt.ondigitalocean.app/api/v1/mentee/mentor-campaign?mentorId=${mentorId}&campaignId=${campaignId}&page=${page}&limit=${limit}`

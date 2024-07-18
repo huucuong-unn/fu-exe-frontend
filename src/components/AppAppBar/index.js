@@ -176,7 +176,7 @@ function AppAppBar({ mode, toggleColorMode }) {
                                 )}
                                 {userInfo?.role === 'mentor' ? (
                                     <MenuItem sx={{ py: '6px', px: '12px', borderRadius: '999px' }}>
-                                        <Link to="/mentors" style={{ textDecoration: 'none' }}>
+                                        <Link to="/campaigns" style={{ textDecoration: 'none' }}>
                                             <Typography variant="body2" color="text.primary" fontSize="16px">
                                                 Campaigns
                                             </Typography>

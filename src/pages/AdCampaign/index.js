@@ -86,8 +86,8 @@ const IOSSwitch = styled((props) => <Switch focusVisibleClassName=".Mui-focusVis
     }),
 );
 
-const steps = ['COMPANY_APPLY', 'STUDENT_APPLY', 'TRAINING', 'CLOSE'];
-const statusOptions = ['COMPANY_APPLY', 'STUDENT_APPLY', 'TRAINING', 'CLOSE'];
+const steps = ['COMPANY_APPLY', 'MENTEE_APPLY', 'TRAINING', 'CLOSE'];
+const statusOptions = ['COMPANY_APPLY', 'MENTEE_APPLY', 'TRAINING', 'CLOSE'];
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -185,8 +185,10 @@ function AdCampaign() {
         endDate: '',
     });
     const [params, setParams] = useState({
-        campaignName: null,
-        status: null,
+        campaignName: '',
+        status: '',
+        startDate: '',
+        endDate: '',
         page: 1,
         limit: 10,
     });
@@ -208,8 +210,9 @@ function AdCampaign() {
     const [isTranningApplyDateValid, setIsTranningApplyDateValid] = useState(true);
     const [isStartDateAndEndDateValid, setIsStartDateAndEndDateValid] = useState(true);
     const [isImgFileValid, setIsImgFileValid] = useState(true);
+    const [isPaging, setIsPaging] = useState(true);
 
-    const fetchCampaigns = async (params) => {
+    const fetchCampaigns = async () => {
         try {
             const campaignData = await CampaignAPI.getAllForAdmin(params);
             console.log(campaignData);
@@ -225,11 +228,17 @@ function AdCampaign() {
             ...prev,
             page: value,
         }));
+
+        if (isPaging === true) {
+            setIsPaging(false);
+        } else {
+            setIsPaging(true);
+        }
     };
 
     useEffect(() => {
-        fetchCampaigns(params);
-    }, [params]);
+        fetchCampaigns();
+    }, [isPaging]);
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -361,12 +370,8 @@ function AdCampaign() {
 
                 // Close the modal and refresh the campaign list
                 setIsCreateModalOpen(false);
-                fetchCampaigns({
-                    campaignName: null,
-                    status: null,
-                    page: 1,
-                    limit: 10,
-                });
+                setParams({ campaignName: '', status: '', startDate: '', endDate: '', page: 1, limit: 10 });
+                fetchCampaigns();
             } catch (error) {
                 console.error('Error creating campaign:', error);
                 // Handle error (e.g., display an error message to the user)
@@ -427,8 +432,8 @@ function AdCampaign() {
                         label="Campaign name..."
                         variant="outlined"
                         size="small"
-                        value={searchParams.campaignName}
-                        onChange={(e) => setSearchParams({ ...searchParams, campaignName: e.target.value })}
+                        value={params.campaignName}
+                        onChange={(e) => setParams({ ...params, campaignName: e.target.value })}
                     />
                     <Autocomplete
                         disablePortal
@@ -436,11 +441,11 @@ function AdCampaign() {
                         options={statusOptions}
                         sx={{ width: '200px' }}
                         size="small"
-                        value={searchParams.status}
-                        onChange={(event, newValue) => setSearchParams({ ...searchParams, status: newValue })}
+                        value={params.status}
+                        onChange={(event, newValue) => setParams({ ...params, status: newValue })}
                         renderInput={(params) => <TextField {...params} label="Status" />}
                     />
-                    <Button variant="contained" size="medium" onClick={handleSearch}>
+                    <Button variant="contained" size="medium" onClick={fetchCampaigns}>
                         Search
                     </Button>
                 </Box>
@@ -546,7 +551,7 @@ function AdCampaign() {
                                             campaign.status === 'COMPANY_APPLY'
                                                 ? 'Company Apply'
                                                 : campaign.status === 'MENTEE_APPLY'
-                                                ? 'Student Apply'
+                                                ? 'Mentee Apply'
                                                 : campaign.status === 'TRAINING'
                                                 ? 'Training'
                                                 : campaign.status === 'CLOSE'

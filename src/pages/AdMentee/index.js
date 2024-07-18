@@ -83,7 +83,6 @@ const AdMentee = () => {
     const [mentorName, setMentorName] = useState('');
     const [campaignId, setCampaignId] = useState(null);
     const [companyId, setCompanyId] = useState(null);
-    const [student, setStudent] = useState(null);
     const [companies, setCompanies] = useState([]);
     const [campaigns, setCampaigns] = useState([]);
     const [params, setParams] = useState({
@@ -95,6 +94,7 @@ const AdMentee = () => {
         limit: 10,
     });
     const [totalPage, setTotalPage] = useState(0);
+    const [isPaging, setIsPaging] = useState(true);
 
     const handleRowClick = (mentee) => {
         setSelectedMentee(mentee);
@@ -109,6 +109,12 @@ const AdMentee = () => {
             ...prev,
             page: value,
         }));
+
+        if (isPaging === true) {
+            setIsPaging(false);
+        } else {
+            setIsPaging(true);
+        }
     };
 
     const handleSearch = async () => {
@@ -125,6 +131,7 @@ const AdMentee = () => {
             const menteesData = await MentorApplyAPI.findAllByMenteeNameAndMentorFullNameAndCampaignIdAndCompanyId(
                 params,
             );
+            setTotalPage(menteesData.totalPage);
 
             setMentees(menteesData.listResult);
         } catch (error) {
@@ -132,24 +139,28 @@ const AdMentee = () => {
         }
     };
 
+    const fetchData = async () => {
+        try {
+            const companiesData = await CompanyAPI.getAllWithStatusActiveWithoutPaging();
+            const campaignsData = await CampaignAPI.getAllWithoutPaging();
+            const menteesData = await MentorApplyAPI.findAllByMenteeNameAndMentorFullNameAndCampaignIdAndCompanyId(
+                params,
+            );
+            setCompanies(companiesData);
+            setCampaigns(campaignsData);
+            setMentees(menteesData.listResult);
+            setTotalPage(menteesData.totalPage);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const companiesData = await CompanyAPI.getAllWithStatusActiveWithoutPaging();
-                const campaignsData = await CampaignAPI.getAllWithoutPaging();
-                const menteesData = await MentorApplyAPI.findAllByMenteeNameAndMentorFullNameAndCampaignIdAndCompanyId(
-                    params,
-                );
-                console.log(menteesData);
-                setCompanies(companiesData);
-                setCampaigns(campaignsData);
-                setMentees(menteesData.listResult);
-                setTotalPage(menteesData.totalPage);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
         fetchData();
+    }, [isPaging]);
+
+    useEffect(() => {
+        console.log(params);
     }, [params]);
 
     return (
@@ -160,16 +171,16 @@ const AdMentee = () => {
                     label="Mentee name..."
                     variant="outlined"
                     size="small"
-                    value={menteeName}
-                    onChange={(e) => setMenteeName(e.target.value)}
+                    value={params.menteeName}
+                    onChange={(e) => setParams({ ...params, menteeName: e.target.value })}
                 />
                 <TextField
                     id="outlined-basic"
                     label="Mentor name..."
                     variant="outlined"
                     size="small"
-                    value={mentorName}
-                    onChange={(e) => setMentorName(e.target.value)}
+                    value={params.mentorFullName}
+                    onChange={(e) => setParams({ ...params, mentorFullName: e.target.value })}
                 />
                 <Autocomplete
                     disablePortal
@@ -178,7 +189,7 @@ const AdMentee = () => {
                     sx={{ width: 300 }}
                     getOptionLabel={(option) => option.name}
                     onChange={(event, newValue) => {
-                        setCampaignId(newValue ? newValue.id : null);
+                        setParams({ ...params, campaignId: newValue ? newValue.id : '' });
                     }}
                     renderInput={(params) => <TextField {...params} label="Campaign name..." />}
                     size="small"
@@ -190,12 +201,12 @@ const AdMentee = () => {
                     sx={{ width: 300 }}
                     getOptionLabel={(option) => option.name}
                     onChange={(event, newValue) => {
-                        setCompanyId(newValue ? newValue.id : null);
+                        setParams({ ...params, companyId: newValue ? newValue.id : '' });
                     }}
                     renderInput={(params) => <TextField {...params} label="Company..." />}
                     size="small"
                 />
-                <Button onClick={handleSearch} variant="contained" size="medium">
+                <Button onClick={fetchData} variant="contained" size="medium">
                     Search
                 </Button>
             </Box>

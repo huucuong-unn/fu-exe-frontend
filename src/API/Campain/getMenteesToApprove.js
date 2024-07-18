@@ -1,4 +1,4 @@
-const getMenteesToApprove = async (mentorId, page = 10, limit = 10) => {
+const getMenteesToApprove = async (mentorId, page = 1, limit = 10) => {
     try {
         const response = await fetch(
             `https://tortee-463vt.ondigitalocean.app/api/v1/application/mentor/${mentorId}?page=${page}&limit=${limit}`

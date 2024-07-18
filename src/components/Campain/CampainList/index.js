@@ -27,6 +27,7 @@ const CampaignList = () => {
     const [selectedYear, setSelectedYear] = useState('');
     const navigate = useNavigate();
     const [selectedItemIndex, setSelectedItemIndex] = useState(null);
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
 
     const getUniqueYears = () => {
         const years = campaigns.map((campaign) => new Date(campaign.startDate).getFullYear());
@@ -171,7 +172,7 @@ const CampaignList = () => {
                                         >
                                             <Avatar
                                                 alt="avatar image"
-                                                src={campaign?.img}
+                                                src={IMGAGE_HOST + campaign?.img}
                                                 sx={{ width: 150, height: 150 }}
                                             />
                                         </Box>
@@ -190,17 +191,7 @@ const CampaignList = () => {
                                                 sx={{ my: 1 }}
                                                 fontSize={'16px'}
                                             >
-                                                {new Date(campaign.startDate).toLocaleDateString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                })}{' '}
-                                                -{' '}
-                                                {new Date(campaign.endDate).toLocaleDateString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                })}
+                                                {campaign.startDate} - {campaign.endDate}
                                             </Typography>
                                             <Typography
                                                 color="text.secondary"
@@ -215,13 +206,13 @@ const CampaignList = () => {
                                                     label={campaign.status}
                                                     sx={{ mr: 2, mb: 1 }}
                                                     color={
-                                                        campaign.status === 'Company-apply'
+                                                        campaign.status === 'COMPANY_APPLY'
                                                             ? 'primary'
-                                                            : campaign.status === 'Student-apply'
+                                                            : campaign.status === 'STUDENT_APPLY'
                                                             ? 'secondary'
-                                                            : campaign.status === 'Tranning'
+                                                            : campaign.status === 'TRAINING'
                                                             ? 'success'
-                                                            : campaign.status === 'Close'
+                                                            : campaign.status === 'CLOSED'
                                                             ? 'error'
                                                             : 'default'
                                                     }

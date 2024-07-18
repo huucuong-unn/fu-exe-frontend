@@ -66,7 +66,6 @@ export default function MentorLandingPage() {
     const [showCustomTheme, setShowCustomTheme] = React.useState(true);
     const LPtheme = createTheme(getLPTheme(mode));
     const defaultTheme = createTheme({ palette: { mode } });
-
     const toggleColorMode = () => {
         setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
     };
@@ -78,7 +77,7 @@ export default function MentorLandingPage() {
     return (
         // showCustomTheme ? LPtheme :
         <ThemeProvider
-            theme={ defaultTheme}
+            theme={defaultTheme}
             sx={{
                 fontFamily: 'Montserrat, sans-serif',
             }}
@@ -87,14 +86,9 @@ export default function MentorLandingPage() {
             <AppAppBar mode={mode} toggleColorMode={toggleColorMode} />
             <Divider />
 
-
-
             <Box sx={{ bgcolor: 'background.default' }}>
-
                 <Divider />
                 <CampaignList />
-
-
 
                 <LogoCollection />
 

@@ -8,6 +8,7 @@ import MentorAPI from '~/API/MentorAPI';
 function SimilarMentor({ similarMentor }) {
     const [selectedItemIndex, setSelectedItemIndex] = useState(0);
     const navigate = useNavigate();
+    const IMGAGE_HOST = process.env.REACT_APP_IMG_HOST;
     const handleItemClick = (index, mentorId) => {
         setSelectedItemIndex(index);
         navigate(`/mentor/${mentorId}`);
@@ -55,7 +56,7 @@ function SimilarMentor({ similarMentor }) {
                                         <Box>
                                             <Avatar
                                                 alt="avatar image"
-                                                src={mentor?.mentorProfile?.profilePicture}
+                                                src={IMGAGE_HOST + mentor?.mentorProfile?.mentorDTO.account.avatarUrl}
                                                 sx={{ width: 150, height: 150 }}
                                             />
                                         </Box>

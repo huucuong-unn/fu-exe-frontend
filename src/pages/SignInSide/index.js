@@ -10,7 +10,7 @@ import AccountAPI from '~/API/AccountAPI';
 import Alert from '@mui/material/Alert';
 import storageService from '~/components/StorageService/storageService';
 import logo from '~/assets/images/logo.png';
-import { jwtDecode } from "jwt-decode"
+import { jwtDecode } from 'jwt-decode';
 
 const clientId = '478388298220-qhn8p4akrr4hsidbvnp999v5tn0u3s93.apps.googleusercontent.com';
 
@@ -97,37 +97,39 @@ export default function SignInSide() {
 
     const handleGoogleLoginSuccess = async (response) => {
         try {
-        const token = "";
-        const decoded = jwtDecode(response?.credential);
-        console.log('Google login success:', response);
-        console.log('Google login success:', decoded);
-        const data = "";
-        data.append('loginWithRole', loginWithRole);
-        const userInfo = await AccountAPI.login(data);
+            const token = '';
+            const decoded = jwtDecode(response?.credential);
+            console.log('Google login success:', response);
+            console.log('Google login success:', decoded);
+            const data = {
+                emailOrUsername: decoded.email,
+                loginWithRole: loginWithRole,
+            };
 
-        if (userInfo) {
+            const userInfo = await AccountAPI.loginWithGoogle(data);
 
-            storageService.setItem('userInfo', userInfo);
-            switch (loginWithRole) {
-                case 'mentor':
-                    navigate('/campaigns');
-                    break;
-                case 'student':
-                    navigate('/');
-                    break;
-                case 'admin':
-                    navigate('/admin/dashboard');
-                    break;
-                case 'company':
-                    navigate('/company/campaign-history');
-                    break;
-                default:
-                    navigate('/');
+            if (userInfo) {
+                storageService.setItem('userInfo', userInfo);
+                switch (loginWithRole) {
+                    case 'mentor':
+                        navigate('/campaigns');
+                        break;
+                    case 'student':
+                        navigate('/');
+                        break;
+                    case 'admin':
+                        navigate('/admin/dashboard');
+                        break;
+                    case 'company':
+                        navigate('/company/campaign-history');
+                        break;
+                    default:
+                        navigate('/');
+                }
             }
+        } catch (error) {
+            console.log(error);
         }
-    } catch (error) {
-        console.log(error);
-    }
     };
 
     const handleGoogleLoginFailure = (error) => {

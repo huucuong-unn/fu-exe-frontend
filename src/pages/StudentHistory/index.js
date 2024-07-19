@@ -102,10 +102,9 @@ function StudentHistory() {
                     createdDate: 'desc',
                 };
                 const response = await ApplicationAPI.getApplicationByStudentId(userInfo.studentId, params, false);
-                const response2 = await MentorApplyAPI.findMentorApplysByStudentId(userInfo.studentId);
-                setMentorApplys(response2);
+                console.log(response);
+
                 setApplys(response.listResult);
-                console.log(applys);
             } catch (error) {
                 console.error('Error fetching applications:', error);
             }
@@ -127,7 +126,10 @@ function StudentHistory() {
                     createdDate: 'desc',
                 };
                 const response = await TransactionAPI.getTransactionByAccountId(userInfo.id, params, false);
+                const response2 = await MentorApplyAPI.findMentorApplysByStudentId(userInfo.studentId);
+                console.log(response2);
 
+                setMentorApplys(response2);
                 setTransactions(response.listResult);
 
                 console.log(transactions);
@@ -138,6 +140,10 @@ function StudentHistory() {
 
         fetchTransactions();
     }, []);
+
+    useEffect(() => {
+        console.log(mentorApplys);
+    }, [mentorApplys]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -321,7 +327,7 @@ function StudentHistory() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {applys.map((apply) => (
+                            {mentorApplys.map((apply) => (
                                 <StyledTableRow
                                     key={apply.id} // Assuming 'id' is a unique identifier for each application
                                     onClick={() => handleRowApplyClick(apply)}
@@ -333,10 +339,22 @@ function StudentHistory() {
                                     }}
                                 >
                                     <StyledTableCell component="th" scope="row">
-                                        {apply.tranningTime}
+                                        {new Date(apply.campaign.trainingStartDate).toLocaleDateString('en-GB', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                        })}
+                                        -{' '}
+                                        {new Date(apply.campaign.trainingEndDate).toLocaleDateString('en-GB', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                        })}
                                     </StyledTableCell>
-                                    <StyledTableCell align="left">{apply.mentorName}</StyledTableCell>
-                                    <StyledTableCell align="left">{apply.companyName}</StyledTableCell>
+                                    <StyledTableCell align="left">{apply.application.mentor.fullName}</StyledTableCell>
+                                    <StyledTableCell align="left">
+                                        {apply.application.mentor.company.name}
+                                    </StyledTableCell>
                                     <StyledTableCell align="left">
                                         <Chip
                                             label={apply.status}
@@ -344,7 +362,7 @@ function StudentHistory() {
                                                 backgroundColor:
                                                     apply.status === 'DONE'
                                                         ? 'success.main'
-                                                        : apply.status === 'TRANNING'
+                                                        : apply.status === 'TRAINING'
                                                         ? 'info.main'
                                                         : 'default.main',
                                                 color: 'white',

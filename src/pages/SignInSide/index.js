@@ -235,6 +235,10 @@ export default function SignInSide() {
                                                 <Link to="/sign-up" variant="body2">
                                                     {"Don't have an account? Sign Up"}
                                                 </Link>
+                                                <Divider></Divider>
+                                                <Link to="/company/sign-up" variant="body2">
+                                                    {'Sign up as company'}
+                                                </Link>
                                             </Grid>
                                         </Grid>
                                         <Copyright sx={{ mt: 5 }} />

@@ -486,34 +486,38 @@ const CampaignDetail = () => {
                 </Card>
             </Box>
 
-            <Box
-                mb={2}
-                sx={{
-                    marginLeft: 2,
-                    marginRight: 2,
-                    marginTop: 1,
-                }}
-            >
-                <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
-                    Application list:
-                </Typography>
-                <Button
-                    variant="contained"
-                    color={showApprovalList ? 'secondary' : 'primary'}
-                    onClick={() => setShowApprovalList((prev) => !prev)}
-                >
-                    {showApprovalList ? 'Hide Mentees Needing Approval' : 'Show Mentees Needing Approval'}
-                </Button>
-            </Box>
+            <>
+                {campaign.status === "STUDENT_APPLY" && (
+                    <Box
+                        mb={2}
+                        sx={{
+                            marginLeft: 2,
+                            marginRight: 2,
+                            marginTop: 1,
+                        }}
+                    >
+                        <Typography color="text.primary" variant="body1" fontWeight="bold" fontSize={'24px'}>
+                            Application list:
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            color={showApprovalList ? 'secondary' : 'primary'}
+                            onClick={() => setShowApprovalList((prev) => !prev)}
+                        >
+                            {showApprovalList ? 'Hide Mentees Needing Approval' : 'Show Mentees Needing Approval'}
+                        </Button>
+                    </Box>
+                )}
 
-            {showApprovalList && (
-                <MenteesNeedingApproval
-                    mentees={mentees}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                    fetchMentees={fetchMentees}
-                />
-            )}
+                {showApprovalList && campaign.status === "STUDENT_APPLY" && (
+                    <MenteesNeedingApproval
+                        mentees={mentees}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        fetchMentees={fetchMentees}
+                    />
+                )}
+            </>
 
             <Box mb={2}>
                 <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>

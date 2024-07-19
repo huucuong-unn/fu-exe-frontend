@@ -1227,7 +1227,10 @@ function CompaniesCampaignDetail() {
                                                 <Box>
                                                     <Avatar
                                                         alt="avatar image"
-                                                        src=""
+                                                        src={
+                                                            IMGAGE_HOST +
+                                                            mentor.mentorProfile.mentorDTO.account.avatarUrl
+                                                        }
                                                         sx={{ width: 150, height: 150 }}
                                                     />
                                                 </Box>
